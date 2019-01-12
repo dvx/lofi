@@ -1,0 +1,94 @@
+@import url('https://rsms.me/inter/inter-ui.css');
+@import url('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+
+.top-menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-size: 12px;
+    background-color: #151515de;
+    opacity: 0.25;
+    transition: opacity .25s ease-in-out;
+    -moz-transition: opacity .25s ease-in-out;
+    -webkit-transition: opacity .25s ease-in-out;
+}
+
+.top-menu li {
+    display: block;
+    float: left;
+}
+
+.top-menu li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 5px;
+    text-decoration: none;
+}
+
+.top-menu li a:hover {
+    cursor: pointer;
+    color: #89e484;
+}
+
+.top-menu li a.danger:hover {
+    cursor: pointer;
+    color: #ff5858;
+}
+
+.pull-right {
+    float: right !important;
+}
+
+.full {
+    height: 100%;
+    width: 100%;
+}
+
+.controls {
+    height: 100%;
+    float: left;
+    width: 50%;
+}
+
+.button {
+    padding: .5em;
+    border-radius: 8px;
+    background: #3c3c3c;
+    font-size: 85%;
+}
+
+.button:hover {
+    cursor: default;
+}
+
+.cover {
+    background-size: cover;
+    float: right;
+    width: 100%;
+    height: 100%;
+}
+
+.menu-item {
+    text-align: right;
+    padding: 1em;
+    padding-top: 0.5em;
+    color: #ececec;
+}
+
+.menu-item:first-child {
+    padding-top: 1em;
+}
+
+body:hover .top-menu {
+    opacity: 1;
+}
+
+html, body, .app {
+    font-family: 'Inter UI', sans-serif; 
+    font-feature-settings: 'calt' 1, 'ss02' 1;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+}
