@@ -18,3 +18,8 @@ declare module '*.icns' {
     const value: any;
     export = value;
 }
+
+// non-exposed type from 'electron-settings'
+interface SettingsObserver {
+    dispose(): void;
+}

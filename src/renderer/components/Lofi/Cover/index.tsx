@@ -1,25 +1,43 @@
 import * as React from 'react';
-import { remote, ipcRenderer } from 'electron'
+import Menu from './../Menu';
+import Controls from './Controls'
+import './style.scss';
 
 class Cover extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
+    this.state = {
+      cover_art: ''
+    }
   }
 
-  closeApp() {
-    let w = remote.getCurrentWindow()
-    w.close()
+  componentDidMount() {
+    const intervalId = setInterval(() => this.listeningTo(), 5000);
+    this.setState({ intervalId });
+    this.listeningTo();
+  }
+
+  async listeningTo() {
+    let res = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+      method: 'GET',
+      headers: new Headers({
+        'Authorization': 'Bearer '+ this.props.token
+      })
+    });
+    const currently_playing = await res.json();
+    this.setState({
+      cover_art: currently_playing.item.album.images[0].url
+    });
   }
 
   render() {
     return (
-      <div className='cover' style={{ backgroundImage: 'url(' + this.props.art + ')' }}>
-        <ul className='not-draggable top-menu'>
-          <li><a><i className="fa fa-cube"></i></a></li>
-          <li><a><span style={{fontWeight:'bold'}}>lo</span>fi</a></li>
-          <li className='pull-right'><a onClick={this.closeApp} className='danger'><i className="fa fa-times-circle"></i></a></li>
-        </ul>
-      </div>
+      <>
+        <Menu />
+        <div className='cover full' style={{ backgroundImage: 'url(' + this.state.cover_art + ')' }}>
+          <Controls />
+        </div>
+      </>
     );
   }
 }

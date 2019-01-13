@@ -1,0 +1,27 @@
+.centered {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+}
+
+.centered p {
+    margin: auto;
+    padding: 1em;
+    color: white;
+}
+
+.action {
+    background: black;
+}
+
+.circle-icon {
+    background: #ffc0c0;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 100px;
+    vertical-align: middle;
+    padding: 30px;
+}

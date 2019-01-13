@@ -1,0 +1,32 @@
+.welcome {
+    background-image: url('https://66.media.tumblr.com/6cb0ae44278156aa660d95d55df340de/tumblr_nz14o7t0Z61skcd7fo1_500.gif');
+    background-size: cover;
+}
+
+.centered {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+}
+
+.centered a {
+    margin: auto;
+    background: black;
+    padding: 1em;
+    color: white;
+    text-decoration: none;
+    transition: transform .2s;
+}
+
+.centered a:hover {
+    background: #222;
+    transform: scale(1.05);
+    border:1px solid #000;
+
+}
+
+.centered a i {
+    color: #1DB954;
+}

@@ -2,22 +2,87 @@ import * as React from 'react';
 import * as settings from 'electron-settings';
 import { ipcRenderer } from 'electron'
 import Cover from './Cover';
+import Welcome from './Welcome';
 
 class Lofi extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
-    console.log(settings.get('hello'));
-    console.log(settings.set('hello','world'));
+
+    this.state = {
+      access_token: settings.get('spotify.access_token'),
+      refresh_token: settings.get('spotify.refresh_token'),
+      auth: false
+    }
+  }
+  
+  async verifyAccessToken(observer?: SettingsObserver) {
+    console.log('Verifying access token...')
+    if (observer) {
+      observer.dispose();
+    }
+    let res = await fetch('https://api.spotify.com/v1/me', {
+      method: 'GET',
+      headers: new Headers({
+        'Authorization': 'Bearer '+ this.state.access_token
+      })
+    });
+    if (res.status === 200) {
+      this.setState({
+        auth: true
+      });
+    } else {
+      this.refreshAccessToken();
+    }
+  }
+
+  async refreshAccessToken() {
+    console.log('Access token was bad... renewing');
+    let res = await fetch('http://auth.lofi.rocks/refresh_token?refresh_token=' + this.state.refresh_token);
+    console.log((await res.body));
+    if (res.status === 200) {
+      const access_token = (await res.json()).access_token;
+      settings.set('spotify.access_token', access_token)
+      this.setState({
+        access_token,
+        auth: true
+      })
+    } else {
+      // Something is very, very wrong -- nuke the settings
+      console.log('nuking settings');
+      settings.setAll({});
+      this.setState({
+        refresh_token: null,
+        access_token: null
+      });
+      this.handleAuth();
+    }
+  }
+
+  async handleAuth() {
+    // No token data! Make sure we wait for authentication
+    if (!this.state.refresh_token) {
+      let observer: SettingsObserver = settings.watch('spotify', (newValue, oldValue) => {
+        this.setState({
+          refresh_token: newValue.refresh_token,
+          access_token: newValue.access_token
+        });
+        this.verifyAccessToken(observer);
+      });
+    } else {
+      this.verifyAccessToken(null);
+    }
   }
 
   componentDidMount() {
+    this.handleAuth();
+
     // Move the window when dragging specific element without cannibalizing events
     // Credit goes out to @danielravina
     // See: https://github.com/electron/electron/issues/1354#issuecomment-404348957
-    let animationId:any;
-    let mouseX:any;
-    let mouseY:any;
-    function onMouseDown(e:any) {
+    let animationId: number;
+    let mouseX: number;
+    let mouseY: number;
+    function onMouseDown(e: MouseEvent) {
         if (leftMousePressed(e)) {
             mouseX = e.clientX;  
             mouseY = e.clientY;
@@ -26,7 +91,7 @@ class Lofi extends React.Component<any, any> {
         }
     }
 
-    function onMouseUp(e:any) {
+    function onMouseUp(e: MouseEvent) {
         if (leftMousePressed(e)) {
             ipcRenderer.send('windowMoved');
             document.removeEventListener('mouseup', onMouseUp)
@@ -39,10 +104,9 @@ class Lofi extends React.Component<any, any> {
         animationId = requestAnimationFrame(moveWindow);
     }
 
-    function leftMousePressed(e:any) {
-        e = e || window.event;
+    function leftMousePressed(e: MouseEvent) {
         var button = e.which || e.button;
-        return button == 1;
+        return button === 1;
     }
 
     document.getElementById('main').addEventListener("mousedown", onMouseDown);
@@ -51,7 +115,7 @@ class Lofi extends React.Component<any, any> {
   render() {
     return (
       <div id='main' className='full'>
-        <Cover art='https://i.scdn.co/image/07c323340e03e25a8e5dd5b9a8ec72b69c50089d' />
+        { this.state.auth ? <Cover token={this.state.access_token} /> : <Welcome /> }
       </div>
     );
   }

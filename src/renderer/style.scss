@@ -1,19 +1,33 @@
 @import url('https://rsms.me/inter/inter-ui.css');
 @import url('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 
+body {
+    user-select: none;
+}
+
+*, *::after, *::before {
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-app-region: no-drag;
+    cursor: default;
+}
+
 .top-menu {
+    z-index: 9999;
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
     font-size: 12px;
     background-color: #151515de;
-    opacity: 0.25;
+    opacity: 0;
     transition: opacity .25s ease-in-out;
     -moz-transition: opacity .25s ease-in-out;
     -webkit-transition: opacity .25s ease-in-out;
-    padding-right: .5em;
-    padding-left: .5em;    
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
 }
 
 .top-menu li {
@@ -65,13 +79,6 @@
     cursor: default;
 }
 
-.cover {
-    background-size: cover;
-    float: right;
-    width: 100%;
-    height: 100%;
-}
-
 .menu-item {
     text-align: right;
     padding: 1em;
@@ -87,16 +94,23 @@ body:hover .top-menu {
     opacity: 1;
 }
 
+body:hover .cover {
+    transform: scale(1.1);
+    filter: blur(2px);
+}
+
 html, body, .app {
     font-family: 'Inter UI', sans-serif; 
     font-feature-settings: 'calt' 1, 'ss02' 1;
     height: 100%;
     width: 100%;
     margin: 0;
+    overflow: hidden;
 }
 
 .app {
     height: calc(100% - 2px);
     width: calc(100% - 2px);
-    border: 1px solid white;    
+    border: 1px solid #3c3c3c;
+    background: #3c3c3c;
 }
