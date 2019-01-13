@@ -12,6 +12,8 @@
     transition: opacity .25s ease-in-out;
     -moz-transition: opacity .25s ease-in-out;
     -webkit-transition: opacity .25s ease-in-out;
+    padding-right: .5em;
+    padding-left: .5em;    
 }
 
 .top-menu li {
@@ -91,4 +93,10 @@ html, body, .app {
     height: 100%;
     width: 100%;
     margin: 0;
+}
+
+.app {
+    height: calc(100% - 2px);
+    width: calc(100% - 2px);
+    border: 1px solid white;    
 }
