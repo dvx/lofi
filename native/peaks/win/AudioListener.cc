@@ -128,3 +128,11 @@ HRESULT AudioListener::RecordAudioStream(IAudioSink* Sink)
 	if (hr) throw hr;
 	return hr;
 }
+
+DWORD AudioListener::GetSamplesPerSecond() {
+	return m_pwfx->nSamplesPerSec;
+}
+
+DWORD AudioListener::GetAverageBytesPerSecond() {
+	return m_pwfx->nAvgBytesPerSec;
+}

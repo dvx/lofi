@@ -24,7 +24,6 @@ private:
 
 	const int m_refTimesPerMS = 10000;
 	const int m_refTimesPerSec = 10000000;
-	const int m_freq = 44100;
 	
 	const CLSID m_CLSID_MMDeviceEnumerator = __uuidof(MMDeviceEnumerator);
 	const IID m_IID_IMMDeviceEnumerator = __uuidof(IMMDeviceEnumerator);
@@ -32,6 +31,8 @@ private:
 	const IID m_IID_IAudioCaptureClient = __uuidof(IAudioCaptureClient);
 
 public:
+	DWORD GetAverageBytesPerSecond();
+	DWORD GetSamplesPerSecond();
 	AudioListener(int BitsPerSample, int FormatTag, int BlockAlign, int XSize);
 	~AudioListener();
 	HRESULT RecordAudioStream(IAudioSink*);
