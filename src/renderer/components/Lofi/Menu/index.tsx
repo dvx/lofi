@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { remote } from 'electron'
+import './style.scss'
 
 class Menu extends React.Component<any, any> {
   constructor(props: any) {

@@ -1,0 +1,39 @@
+#visible-ui {
+    height: 100%;
+    position: relative;
+    width: 20%;
+    left: 40%;
+    overflow: hidden;
+}
+
+#visible-ui:hover .top-menu {
+    opacity: 1;
+}
+
+#visible-ui:hover .cover {
+    transform: scale(1.1);
+    filter: blur(2px);
+}
+
+#visible-ui:hover .track-info {
+    transition: .15s;
+    margin-right: 1em;
+    opacity: 1;
+}
+
+#visible-ui:hover .controls {
+    transition: .1s;
+    opacity: 1;
+}
+
+.centered {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+}
+
+.centered a i {
+    color: #1DB954;
+}

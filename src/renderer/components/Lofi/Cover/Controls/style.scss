@@ -1,11 +1,15 @@
-.centered {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
+.controls {
     height: 100%;
+    overflow: hidden;
+    width: 20%;
+    background: #000000aa;
+    position: fixed;
+    top: 0;
+    opacity: 0;
+    transition: .1s;
 }
 
-.centered p {
+.controls p {
     margin: auto;
     padding: 1em;
     color: white;
@@ -15,13 +19,23 @@
     background: black;
 }
 
-.circle-icon {
-    background: #ffc0c0;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    text-align: center;
-    line-height: 100px;
+.control-btn {
     vertical-align: middle;
-    padding: 30px;
+    background: black;
+    padding: 6vh;
+    color: white;
+    margin: 2vh;
+    border: 1px solid black;
+    text-decoration: none;
+    transition: transform .2s;    
+}
+
+.control-btn:hover {
+    background: #222;
+    transform: scale(1.05);
+    border:1px solid #000;
+}
+
+.secondary-control {
+    font-size: 65%;
 }

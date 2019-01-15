@@ -3,13 +3,16 @@ import startAuthServer from './server';
 import * as path from 'path';
 import * as url from 'url';
 
+const HEIGHT = 150;
+const WIDTH_RATIO = 5; // has to be odd
+
 let mainWindow: Electron.BrowserWindow;
 
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    height: 200,
-    width: 200,
+    height: HEIGHT,
+    width: HEIGHT * WIDTH_RATIO,
     frame: false,
     resizable: false,
     maximizable: false,
@@ -29,6 +32,20 @@ function createWindow() {
     })
   );
 
+  setInterval(function() {
+    if (screen && mainWindow) {
+      let p = screen.getCursorScreenPoint();
+      let b = mainWindow.getBounds();
+      let bb = { ix: b.x + ((WIDTH_RATIO - 1) / 2 * HEIGHT), iy: b.y, ax: b.x + (b.width - ((WIDTH_RATIO - 1) / 2 * HEIGHT)), ay: b.y + b.height }
+      if (bb.ix <= p.x && p.x <= bb.ax && bb.iy <= p.y && p.y <= bb.ay) {
+        mainWindow.setIgnoreMouseEvents(false);
+      } else {
+        mainWindow.setIgnoreMouseEvents(true);
+      }
+    }
+    
+  }, 10);
+
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 
@@ -46,8 +63,8 @@ function createWindow() {
     // use setBounds instead of setPosition
     // See: https://github.com/electron/electron/issues/9477#issuecomment-406833003
     mainWindow.setBounds({
-      width: 200,
-      height: 200,
+      height: HEIGHT,
+      width: HEIGHT * WIDTH_RATIO,
       x: x - mouseX,
       y: y - mouseY
     });
@@ -55,6 +72,14 @@ function createWindow() {
 
   ipcMain.on('windowMoved', () => {
     // Do somehting when dragging stop
+  });
+
+  ipcMain.on('windowIgnoreMouseEvents', () => {
+    mainWindow.setIgnoreMouseEvents(true);
+  });
+
+  ipcMain.on('windowDontIgnoreMouseEvents', () => {
+    mainWindow.setIgnoreMouseEvents(false);
   });
 
   // open external URLs in default OS browser

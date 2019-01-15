@@ -23,3 +23,5 @@ declare module '*.icns' {
 interface SettingsObserver {
     dispose(): void;
 }
+
+declare module 'electron-transparency-mouse-fix';

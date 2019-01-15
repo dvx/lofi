@@ -12,7 +12,7 @@ class Welcome extends React.Component<any, any> {
       <div className='welcome full'>
         <Menu />
         <div className='centered'>
-          <a target="_blank" href="http://auth.lofi.rocks/login"><i className="fa fa-spotify"></i>&nbsp;&nbsp;<strong>Log in</strong></a>
+          <a className='login-btn' target="_blank" href="http://auth.lofi.rocks/login"><i className="fa fa-spotify"></i>&nbsp;&nbsp;<strong>Log in</strong></a>
         </div>
       </div>
     );

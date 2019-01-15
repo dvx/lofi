@@ -3,30 +3,18 @@
     background-size: cover;
 }
 
-.centered {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    height: 100%;
-    overflow: hidden;
-}
-
-.centered a {
+.login-btn {
     margin: auto;
     background: black;
     padding: 1em;
     color: white;
     text-decoration: none;
     transition: transform .2s;
+    vertical-align: middle;
 }
 
-.centered a:hover {
+.login-btn:hover {
     background: #222;
     transform: scale(1.05);
     border:1px solid #000;
-
-}
-
-.centered a i {
-    color: #1DB954;
 }

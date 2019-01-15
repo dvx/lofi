@@ -1,8 +1,10 @@
 import * as React from 'react';
 import * as settings from 'electron-settings';
-import { ipcRenderer } from 'electron'
+import * as TransparencyMouseFix from 'electron-transparency-mouse-fix';
+import { ipcRenderer, BrowserWindow } from 'electron'
 import Cover from './Cover';
 import Welcome from './Welcome';
+import './style.scss'
 
 class Lofi extends React.Component<any, any> {
   constructor(props: any) {
@@ -79,6 +81,7 @@ class Lofi extends React.Component<any, any> {
     // Move the window when dragging specific element without cannibalizing events
     // Credit goes out to @danielravina
     // See: https://github.com/electron/electron/issues/1354#issuecomment-404348957
+    
     let animationId: number;
     let mouseX: number;
     let mouseY: number;
@@ -108,13 +111,14 @@ class Lofi extends React.Component<any, any> {
         var button = e.which || e.button;
         return button === 1;
     }
+    
+    document.getElementById('visible-ui').addEventListener("mousedown", onMouseDown);
 
-    document.getElementById('main').addEventListener("mousedown", onMouseDown);
   }
 
   render() {
     return (
-      <div id='main' className='full'>
+      <div id='visible-ui' className='click-on'>
         { this.state.auth ? <Cover token={this.state.access_token} /> : <Welcome /> }
       </div>
     );

@@ -12,47 +12,6 @@ body {
     cursor: default;
 }
 
-.top-menu {
-    z-index: 9999;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    font-size: 12px;
-    background-color: #151515de;
-    opacity: 0;
-    transition: opacity .25s ease-in-out;
-    -moz-transition: opacity .25s ease-in-out;
-    -webkit-transition: opacity .25s ease-in-out;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-}
-
-.top-menu li {
-    display: block;
-    float: left;
-}
-
-.top-menu li a {
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 5px;
-    text-decoration: none;
-}
-
-.top-menu li a:hover {
-    cursor: pointer;
-    color: #89e484;
-}
-
-.top-menu li a.danger:hover {
-    cursor: pointer;
-    color: #ff5858;
-}
-
 .pull-right {
     float: right !important;
 }
@@ -90,15 +49,6 @@ body {
     padding-top: 1em;
 }
 
-body:hover .top-menu {
-    opacity: 1;
-}
-
-body:hover .cover {
-    transform: scale(1.1);
-    filter: blur(2px);
-}
-
 html, body, .app {
     font-family: 'Inter UI', sans-serif; 
     font-feature-settings: 'calt' 1, 'ss02' 1;
@@ -108,9 +58,5 @@ html, body, .app {
     overflow: hidden;
 }
 
-.app {
-    height: calc(100% - 2px);
-    width: calc(100% - 2px);
-    border: 1px solid #3c3c3c;
-    background: #3c3c3c;
-}
+.click-on      {pointer-events: all}
+.click-through {pointer-events: none}

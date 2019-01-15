@@ -1,6 +1,8 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import Menu from './../Menu';
-import Controls from './Controls'
+import Controls from './Controls';
+import TrackInfo from './TrackInfo';
 import './style.scss';
 
 class Cover extends React.Component<any, any> {
@@ -25,8 +27,11 @@ class Cover extends React.Component<any, any> {
       })
     });
     const currently_playing = await res.json();
+    console.log(currently_playing);
     this.setState({
-      cover_art: currently_playing.item.album.images[0].url
+      cover_art: currently_playing.item.album.images[0].url,
+      track: currently_playing.item.album.name,
+      artist: _.map(currently_playing.item.artists, 'name').join(", ")
     });
   }
 
@@ -34,9 +39,10 @@ class Cover extends React.Component<any, any> {
     return (
       <>
         <Menu />
+        <TrackInfo track={this.state.track} artist={this.state.artist} />
         <div className='cover full' style={{ backgroundImage: 'url(' + this.state.cover_art + ')' }}>
-          <Controls />
         </div>
+        <Controls />
       </>
     );
   }

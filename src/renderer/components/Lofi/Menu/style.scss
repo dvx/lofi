@@ -1,0 +1,40 @@
+.top-menu {
+    z-index: 9999;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-size: 12px;
+    background-color: #151515de;
+    opacity: 0;
+    transition: opacity .25s ease-in-out;
+    -moz-transition: opacity .25s ease-in-out;
+    -webkit-transition: opacity .25s ease-in-out;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+.top-menu li {
+    display: block;
+    float: left;
+}
+
+.top-menu li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 5px;
+    text-decoration: none;
+}
+
+.top-menu li a:hover {
+    cursor: pointer;
+    color: #89e484;
+}
+
+.top-menu li a.danger:hover {
+    cursor: pointer;
+    color: #ff5858;
+}
