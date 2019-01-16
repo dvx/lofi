@@ -53,9 +53,9 @@ class Controls extends React.Component<any, any> {
     return (
       <div className='controls centered'>
         <p>
-        <a onClick={this.forward.bind(this)} className='control-btn secondary-control not-draggable'><i className="fa fa-step-backward not-draggable"></i></a>
+        <a onClick={this.backward.bind(this)} className='control-btn secondary-control not-draggable'><i className="fa fa-step-backward not-draggable"></i></a>
         <a onClick={this.pausePlay.bind(this)} className='control-btn not-draggable' ><i className="fa fa-play not-draggable pause-play"></i></a>
-        <a onClick={this.backward.bind(this)} className='control-btn secondary-control not-draggable'><i className="fa fa-step-forward not-draggable"></i></a>
+        <a onClick={this.forward.bind(this)} className='control-btn secondary-control not-draggable'><i className="fa fa-step-forward not-draggable"></i></a>
         </p>
       </div>
     );

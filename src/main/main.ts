@@ -2,6 +2,12 @@ import { app, BrowserWindow, ipcMain, screen, shell } from 'electron';
 import startAuthServer from './server';
 import * as path from 'path';
 import * as url from 'url';
+// @ts-ignore
+import peaks from '../../build/Release/peaks.node';
+
+peaks(function(msg: number) {
+  console.log(msg);
+});
 
 const HEIGHT = 150;
 const WIDTH_RATIO = 5; // has to be odd
@@ -16,7 +22,8 @@ function createWindow() {
     frame: false,
     resizable: false,
     maximizable: false,
-    transparent: true
+    transparent: true,
+    hasShadow: true
   });
 
   mainWindow.setAlwaysOnTop(true, "floating", 1);

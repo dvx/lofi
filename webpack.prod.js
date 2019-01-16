@@ -40,6 +40,10 @@ let mainConfig = {
                     name: '[path][name].[ext]',
                 },
             },
+            {
+                test: /\.node$/,
+                use: 'node-loader'
+            }
         ],
     },
 };

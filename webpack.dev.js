@@ -40,6 +40,10 @@ let mainConfig = {
                     name: '[path][name].[ext]',
                 },
             },
+            {
+                test: /\.node$/,
+                use: 'native-ext-loader'
+            }
         ],
     },
 };
@@ -83,14 +87,7 @@ let rendererConfig = {
                 options: {
                     name: '[path][name].[ext]',
                 },
-            },
-            {
-                test: /\.(eot|ttf|woff|woff2)$/,
-                loader: 'file-loader',
-                options: {
-                    name: '[path][name].[ext]',
-                },
-            },
+            }
         ],
     },
     plugins: [
