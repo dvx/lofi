@@ -30,7 +30,7 @@ class Cover extends React.Component<any, any> {
     console.log(currently_playing);
     this.setState({
       cover_art: currently_playing.item.album.images[0].url,
-      track: currently_playing.item.album.name,
+      track: currently_playing.item.name,
       artist: _.map(currently_playing.item.artists, 'name').join(", ")
     });
   }

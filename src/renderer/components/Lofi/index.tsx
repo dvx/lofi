@@ -85,8 +85,8 @@ class Lofi extends React.Component<any, any> {
     let animationId: number;
     let mouseX: number;
     let mouseY: number;
-    function onMouseDown(e: MouseEvent) {
-        if (leftMousePressed(e)) {
+    function onMouseDown(e: any) {
+        if (leftMousePressed(e) && !e.target['classList'].contains('not-draggable')) {
             mouseX = e.clientX;  
             mouseY = e.clientY;
             document.addEventListener('mouseup', onMouseUp)
@@ -113,7 +113,6 @@ class Lofi extends React.Component<any, any> {
     }
     
     document.getElementById('visible-ui').addEventListener("mousedown", onMouseDown);
-
   }
 
   render() {

@@ -10,9 +10,9 @@ class Controls extends React.Component<any, any> {
     return (
       <div className='controls centered'>
         <p>
-        <a className='control-btn secondary-control' href="#pp"><i className="fa fa-step-backward"></i></a>
-        <a className='control-btn' href="#pp"><i className="fa fa-play"></i></a>
-        <a className='control-btn secondary-control' href="#pp"><i className="fa fa-step-forward"></i></a>
+        <a className='control-btn secondary-control not-draggable' href="#pp"><i className="fa fa-step-backward not-draggable"></i></a>
+        <a className='control-btn not-draggable' href="#pp"><i className="fa fa-play not-draggable"></i></a>
+        <a className='control-btn secondary-control not-draggable' href="#pp"><i className="fa fa-step-forward not-draggable"></i></a>
         </p>
       </div>
     );

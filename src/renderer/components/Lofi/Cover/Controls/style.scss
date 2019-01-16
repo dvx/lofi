@@ -27,7 +27,8 @@
     margin: 2vh;
     border: 1px solid black;
     text-decoration: none;
-    transition: transform .2s;    
+    transition: transform .2s;
+    display: inline-grid;
 }
 
 .control-btn:hover {
