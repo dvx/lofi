@@ -28,7 +28,7 @@
     border: 1px solid black;
     text-decoration: none;
     transition: transform .2s;
-    display: inline-grid;
+    display: inline-block;
 }
 
 .control-btn:hover {
@@ -39,4 +39,9 @@
 
 .secondary-control {
     font-size: 65%;
+}
+
+.pause-play {
+    border-left: 4px solid #1DB954;
+    padding-left: 4px;
 }

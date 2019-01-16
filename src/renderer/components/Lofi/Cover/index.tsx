@@ -42,7 +42,7 @@ class Cover extends React.Component<any, any> {
         <TrackInfo track={this.state.track} artist={this.state.artist} />
         <div className='cover full' style={{ backgroundImage: 'url(' + this.state.cover_art + ')' }}>
         </div>
-        <Controls />
+        <Controls token={this.props.token} />
       </>
     );
   }
