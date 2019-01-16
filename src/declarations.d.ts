@@ -1,4 +1,3 @@
-// Put all your custom type information for 3rd party modules here
 declare module '*.svg' {
     const value: any;
     export = value;
@@ -16,6 +15,17 @@ declare module '*.ico' {
 
 declare module '*.icns' {
     const value: any;
+    export = value;
+}
+
+declare module "*.visualization" {
+    const value: Function;
+    export = value;
+}
+
+// volume native type
+declare module "*volume.node" {
+    const value: { volume: Function };
     export = value;
 }
 

@@ -1,13 +1,10 @@
-import { app, BrowserWindow, ipcMain, screen, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, screen, shell, ipcRenderer } from 'electron';
 import startAuthServer from './server';
 import * as path from 'path';
 import * as url from 'url';
-// @ts-ignore
-import peaks from '../../build/Release/peaks.node';
 
-peaks(function(msg: number) {
-  console.log(msg);
-});
+// native modules
+import { volume } from '../../build/release/volume.node';
 
 const HEIGHT = 150;
 const WIDTH_RATIO = 5; // has to be odd
@@ -39,7 +36,7 @@ function createWindow() {
     })
   );
 
-  setInterval(function() {
+  setInterval(() => {
     if (screen && mainWindow) {
       let p = screen.getCursorScreenPoint();
       let b = mainWindow.getBounds();
@@ -52,6 +49,12 @@ function createWindow() {
     }
     
   }, 10);
+
+  setInterval(() => {
+    if (mainWindow) {
+      mainWindow.webContents.send('volume', { peak: volume() } );
+    }
+  }, 1);
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();

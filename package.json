@@ -4,6 +4,7 @@
   "description": "Mini Spotify player with visualizations.",
   "main": "./dist/main.bundle.js",
   "scripts": {
+    "build": "node-gyp rebuild --target=4.0.1 --arch=x64 --dist-url=https://atom.io/download/electron",
     "start": "electron ./dist/main.bundle.js",
     "development": "rimraf dist && webpack --watch --config ./webpack.dev.js --progress --colors",
     "production": "rimraf dist && webpack --config ./webpack.prod.js --progress --colors"
@@ -25,7 +26,6 @@
     "html-webpack-plugin": "^3.2.0",
     "native-ext-loader": "^2.3.0",
     "node-addon-api": "^1.6.2",
-    "node-loader": "^0.6.0",
     "node-sass": "^4.11.0",
     "rimraf": "^2.6.3",
     "sass-loader": "^7.1.0",

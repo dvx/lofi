@@ -1,7 +1,6 @@
 #include <napi.h>
 
-const float NOT_IMPLEMENTED = -1.0;
-float peak;
+#define NOT_IMPLEMENTED -1.0f
 
 #if defined(_WIN32) || defined(_WIN64) || defined(__WINDOWS__)
 #include <Windows.h>
@@ -17,21 +16,18 @@ IAudioMeterInformation *pMeter = NULL;
   // TODO: OSX implementation
 #endif
 
-void RunCallback(const Napi::CallbackInfo& info) {
+Napi::Number NativeVolume(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  Napi::Function cb = info[0].As<Napi::Function>();
-
+	float peak = NOT_IMPLEMENTED;
 #if defined(_WIN32) || defined(_WIN64) || defined(__WINDOWS__)
   pMeter->GetPeakValue(&peak);
 #elif defined(__APPLE__) && defined(__MACH__)
   // TODO: OSX implementation
-  peak = NOT_IMPLEMENTED;
 #else
-  // fallback returns -1.0
-  peak = NOT_IMPLEMENTED;
+  // fallback returns NOT_IMPLEMENTED
 #endif  
 
-  cb.Call(env.Global(), { Napi::Number::New(env, peak) });
+	return Napi::Number::New(env, peak);
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
@@ -57,7 +53,9 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   // TODO: OSX implementation
 #endif
     
-  return Napi::Function::New(env, RunCallback);
+  exports.Set(Napi::String::New(env, "volume"),
+              Napi::Function::New(env, NativeVolume));
+  return exports;
 }
 
-NODE_API_MODULE(peaks, Init)
+NODE_API_MODULE(volume, Init)

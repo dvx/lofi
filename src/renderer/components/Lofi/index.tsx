@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as settings from 'electron-settings';
-import * as TransparencyMouseFix from 'electron-transparency-mouse-fix';
-import { ipcRenderer, BrowserWindow } from 'electron'
+import { ipcRenderer } from 'electron'
 import Cover from './Cover';
 import Welcome from './Welcome';
 import './style.scss'

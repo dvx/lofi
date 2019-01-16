@@ -1,15 +1,19 @@
 import * as React from 'react';
+import { ipcRenderer } from 'electron'
 import * as _ from 'lodash';
 import Menu from './../Menu';
 import Controls from './Controls';
 import TrackInfo from './TrackInfo';
+import Visualizer from './Visualizer';
 import './style.scss';
 
 class Cover extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      cover_art: ''
+      cover_art: '',
+      volume: { peak: 0 },
+      visualization: true
     }
   }
 
@@ -17,6 +21,12 @@ class Cover extends React.Component<any, any> {
     const intervalId = setInterval(() => this.listeningTo(), 5000);
     this.setState({ intervalId });
     this.listeningTo();
+    const that = this;
+    ipcRenderer.on('volume' , function(e: Event, volume: { peak: Number }) {
+      that.setState( {
+        volume
+      });
+    });    
   }
 
   async listeningTo() {
@@ -40,8 +50,10 @@ class Cover extends React.Component<any, any> {
       <>
         <Menu />
         <TrackInfo track={this.state.track} artist={this.state.artist} />
-        <div className='cover full' style={{ backgroundImage: 'url(' + this.state.cover_art + ')' }}>
-        </div>
+        { this.state.visualization ?
+          <Visualizer data={ this.state } /> :
+          <div className='cover full' style={{ backgroundImage: 'url(' + this.state.cover_art + ')' }} />
+        }
         <Controls token={this.props.token} />
       </>
     );
