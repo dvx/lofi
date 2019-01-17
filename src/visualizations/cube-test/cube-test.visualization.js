@@ -1,204 +1,92 @@
 function visualize(canvas, getMusicData) {
 
-         var peaks = [ ];
-         var normalizedPeaks = [ ];
+  var peaks = [];
+  var gl = canvas.getContext('experimental-webgl');
 
-         /*============= Creating a canvas =================*/
-         var gl = canvas.getContext('experimental-webgl');
+  var vertices = [
+    -1, 1, 0.0,
+    -1, -1, 0.0,
+    1, -1, 0.0,
+    1, 1, 0.0
+  ];
 
-         /*============ Defining and storing the geometry =========*/
+  var indices = [3, 2, 1, 3, 1, 0];
 
-         var vertices = [
-            -1,-1,-1, 1,-1,-1, 1, 1,-1, -1, 1,-1,
-            -1,-1, 1, 1,-1, 1, 1, 1, 1, -1, 1, 1,
-            -1,-1,-1, -1, 1,-1, -1, 1, 1, -1,-1, 1,
-            1,-1,-1, 1, 1,-1, 1, 1, 1, 1,-1, 1,
-            -1,-1,-1, -1,-1, 1, 1,-1, 1, 1,-1,-1,
-            -1, 1,-1, -1, 1, 1, 1, 1, 1, 1, 1,-1, 
-         ];
+  var vertex_buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-         var colors = [
-            5,3,7, 5,3,7, 5,3,7, 5,3,7,
-            1,1,3, 1,1,3, 1,1,3, 1,1,3,
-            0,0,1, 0,0,1, 0,0,1, 0,0,1,
-            1,0,0, 1,0,0, 1,0,0, 1,0,0,
-            1,1,0, 1,1,0, 1,1,0, 1,1,0,
-            0,1,0, 0,1,0, 0,1,0, 0,1,0
-         ];
+  var index_buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index_buffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
-         var indices = [
-            0,1,2, 0,2,3, 4,5,6, 4,6,7,
-            8,9,10, 8,10,11, 12,13,14, 12,14,15,
-            16,17,18, 16,18,19, 20,21,22, 20,22,23 
-         ];
+  var vertex_shader_prog = `
+    attribute vec3 coordinates;
+    void main(void) {
+        gl_Position = vec4(coordinates, 1.0);
+    }
+  `;
 
-         // Create and store data into vertex buffer
-         var vertex_buffer = gl.createBuffer ();
-         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
-         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+  var vertShader = gl.createShader(gl.VERTEX_SHADER);
+  gl.shaderSource(vertShader, vertex_shader_prog);
+  gl.compileShader(vertShader);
 
-         // Create and store data into color buffer
-         var color_buffer = gl.createBuffer ();
-         gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
-         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+  var fragment_shader_prog = `
+    precision mediump float;
+    uniform float time;
+    uniform float volume;
+    uniform vec2 resolution;
+    
+    void main() {
+        vec2 p = (gl_FragCoord.xy / resolution.xy) - .5;
+        float sx = (0.01 + volume) * (p.x * p.x * 3. - (0.01 + volume)) * sin(10. * p.x - 5. * time * 0.005);
+        gl_FragColor = vec4(.05, .0, (5. / (420. * abs(p.y + sx))), 1);
+    }
+  `;
 
-         // Create and store data into index buffer
-         var index_buffer = gl.createBuffer ();
-         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index_buffer);
-         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+  var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+  gl.shaderSource(fragShader, fragment_shader_prog);
+  gl.compileShader(fragShader);
 
-         /*=================== Shaders =========================*/
+  var shaderProgram = gl.createProgram();
+  gl.attachShader(shaderProgram, vertShader);
+  gl.attachShader(shaderProgram, fragShader);
+  gl.linkProgram(shaderProgram);
+  gl.useProgram(shaderProgram);
 
-         var vertCode = 'attribute vec3 position;'+
-            'uniform mat4 Pmatrix;'+
-            'uniform mat4 Vmatrix;'+
-            'uniform mat4 Mmatrix;'+
-            'attribute vec3 color;'+//the color of the point
-            'varying vec3 vColor;'+
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index_buffer);
+  var coord = gl.getAttribLocation(shaderProgram, "coordinates");
+  gl.vertexAttribPointer(coord, 3, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(coord);
+  var timeUniform = gl.getUniformLocation(shaderProgram, "time");
+  var volumeUniform = gl.getUniformLocation(shaderProgram, "volume");
+  var resolutionUniform = gl.getUniformLocation(shaderProgram, "resolution");
+  gl.uniform2fv(resolutionUniform, [canvas.height, canvas.width]);
 
-            'void main(void) { '+//pre-built function
-               'gl_Position = Pmatrix*Vmatrix*Mmatrix*vec4(position, 1.);'+
-               'vColor = color;'+
-            '}';
+  var animate = function (time) {
 
-         var fragCode = 'precision mediump float;'+
-            'varying vec3 vColor;'+
-            'void main(void) {'+
-               'gl_FragColor = vec4(vColor, 1.);'+
-            '}';
+    if (peaks.length >= 5) {
+      peaks.shift(1);
+    }
+    peaks.push(getMusicData().volume.peak);
+    
+    // average over the last 5 peaks (~100ms)
+    // should probably be done in the shader
+    var avg = peaks.reduce((prev, curr) => prev + curr) / peaks.length
 
-         var vertShader = gl.createShader(gl.VERTEX_SHADER);
-         gl.shaderSource(vertShader, vertCode);
-         gl.compileShader(vertShader);
-
-         var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
-         gl.shaderSource(fragShader, fragCode);
-         gl.compileShader(fragShader);
-
-         var shaderProgram = gl.createProgram();
-         gl.attachShader(shaderProgram, vertShader);
-         gl.attachShader(shaderProgram, fragShader);
-         gl.linkProgram(shaderProgram);
-
-         /* ====== Associating attributes to vertex shader =====*/
-         var Pmatrix = gl.getUniformLocation(shaderProgram, "Pmatrix");
-         var Vmatrix = gl.getUniformLocation(shaderProgram, "Vmatrix");
-         var Mmatrix = gl.getUniformLocation(shaderProgram, "Mmatrix");
-
-         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
-         var position = gl.getAttribLocation(shaderProgram, "position");
-         gl.vertexAttribPointer(position, 3, gl.FLOAT, false,0,0) ;
-
-         // Position
-         gl.enableVertexAttribArray(position);
-         gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
-         var color = gl.getAttribLocation(shaderProgram, "color");
-         gl.vertexAttribPointer(color, 3, gl.FLOAT, false,0,0) ;
-
-         // Color
-         gl.enableVertexAttribArray(color);
-         gl.useProgram(shaderProgram);
-
-         /*==================== MATRIX =====================*/
-
-         function get_projection(angle, a, zMin, zMax) {
-            var ang = Math.tan((angle*.5)*Math.PI/180);//angle*.5
-            return [
-               0.5/ang, 0 , 0, 0,
-               0, 0.5*a/ang, 0, 0,
-               0, 0, -(zMax+zMin)/(zMax-zMin), -1,
-               0, 0, (-2*zMax*zMin)/(zMax-zMin), 0 
-            ];
-         }
-
-         var proj_matrix = get_projection(40, canvas.width/canvas.height, 1, 100);
-
-         var mov_matrix = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1];
-         var view_matrix = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1];
-
-         // translating z
-         view_matrix[14] = view_matrix[14]-6;//zoom
-
-         /*==================== Rotation ====================*/
-
-         function rotateZ(m, angle) {
-            var c = Math.cos(angle);
-            var s = Math.sin(angle);
-            var mv0 = m[0], mv4 = m[4], mv8 = m[8];
-
-            m[0] = c*m[0]-s*m[1];
-            m[4] = c*m[4]-s*m[5];
-            m[8] = c*m[8]-s*m[9];
-
-            m[1]=c*m[1]+s*mv0;
-            m[5]=c*m[5]+s*mv4;
-            m[9]=c*m[9]+s*mv8;
-         }
-
-         function rotateX(m, angle) {
-            var c = Math.cos(angle);
-            var s = Math.sin(angle);
-            var mv1 = m[1], mv5 = m[5], mv9 = m[9];
-
-            m[1] = m[1]*c-m[2]*s;
-            m[5] = m[5]*c-m[6]*s;
-            m[9] = m[9]*c-m[10]*s;
-
-            m[2] = m[2]*c+mv1*s;
-            m[6] = m[6]*c+mv5*s;
-            m[10] = m[10]*c+mv9*s;
-         }
-
-         function rotateY(m, angle) {
-            var c = Math.cos(angle);
-            var s = Math.sin(angle);
-            var mv0 = m[0], mv4 = m[4], mv8 = m[8];
-
-            m[0] = c*m[0]+s*m[2];
-            m[4] = c*m[4]+s*m[6];
-            m[8] = c*m[8]+s*m[10];
-
-            m[2] = c*m[2]-s*mv0;
-            m[6] = c*m[6]-s*mv4;
-            m[10] = c*m[10]-s*mv8;
-         }
-
-         /*================= Drawing ===========================*/
-         var time_old = 0;
-
-         var animate = function(time) {
-
-            if (peaks.length >= 20) {
-               peaks.shift(1);
-            }
-            peaks.push(getMusicData().volume.peak);
-            //console.log(getMusicData().volume.peak);
-            //var ratio = Math.max(...peaks) / 1;
-            //normalizedPeaks = peaks.map(v => Math.round(v / ratio));
-            var avg = peaks.reduce((prev, curr) => prev + curr) / peaks.length
-
-            var dt = time-time_old;
-            //rotateZ(mov_matrix, dt*getMusicData().volume.peak);//time
-            //rotateY(mov_matrix, dt*getMusicData().volume.peak);
-            //rotateX(mov_matrix, dt*getMusicData().volume.peak);
-            time_old = time;
-
-            gl.enable(gl.DEPTH_TEST);
-            gl.depthFunc(gl.LEQUAL);
-            gl.clearColor(0.0, 0.0, 0.0, avg);
-            gl.clearDepth(1.0);
-
-            gl.viewport(0.0, 0.0, canvas.width, canvas.height);
-            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-            gl.uniformMatrix4fv(Pmatrix, false, proj_matrix);
-            gl.uniformMatrix4fv(Vmatrix, false, view_matrix);
-            gl.uniformMatrix4fv(Mmatrix, false, mov_matrix);
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index_buffer);
-            gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
-
-            window.requestAnimationFrame(animate);
-         }
-         animate(0);
+    gl.uniform1f(timeUniform, time);
+    gl.uniform1f(volumeUniform, avg);
+    gl.clearColor(0.5, 0.5, 0.5, 0.9);
+    gl.enable(gl.DEPTH_TEST);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+    window.requestAnimationFrame(animate);
+  }
+  animate(0);
 }
 
 export default visualize;

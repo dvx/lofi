@@ -23,7 +23,7 @@ class Visualizer extends React.Component<any, any> {
 
   render() {
     return (
-        <canvas ref='canvas' id='small-visualization' className='cover full' />
+        <canvas ref='canvas' height='150' width='150' id='small-visualization'/>
     );
   }
 }
