@@ -26,7 +26,7 @@ class Cover extends React.Component<any, any> {
       that.setState( {
         volume
       });
-    });    
+    });
   }
 
   async listeningTo() {

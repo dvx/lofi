@@ -68,11 +68,11 @@ function visualize(canvas, getMusicData) {
 
   var animate = function (time) {
 
-    if (peaks.length >= 5) {
+    if (peaks.length >= 10) {
       peaks.shift(1);
     }
     peaks.push(getMusicData().volume.peak);
-    
+
     // average over the last 5 peaks (~100ms)
     // should probably be done in the shader
     var avg = peaks.reduce((prev, curr) => prev + curr) / peaks.length

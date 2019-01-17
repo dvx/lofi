@@ -6,10 +6,14 @@ import * as url from 'url';
 // native modules
 import { volume } from '../../build/release/volume.node';
 
+
 const HEIGHT = 150;
 const WIDTH_RATIO = 5; // has to be odd
 
 let mainWindow: Electron.BrowserWindow;
+
+app.commandLine.appendSwitch("disable-gpu-vsync");
+app.commandLine.appendArgument("disable-gpu-vsync");
 
 function createWindow() {
   // Create the browser window.
@@ -57,7 +61,7 @@ function createWindow() {
   }, 1);
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
