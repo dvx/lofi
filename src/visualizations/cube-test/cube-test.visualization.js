@@ -4,10 +4,10 @@ function visualize(canvas, getMusicData) {
   var gl = canvas.getContext('experimental-webgl');
 
   var vertices = [
-    -1, 1, 0.0,
-    -1, -1, 0.0,
-    1, -1, 0.0,
-    1, 1, 0.0
+    -1,   1,  0.0,
+    -1,  -1,  0.0,
+     1,  -1,  0.0,
+     1,   1,  0.0
   ];
 
   var indices = [3, 2, 1, 3, 1, 0];
@@ -71,7 +71,7 @@ function visualize(canvas, getMusicData) {
     if (peaks.length >= 10) {
       peaks.shift(1);
     }
-    peaks.push(getMusicData().volume.peak);
+    peaks.push(getMusicData().volume());
 
     // average over the last 5 peaks (~100ms)
     // should probably be done in the shader

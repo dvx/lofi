@@ -3,10 +3,6 @@ import startAuthServer from './server';
 import * as path from 'path';
 import * as url from 'url';
 
-// native modules
-import { volume } from '../../build/release/volume.node';
-
-
 const HEIGHT = 150;
 const WIDTH_RATIO = 5; // has to be odd
 
@@ -54,14 +50,8 @@ function createWindow() {
     
   }, 10);
 
-  setInterval(() => {
-    if (mainWindow) {
-      mainWindow.webContents.send('volume', { peak: volume() } );
-    }
-  }, 1);
-
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {

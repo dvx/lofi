@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+        canvas {
+            background-color: #ccc;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <title>lofi visualization</title>
+</head>
+<body>
+    <div id="app" class="app click-through"></div>
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <script>
+        var canvas = document.getElementById('canvas');
+        vis = require('cube-test.visualization.js');
+        //vis = visualize(canvas, null);
+    </script>
+</body>
+</html>

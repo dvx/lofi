@@ -87,12 +87,22 @@ let rendererConfig = {
                 options: {
                     name: '[path][name].[ext]',
                 },
+            },
+            {
+                test: /\.node$/,
+                use: 'native-ext-loader'
             }
         ],
     },
     plugins: [
         new HtmlWebpackPlugin({
+            filename: 'index.html',
             template: path.resolve(__dirname, './src/renderer/index.html'),
+        }),
+        new HtmlWebpackPlugin({
+            filename: 'visualization.html',
+            template: path.resolve(__dirname, './src/renderer/visualization.html'),
+            //inject: false
         }),
     ],
 };

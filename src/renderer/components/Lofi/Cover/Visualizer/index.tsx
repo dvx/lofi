@@ -1,6 +1,7 @@
 import * as React from 'react';
 import './style.scss';
 
+import { volume } from '../../../../../../build/release/volume.node';
 import visualize from '../../../../../visualizations/cube-test/cube-test.visualization'
 
 class Visualizer extends React.Component<any, any> {
@@ -15,7 +16,7 @@ class Visualizer extends React.Component<any, any> {
   getMusicData() {
     return {
       cover_art: this.props.data.cover_art,
-      volume: this.props.data.volume,
+      volume,
       track: this.props.data.track,
       artist: this.props.data.artist
     };
@@ -23,7 +24,7 @@ class Visualizer extends React.Component<any, any> {
 
   render() {
     return (
-        <canvas ref='canvas' height='150' width='150' id='small-visualization'/>
+        <canvas ref='canvas' className={'cover full ' + (this.props.show ? 'show' : 'hide')} height='150' width='150' id='small-visualization'/>
     );
   }
 }

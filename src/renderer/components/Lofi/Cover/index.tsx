@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { ipcRenderer } from 'electron'
+import { ipcRenderer, remote } from 'electron'
+import * as path from 'path';
+import * as url from 'url';
 import * as _ from 'lodash';
 import Menu from './../Menu';
 import Controls from './Controls';
@@ -12,8 +14,10 @@ class Cover extends React.Component<any, any> {
     super(props);
     this.state = {
       cover_art: '',
-      volume: { peak: 0 },
-      visualization: true
+      vis_window: null,
+      // TODO: grab this from settings
+      visualization: false,
+      bigVisualization: false
     }
   }
 
@@ -21,12 +25,6 @@ class Cover extends React.Component<any, any> {
     const intervalId = setInterval(() => this.listeningTo(), 5000);
     this.setState({ intervalId });
     this.listeningTo();
-    const that = this;
-    ipcRenderer.on('volume' , function(e: Event, volume: { peak: Number }) {
-      that.setState( {
-        volume
-      });
-    });
   }
 
   async listeningTo() {
@@ -43,17 +41,49 @@ class Cover extends React.Component<any, any> {
       track: currently_playing.item.name,
       artist: _.map(currently_playing.item.artists, 'name').join(", ")
     });
+
+    if (this.state.bigVisualization) {
+      this.state.vis_window.webContents.send('currently-playing', currently_playing);
+    }
+  }
+
+  toggleVisualization() {
+    this.setState({
+      visualization: !this.state.visualization
+    });
+  }
+
+  toggleBigVisualization() {
+    if (!this.state.bigVisualization) {
+      const BrowserWindow = remote.BrowserWindow;
+      const visWindow = new BrowserWindow({ width: 800, height: 600 });
+      visWindow.loadURL(
+        url.format({
+          pathname: path.join(__dirname, './visualization.html'),
+          protocol: 'file:',
+          slashes: true,
+        })
+      );
+      visWindow.webContents.openDevTools();
+      this.setState({
+        vis_window: visWindow,
+        bigVisualization: true
+      })
+    } else {
+      this.setState({
+        vis_window: null,
+        bigVisualization: false
+      })
+    }
   }
 
   render() {
     return (
       <>
-        <Menu />
+        <Menu parent={this} />
         <TrackInfo track={this.state.track} artist={this.state.artist} />
-        { this.state.visualization ?
-          <Visualizer data={ this.state } /> :
-          <div className='cover full' style={{ backgroundImage: 'url(' + this.state.cover_art + ')' }} />
-        }
+        <div className='cover full' style={{ backgroundImage: 'url(' + this.state.cover_art + ')' }} />
+        <Visualizer show={this.state.visualization} data={ this.state } />
         <Controls token={this.props.token} />
       </>
     );
