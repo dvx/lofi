@@ -45,10 +45,25 @@
     text-decoration: none;
 }
 
-.menu li a:hover {
-    color: #89e484;
-}
-
 .menu li a.danger:hover {
     color: #ff5858;
+}
+
+.menu li a.danger:active {
+    color: #810000;
+}
+
+.menu li a.vis:hover {
+    color: #61eb9a;
+}
+
+.menu li a.vis:active {
+    color: #187c42;
+}
+
+.menu .logo-typo {
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.33) 0%,rgba(0, 0, 0, 0) 70%);
+    color: #dcdcdc;
+    padding-right: 10px;
+    padding-left: 10px;
 }

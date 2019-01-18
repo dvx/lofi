@@ -99,12 +99,54 @@ let rendererConfig = {
             filename: 'index.html',
             template: path.resolve(__dirname, './src/renderer/index.html'),
         }),
+    ],
+};
+
+let visualizerConfig = {
+    mode: 'development',
+    entry: './src/visualizer/visualizer.ts',
+    target: 'electron-renderer',
+    output: {
+        filename: 'visualizer.bundle.js',
+        path: __dirname + '/dist',
+    },
+    node: {
+        __dirname: false,
+        __filename: false,
+    },
+    resolve: {
+        extensions: ['.js', '.json', '.ts', '.tsx'],
+    },
+    module: {
+        rules: [
+            {
+                // All files with a '.ts' or '.tsx' extension will be handled by 'ts-loader'.
+                test: /\.(ts|tsx)$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'ts-loader',
+                },
+            },
+            {
+                test: /\.(scss|css)$/,
+                use: [
+                    'style-loader',
+                    'css-loader?sourceMap',
+                    'sass-loader?sourceMap',
+                ],
+            },
+            {
+                test: /\.node$/,
+                use: 'native-ext-loader'
+            }
+        ],
+    },
+    plugins: [
         new HtmlWebpackPlugin({
-            filename: 'visualization.html',
-            template: path.resolve(__dirname, './src/renderer/visualization.html'),
-            //inject: false
+            filename: 'visualizer.html',
+            template: path.resolve(__dirname, './src/visualizer/visualizer.html'),
         }),
     ],
 };
 
-module.exports = [mainConfig, rendererConfig];
+module.exports = [mainConfig, rendererConfig, visualizerConfig];

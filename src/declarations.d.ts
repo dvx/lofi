@@ -35,3 +35,4 @@ interface SettingsObserver {
 }
 
 declare module 'electron-transparency-mouse-fix';
+declare module 'electron-localshortcut';

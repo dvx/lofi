@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { remote } from 'electron'
 import './style.scss'
 
 class Menu extends React.Component<any, any> {
@@ -8,29 +7,23 @@ class Menu extends React.Component<any, any> {
   }
 
   closeApp() {
-    let w = remote.getCurrentWindow()
-    w.close()
+    this.props.parent.closeApp();
   }
 
-  toggleVis() {
-    this.props.parent.toggleVisualization();
-  }
-
-  bigVis() {
-    this.props.parent.toggleBigVisualization();
+  cycleVis() {
+    this.props.parent.cycleVisualizationType();
   }
 
   render() {
     return (
       <>
         <ul className='menu top-menu'>
-            <li><a><span style={{fontWeight:'bold'}}>lo</span>fi</a></li>
-            <li className='pull-right'><a onClick={this.closeApp} className='danger not-draggable'><i className="fa fa-times-circle not-draggable"></i></a></li>
+            <li><a className='logo-typo'><span style={{fontWeight:'bold'}}>lo</span>fi</a></li>
+            <li className='pull-right'><a onClick={this.closeApp.bind(this)} className='danger not-draggable'><i className="fa fa-times-circle not-draggable"></i></a></li>
         </ul>
         <ul className='menu bottom-menu'>
-          <li><a onClick={this.toggleVis.bind(this)} className='not-draggable'><i className="fa fa-image not-draggable"></i></a></li>
-          <li className='pull-right'><a onClick={this.bigVis.bind(this)} className='not-draggable'><i className="fa fa-expand-arrows-alt not-draggable"></i></a></li>
-        </ul>        
+          <li><a onClick={this.cycleVis.bind(this)} className='vis not-draggable'><i className={'fa not-draggable ' + this.props.visIcon }></i></a></li>
+        </ul>
       </>
     );
   }
