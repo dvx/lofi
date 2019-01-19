@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ipcRenderer, remote } from 'electron'
+import { MACOS } from '../../../../constants'
 import * as electronLocalshortcut from 'electron-localshortcut';
 import * as path from 'path';
 import * as url from 'url';
@@ -70,7 +71,7 @@ class Cover extends React.Component<any, any> {
         break;
       case VISUALIZATION_TYPE.SMALL:
         const BrowserWindow = remote.BrowserWindow;
-        const visWindow = new BrowserWindow({ width: 1, height: 1 });
+        const visWindow = new BrowserWindow({ closable: MACOS ? false : true });
         visWindow.setPosition(remote.getCurrentWindow().getPosition()[0], remote.getCurrentWindow().getPosition()[1]);
         visWindow.setMenuBarVisibility(false);
         visWindow.loadURL(
@@ -80,20 +81,25 @@ class Cover extends React.Component<any, any> {
             slashes: true,
           })
         );
-        visWindow.on('close', () => {
-          this.setState({
-            visWindow: null,
-            bigVisualization: false
-          })
-        });
-        visWindow.setSimpleFullScreen(true);
+
+        // setSimpleFullScreen is buggy/slow on MacOS
+        // just show regular window instead
+        if (!MACOS) {
+          visWindow.setSimpleFullScreen(true);
+        } else {
+          visWindow.setSize(800, 600);
+        }
+       
         this.setState({
           visWindow,
           visualizationType: VISUALIZATION_TYPE.BIG
         });
         break;
       case VISUALIZATION_TYPE.BIG:
-        this.state.visWindow.close();
+        // there are OS-y ways of closing the window, so make sure it still exists before we attempt to close
+        if (this.state.visWindow) {
+          this.state.visWindow.destroy()
+        }
         this.setState({
           visWindow: null,
           visualizationType: VISUALIZATION_TYPE.NONE

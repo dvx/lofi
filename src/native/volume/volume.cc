@@ -1,6 +1,6 @@
 #include <napi.h>
 
-#define NOT_IMPLEMENTED -1.0f
+#define NOT_IMPLEMENTED .0f
 
 #if defined(_WIN32) || defined(_WIN64) || defined(__WINDOWS__)
 #include <Windows.h>

@@ -29,6 +29,12 @@ declare module "*volume.node" {
     export = value;
 }
 
+// black magic native type
+declare module "*black-magic.node" {
+    const value: { };
+    export = value;
+}
+
 // non-exposed type from 'electron-settings'
 interface SettingsObserver {
     dispose(): void;

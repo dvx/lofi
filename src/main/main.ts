@@ -2,9 +2,8 @@ import { app, BrowserWindow, ipcMain, screen, shell, ipcRenderer } from 'electro
 import startAuthServer from './server';
 import * as path from 'path';
 import * as url from 'url';
-
-const HEIGHT = 150;
-const WIDTH_RATIO = 5; // has to be odd
+import '../../build/release/black-magic.node';
+import { HEIGHT, WIDTH_RATIO, MACOS, MACOS_MOJAVE, PADDING } from '../constants'
 
 let mainWindow: Electron.BrowserWindow;
 
@@ -16,11 +15,14 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     height: HEIGHT,
     width: HEIGHT * WIDTH_RATIO,
+    x: -300,
+    y: 0,
     frame: false,
     resizable: false,
     maximizable: false,
     transparent: true,
-    hasShadow: true
+    hasShadow: true,
+    focusable: false
   });
 
   mainWindow.setAlwaysOnTop(true, "floating", 1);
@@ -67,8 +69,8 @@ function createWindow() {
     // use setBounds instead of setPosition
     // See: https://github.com/electron/electron/issues/9477#issuecomment-406833003
     mainWindow.setBounds({
-      height: HEIGHT,
-      width: HEIGHT * WIDTH_RATIO,
+      height: HEIGHT + PADDING.VERTICAL,
+      width: HEIGHT * WIDTH_RATIO + PADDING.VERTICAL,
       x: x - mouseX,
       y: y - mouseY
     });
@@ -105,7 +107,7 @@ app.on('ready', () => {
 app.on('window-all-closed', () => {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
+  if (!MACOS) {
     app.quit();
   }
 });
