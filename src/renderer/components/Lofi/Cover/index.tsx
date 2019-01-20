@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ipcRenderer, remote } from 'electron'
+import { ipcRenderer, remote, screen } from 'electron'
 import { MACOS } from '../../../../constants'
 import * as electronLocalshortcut from 'electron-localshortcut';
 import * as path from 'path';
@@ -72,7 +72,7 @@ class Cover extends React.Component<any, any> {
       case VISUALIZATION_TYPE.SMALL:
         const BrowserWindow = remote.BrowserWindow;
         const visWindow = new BrowserWindow({ closable: MACOS ? false : true });
-        visWindow.setPosition(remote.getCurrentWindow().getPosition()[0], remote.getCurrentWindow().getPosition()[1]);
+        visWindow.setPosition(screen.getCursorScreenPoint().x, screen.getCursorScreenPoint().y);
         visWindow.setMenuBarVisibility(false);
         visWindow.loadURL(
           url.format({
