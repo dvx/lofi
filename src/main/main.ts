@@ -3,7 +3,7 @@ import startAuthServer from './server';
 import * as path from 'path';
 import * as url from 'url';
 import '../../build/release/black-magic.node';
-import { HEIGHT, WIDTH_RATIO, MACOS, MACOS_MOJAVE, WINDOWS, CONTAINER } from '../constants'
+import { HEIGHT, WIDTH_RATIO, MACOS, MACOS_MOJAVE, WINDOWS, CONTAINER, WIDTH } from '../constants'
 
 // Visualizations look snappier on 60Hz refresh rate screens if we disable vsync
 app.commandLine.appendSwitch("disable-gpu-vsync");
@@ -42,13 +42,19 @@ function createWindow() {
     })
   );
 
-  // Every 10 miliseconds, poll to see if we should ignore mouse events or not
+  // Every 10 milliseconds, poll to see if we should ignore mouse events or not
   setInterval(() => {
     if (screen && mainWindow) {
       let p = screen.getCursorScreenPoint();
       let b = mainWindow.getBounds();
       // Bounding box for the area that's "clickable" -- e.g. main player square
-      let bb = { ix: b.x + ((WIDTH_RATIO - 1) / 2 * HEIGHT), iy: b.y, ax: b.x + (b.width - ((WIDTH_RATIO - 1) / 2 * HEIGHT)), ay: b.y + b.height }
+      let bb = {
+        ix: b.x + (CONTAINER.HORIZONTAL - WIDTH) / 2,
+        iy: b.y + (CONTAINER.VERTICAL - HEIGHT) / 2,
+        ax: b.x + WIDTH + (CONTAINER.HORIZONTAL - WIDTH) / 2,
+        ay: b.y + HEIGHT + (CONTAINER.VERTICAL - HEIGHT) / 2
+      }
+
       if (bb.ix <= p.x && p.x <= bb.ax && bb.iy <= p.y && p.y <= bb.ay) {
         mainWindow.setIgnoreMouseEvents(false);
       } else {

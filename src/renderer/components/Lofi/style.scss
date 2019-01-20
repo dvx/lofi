@@ -35,6 +35,12 @@
     opacity: 1;
 }
 
+#visible-ui:hover .menu .logo-typo {
+    background-position: left center;
+    color: #ef9671;
+    transition: background-position 2000ms ease-out;
+}
+
 .centered {
     display: flex;
     flex-direction: column;
