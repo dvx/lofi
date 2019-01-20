@@ -14,24 +14,20 @@ let mainWindow: Electron.BrowserWindow;
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
+    x: 0 - CONTAINER.HORIZONTAL / 2 + screen.getPrimaryDisplay().size.width / 2,
+    y: 0 - CONTAINER.VERTICAL / 2 + screen.getPrimaryDisplay().size.height / 2,
+    height: CONTAINER.VERTICAL,
+    width: CONTAINER.HORIZONTAL,
     frame: false,
     resizable: false,
     maximizable: false,
     transparent: true,
     hasShadow: false,
-    focusable: false
+    focusable: false,
   });
 
   mainWindow.setAlwaysOnTop(true, "floating", 1);
   mainWindow.setVisibleOnAllWorkspaces(true);
-
-  // Immediately set the bounds
-  mainWindow.setBounds({
-    height: CONTAINER.VERTICAL,
-    width: CONTAINER.HORIZONTAL,
-    x: 0 - CONTAINER.HORIZONTAL / 2 + screen.getPrimaryDisplay().size.width / 2,
-    y: 0 - CONTAINER.VERTICAL / 2 + screen.getPrimaryDisplay().size.height / 2
-  });
 
   // And load the index.html of the app.
   mainWindow.loadURL(
@@ -66,14 +62,6 @@ function createWindow() {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
-
-  // Emitted when the window is closed.
-  mainWindow.on('closed', () => {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null;
-  });
 
   ipcMain.on('windowMoving', (e: Event, { mouseX, mouseY }: { mouseX: number, mouseY: number }) => {
     const { x, y } = screen.getCursorScreenPoint();
