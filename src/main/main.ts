@@ -47,6 +47,7 @@ function createWindow() {
     if (screen && mainWindow) {
       let p = screen.getCursorScreenPoint();
       let b = mainWindow.getBounds();
+      // Bounding box for the area that's "clickable" -- e.g. main player square
       let bb = { ix: b.x + ((WIDTH_RATIO - 1) / 2 * HEIGHT), iy: b.y, ax: b.x + (b.width - ((WIDTH_RATIO - 1) / 2 * HEIGHT)), ay: b.y + b.height }
       if (bb.ix <= p.x && p.x <= bb.ax && bb.iy <= p.y && p.y <= bb.ay) {
         mainWindow.setIgnoreMouseEvents(false);
