@@ -72,7 +72,6 @@ class Cover extends React.Component<any, any> {
       case VISUALIZATION_TYPE.SMALL:
         const BrowserWindow = remote.BrowserWindow;
         const visWindow = new BrowserWindow({ closable: MACOS ? false : true });
-        visWindow.setPosition(screen.getCursorScreenPoint().x, screen.getCursorScreenPoint().y);
         visWindow.setMenuBarVisibility(false);
         visWindow.loadURL(
           url.format({
@@ -82,12 +81,15 @@ class Cover extends React.Component<any, any> {
           })
         );
 
-        // setSimpleFullScreen is buggy/slow on MacOS
-        // just show regular window instead
-        if (!MACOS) {
-          visWindow.setSimpleFullScreen(true);
-        } else {
+        // On MacOS, setSimpleFullScreen is buggy/slow 
+        // We need slightly different logic for where the window pops up because Windows is full screen while MacOS isn't
+        if (MACOS) {
+          // Just show regular window instead
+          visWindow.setPosition(screen.getCursorScreenPoint().x, screen.getCursorScreenPoint().y);
           visWindow.setSize(800, 600);
+        } else {
+          visWindow.setPosition(remote.getCurrentWindow().getBounds().x, remote.getCurrentWindow().getBounds().y);
+          visWindow.setSimpleFullScreen(true);
         }
        
         this.setState({
