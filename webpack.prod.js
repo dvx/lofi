@@ -1,5 +1,6 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const outputFolder = '/pack';
 
 let mainConfig = {
     mode: 'production',
@@ -7,7 +8,7 @@ let mainConfig = {
     target: 'electron-main',
     output: {
         filename: 'main.bundle.js',
-        path: __dirname + '/dist',
+        path: __dirname + outputFolder,
     },
     node: {
         __dirname: false,
@@ -42,7 +43,7 @@ let mainConfig = {
             },
             {
                 test: /\.node$/,
-                use: 'node-loader'
+                use: 'native-ext-loader'
             }
         ],
     },
@@ -54,7 +55,7 @@ let rendererConfig = {
     target: 'electron-renderer',
     output: {
         filename: 'renderer.bundle.js',
-        path: __dirname + '/dist',
+        path: __dirname + outputFolder,
     },
     node: {
         __dirname: false,
@@ -95,6 +96,10 @@ let rendererConfig = {
                     name: '[path][name].[ext]',
                 },
             },
+            {
+                test: /\.node$/,
+                use: 'native-ext-loader'
+            }            
         ],
     },
     plugins: [
@@ -104,4 +109,51 @@ let rendererConfig = {
     ],
 };
 
-module.exports = [mainConfig, rendererConfig];
+let visualizerConfig = {
+    mode: 'production',
+    entry: './src/visualizer/visualizer.ts',
+    target: 'electron-renderer',
+    output: {
+        filename: 'visualizer.bundle.js',
+        path: __dirname + outputFolder,
+    },
+    node: {
+        __dirname: false,
+        __filename: false,
+    },
+    resolve: {
+        extensions: ['.js', '.json', '.ts', '.tsx'],
+    },
+    module: {
+        rules: [
+            {
+                // All files with a '.ts' or '.tsx' extension will be handled by 'ts-loader'.
+                test: /\.(ts|tsx)$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'ts-loader',
+                },
+            },
+            {
+                test: /\.(scss|css)$/,
+                use: [
+                    'style-loader',
+                    'css-loader?sourceMap',
+                    'sass-loader?sourceMap',
+                ],
+            },
+            {
+                test: /\.node$/,
+                use: 'native-ext-loader'
+            }
+        ],
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            filename: 'visualizer.html',
+            template: path.resolve(__dirname, './src/visualizer/visualizer.html'),
+        }),
+    ],
+};
+
+module.exports = [mainConfig, rendererConfig, visualizerConfig];

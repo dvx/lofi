@@ -42,6 +42,8 @@ typings/
 # Output folder & files
 dist
 build
+pack
+package
 
 # Optional npm cache directory
 .npm

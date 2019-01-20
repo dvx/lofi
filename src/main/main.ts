@@ -24,7 +24,8 @@ function createWindow() {
     maximizable: false,
     transparent: true,
     hasShadow: false,
-    focusable: false,
+    // On MacOS, we get weird shadow artifacts if the window is focusable
+    focusable: MACOS ? false : true,
   });
 
   mainWindow.setAlwaysOnTop(true, "floating", 1);
@@ -62,7 +63,7 @@ function createWindow() {
   }, 10);
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 
   ipcMain.on('windowMoving', (e: Event, { mouseX, mouseY }: { mouseX: number, mouseY: number }) => {
     const { x, y } = screen.getCursorScreenPoint();
@@ -78,7 +79,7 @@ function createWindow() {
 
     // Ugly black transparency fix when dragging transparent window past screen edges
     // From what I understand, setting opacity forces a re-draw
-    // TODO: only happens on windows?
+    // TODO: only happens on Windows?
     if (WINDOWS) {
       mainWindow.setOpacity(1);
     }

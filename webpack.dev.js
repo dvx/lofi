@@ -1,5 +1,6 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const outputFolder = '/pack';
 
 let mainConfig = {
     mode: 'development',
@@ -7,7 +8,7 @@ let mainConfig = {
     target: 'electron-main',
     output: {
         filename: 'main.bundle.js',
-        path: __dirname + '/dist',
+        path: __dirname + outputFolder,
     },
     node: {
         __dirname: false,
@@ -54,7 +55,7 @@ let rendererConfig = {
     target: 'electron-renderer',
     output: {
         filename: 'renderer.bundle.js',
-        path: __dirname + '/dist',
+        path: __dirname + outputFolder,
     },
     node: {
         __dirname: false,
@@ -89,6 +90,13 @@ let rendererConfig = {
                 },
             },
             {
+                test: /\.(eot|ttf|woff|woff2)$/,
+                loader: 'file-loader',
+                options: {
+                    name: '[path][name].[ext]',
+                },
+            },            
+            {
                 test: /\.node$/,
                 use: 'native-ext-loader'
             }
@@ -108,7 +116,7 @@ let visualizerConfig = {
     target: 'electron-renderer',
     output: {
         filename: 'visualizer.bundle.js',
-        path: __dirname + '/dist',
+        path: __dirname + outputFolder,
     },
     node: {
         __dirname: false,

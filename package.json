@@ -2,17 +2,33 @@
   "name": "lofi",
   "version": "1.0.0",
   "description": "Mini Spotify player with visualizations.",
-  "main": "./dist/main.bundle.js",
+  "homepage": "http://lofi.rocks",
+  "main": "./pack/main.bundle.js",
   "scripts": {
     "build": "node-gyp rebuild --target=4.0.1 --arch=x64 --dist-url=https://atom.io/download/electron",
-    "start": "electron ./dist/main.bundle.js",
-    "development": "rimraf dist && webpack --watch --config ./webpack.dev.js --progress --colors",
-    "production": "rimraf dist && webpack --config ./webpack.prod.js --progress --colors"
+    "start": "electron ./pack/main.bundle.js",
+    "development": "rimraf pack && webpack --watch --config ./webpack.dev.js --progress --colors",
+    "production": "rimraf pack && webpack --config ./webpack.prod.js --progress --colors",
+    "pack": "yarn run build && yarn run production && rimraf dist && electron-builder --dir",
+    "dist": "yarn run build && yarn run production && rimraf dist && electron-builder"
   },
   "repository": "https://github.com/dvx/lofi.git",
   "author": "David Titarenco <david.titarenco@gmail.com>",
   "license": "MIT",
   "private": false,
+  "build": {
+    "files": [
+      "./pack/**/*",
+      "./icon.*"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "appId": "lofi.rocks",
+    "mac": {
+      "category": "music.player"
+    }
+  },  
   "devDependencies": {
     "@types/electron-settings": "^3.1.1",
     "@types/express": "^4.16.0",
@@ -21,6 +37,7 @@
     "@types/react-dom": "^16.0.11",
     "css-loader": "^2.1.0",
     "electron": "4.0.1",
+    "electron-builder": "^20.38.5",
     "electron-rebuild": "^1.8.2",
     "file-loader": "^3.0.1",
     "html-webpack-plugin": "^3.2.0",
