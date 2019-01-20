@@ -49,13 +49,20 @@ body {
     padding-top: 1em;
 }
 
-html, body, .app {
+html, body {
     font-family: 'Inter UI', sans-serif; 
     font-feature-settings: 'calt' 1, 'ss02' 1;
     height: 100%;
     width: 100%;
     margin: 0;
     overflow: hidden;
+    display: grid;
+}
+
+.app {
+    height: 150px;
+    width: 750px;
+    margin: auto;
 }
 
 .click-on      {pointer-events: all}

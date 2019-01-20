@@ -1,10 +1,13 @@
 .controls {
-    height: 100%;
     overflow: hidden;
-    width: 20%;
     background: #000000aa;
-    position: fixed;
+    position: absolute;
     top: 0;
+    opacity: 0;
+    width: 148px;
+    height: 148px;
+    border: 1px solid #5252524d;
+    transition: .1s;
     opacity: 0;
     transition: .1s;
 }
@@ -22,10 +25,10 @@
 .control-btn {
     vertical-align: middle;
     background: black;
-    padding: 6vh;
     color: white;
-    margin: 2vh;
+    padding: .55em;
     border: 1px solid black;
+    margin: .25em;
     text-decoration: none;
     transition: transform .2s;
     display: inline-block;

@@ -4,6 +4,11 @@
     width: 20%;
     left: 40%;
     overflow: hidden;
+    box-shadow: 0px 0px 76px #0000005e;
+}
+
+#visible-ui:hover {
+    box-shadow: 0px 0px 76px #00000077;
 }
 
 #visible-ui:hover .top-menu {
@@ -34,7 +39,6 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    height: 100%;
     overflow: hidden;
 }
 

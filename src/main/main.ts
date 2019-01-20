@@ -3,33 +3,37 @@ import startAuthServer from './server';
 import * as path from 'path';
 import * as url from 'url';
 import '../../build/release/black-magic.node';
-import { HEIGHT, WIDTH_RATIO, MACOS, MACOS_MOJAVE, PADDING } from '../constants'
+import { HEIGHT, WIDTH_RATIO, MACOS, MACOS_MOJAVE, WINDOWS, CONTAINER } from '../constants'
 
-let mainWindow: Electron.BrowserWindow;
-
+// Visualizations look snappier on 60Hz refresh rate screens if we disable vsync
 app.commandLine.appendSwitch("disable-gpu-vsync");
 app.commandLine.appendArgument("disable-gpu-vsync");
+
+let mainWindow: Electron.BrowserWindow;
 
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    height: HEIGHT,
-    width: HEIGHT * WIDTH_RATIO,
-    x: -300,
-    y: 0,
     frame: false,
     resizable: false,
     maximizable: false,
     transparent: true,
-    hasShadow: true,
+    hasShadow: false,
     focusable: false
   });
 
   mainWindow.setAlwaysOnTop(true, "floating", 1);
-  // allows the window to show over a fullscreen window
   mainWindow.setVisibleOnAllWorkspaces(true);
 
-  // and load the index.html of the app.
+  // Immediately set the bounds
+  mainWindow.setBounds({
+    height: CONTAINER.VERTICAL,
+    width: CONTAINER.HORIZONTAL,
+    x: 0 - CONTAINER.HORIZONTAL / 2 + screen.getPrimaryDisplay().size.width / 2,
+    y: 0 - CONTAINER.VERTICAL / 2 + screen.getPrimaryDisplay().size.height / 2
+  });
+
+  // And load the index.html of the app.
   mainWindow.loadURL(
     url.format({
       pathname: path.join(__dirname, './index.html'),
@@ -38,6 +42,7 @@ function createWindow() {
     })
   );
 
+  // Every 10 miliseconds, poll to see if we should ignore mouse events or not
   setInterval(() => {
     if (screen && mainWindow) {
       let p = screen.getCursorScreenPoint();
@@ -66,14 +71,21 @@ function createWindow() {
   ipcMain.on('windowMoving', (e: Event, { mouseX, mouseY }: { mouseX: number, mouseY: number }) => {
     const { x, y } = screen.getCursorScreenPoint();
 
-    // use setBounds instead of setPosition
+    // Use setBounds instead of setPosition
     // See: https://github.com/electron/electron/issues/9477#issuecomment-406833003
     mainWindow.setBounds({
-      height: HEIGHT + PADDING.VERTICAL,
-      width: HEIGHT * WIDTH_RATIO + PADDING.VERTICAL,
+      height: CONTAINER.VERTICAL,
+      width: CONTAINER.HORIZONTAL,
       x: x - mouseX,
       y: y - mouseY
     });
+
+    // Ugly black transparency fix when dragging transparent window past screen edges
+    // From what I understand, setting opacity forces a re-draw
+    // TODO: only happens on windows?
+    if (WINDOWS) {
+      mainWindow.setOpacity(1);
+    }
   });
 
   ipcMain.on('windowMoved', () => {
@@ -88,7 +100,7 @@ function createWindow() {
     mainWindow.setIgnoreMouseEvents(false);
   });
 
-  // open external URLs in default OS browser
+  // Open external URLs in default OS browser
   mainWindow.webContents.on('new-window', function (event: Electron.Event, url: string) {
     event.preventDefault();
     shell.openExternal(url);
