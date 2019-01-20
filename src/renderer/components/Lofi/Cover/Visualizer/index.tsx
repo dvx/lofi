@@ -2,7 +2,7 @@ import * as React from 'react';
 import './style.scss';
 
 import { volume } from '../../../../../../build/release/volume.node';
-import visualize from '../../../../../visualizations/cube-test/cube-test.visualization'
+import visualize from '../../../../../visualizations/rainbow-road/rainbow-road.visualization'
 
 class Visualizer extends React.Component<any, any> {
   constructor(props: any) {

@@ -33,19 +33,18 @@
             'xcode_settings': {
                 'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
                 'CLANG_CXX_LIBRARY': 'libc++',
-
                 'OTHER_CFLAGS': [
                   '-ObjC++',
                   '-std=c++11'
                 ],
-            },            
+            },
           }
         ],
         ['OS=="win"',
           {
           }
         ]
-    ],      
+    ],
     }
   ]
 }

@@ -10,9 +10,10 @@ app.commandLine.appendSwitch("disable-gpu-vsync");
 app.commandLine.appendArgument("disable-gpu-vsync");
 
 let mainWindow: Electron.BrowserWindow;
+let mousePoller: NodeJS.Timeout;
 
 function createWindow() {
-  // Create the browser window.
+  // Create the browser window
   mainWindow = new BrowserWindow({
     x: 0 - CONTAINER.HORIZONTAL / 2 + screen.getPrimaryDisplay().size.width / 2,
     y: 0 - CONTAINER.VERTICAL / 2 + screen.getPrimaryDisplay().size.height / 2,
@@ -29,7 +30,7 @@ function createWindow() {
   mainWindow.setAlwaysOnTop(true, "floating", 1);
   mainWindow.setVisibleOnAllWorkspaces(true);
 
-  // And load the index.html of the app.
+  // And load the index.html of the app
   mainWindow.loadURL(
     url.format({
       pathname: path.join(__dirname, './index.html'),
@@ -39,7 +40,7 @@ function createWindow() {
   );
 
   // Every 10 milliseconds, poll to see if we should ignore mouse events or not
-  setInterval(() => {
+  mousePoller = setInterval(() => {
     if (screen && mainWindow) {
       let p = screen.getCursorScreenPoint();
       let b = mainWindow.getBounds();
@@ -115,6 +116,7 @@ app.on('window-all-closed', () => {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (!MACOS) {
+    clearTimeout(mousePoller);
     app.quit();
   }
 });
