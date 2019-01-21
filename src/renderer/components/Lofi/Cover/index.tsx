@@ -80,6 +80,7 @@ class Cover extends React.Component<any, any> {
   closeApp() {
     if (this.state.visWindow) {
       this.state.visWindow.close();
+      this.state.visWindow.destroy();
     }
     let mainWindow = remote.getCurrentWindow()
     mainWindow.close()

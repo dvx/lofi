@@ -65,3 +65,6 @@ package
 
 # next.js build output
 .next
+
+# Mac specific
+.DS_Store
