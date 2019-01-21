@@ -1,6 +1,47 @@
-.welcome {
-    background-image: url('https://66.media.tumblr.com/6cb0ae44278156aa660d95d55df340de/tumblr_nz14o7t0Z61skcd7fo1_500.gif');
+.welcome-pane {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    width: calc(150px - 1em);
+    padding: .5em;
+    text-align: center;
+    height: calc(150px - 1em);
+    background-image: url('./waves.gif');
     background-size: cover;
+    transition: .2s;
+}
+
+.brand {
+    font-size: 20px;
+    display: inline-block;
+    color: white;
+    text-shadow: 1px 1px 1px #ff0e88;
+}
+
+.brand-highlight {
+    font-weight: normal;
+    text-shadow: 1px 1px 1px #ef00ff;
+}
+
+.brand-tagline {
+    font-size: 10px;
+    color: white;
+    background: black;
+    margin: 0.5em;
+    padding: 0.5em;
+    display: inline-block;
+    bottom: .3em;
+    position: relative;
+}
+
+.welcome-controls {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    opacity: 0;
+    width: 148px;
+    height: 148px;
+    border: 1px solid #5252524d;
 }
 
 .login-btn {
@@ -11,6 +52,7 @@
     text-decoration: none;
     transition: transform .2s;
     vertical-align: middle;
+    font-size:11px;
 }
 
 .login-btn:hover {

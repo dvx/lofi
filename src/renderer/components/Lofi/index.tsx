@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as settings from 'electron-settings';
 import { ipcRenderer } from 'electron'
+import { startAuthServer, stopAuthServer } from '../../../main/server';
 import Cover from './Cover';
 import Welcome from './Welcome';
 import './style.scss'
@@ -39,35 +40,37 @@ class Lofi extends React.Component<any, any> {
   async refreshAccessToken() {
     console.log('Access token was bad... renewing');
     let res = await fetch('http://auth.lofi.rocks/refresh_token?refresh_token=' + this.state.refresh_token);
-    console.log((await res.body));
     if (res.status === 200) {
       const access_token = (await res.json()).access_token;
       settings.set('spotify.access_token', access_token)
       this.setState({
         access_token,
         auth: true
-      })
+      });
     } else {
       // Something is very, very wrong -- nuke the settings
-      console.log('nuking settings');
       settings.setAll({});
       this.setState({
         refresh_token: null,
-        access_token: null
+        access_token: null,
+        auth: false
       });
       this.handleAuth();
     }
   }
 
   async handleAuth() {
+    startAuthServer();
     // No token data! Make sure we wait for authentication
     if (!this.state.refresh_token) {
+      // FIXME: This observer needs to be disposed at some point
       let observer: SettingsObserver = settings.watch('spotify', (newValue, oldValue) => {
         this.setState({
           refresh_token: newValue.refresh_token,
           access_token: newValue.access_token
         });
         this.verifyAccessToken(observer);
+        stopAuthServer();
       });
     } else {
       this.verifyAccessToken(null);
@@ -117,7 +120,7 @@ class Lofi extends React.Component<any, any> {
   render() {
     return (
       <div id='visible-ui' className='click-on'>
-        { this.state.auth ? <Cover token={this.state.access_token} /> : <Welcome /> }
+        { this.state.auth ? <Cover lofi={this} token={this.state.access_token} /> : <Welcome /> }
       </div>
     );
   }

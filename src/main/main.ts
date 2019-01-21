@@ -1,5 +1,4 @@
 import { app, BrowserWindow, ipcMain, screen, shell, ipcRenderer } from 'electron';
-import startAuthServer from './server';
 import * as path from 'path';
 import * as url from 'url';
 import '../../build/release/black-magic.node';
@@ -26,6 +25,11 @@ function createWindow() {
     hasShadow: false,
     // On MacOS, we get weird shadow artifacts if the window is focusable
     focusable: MACOS ? false : true,
+    webPreferences: {
+      allowRunningInsecureContent: false,
+      nodeIntegration: true,
+      nativeWindowOpen: true
+    }
   });
 
   mainWindow.setAlwaysOnTop(true, "floating", 1);
@@ -63,7 +67,7 @@ function createWindow() {
   }, 10);
 
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools({mode:"detach"});
 
   ipcMain.on('windowMoving', (e: Event, { mouseX, mouseY }: { mouseX: number, mouseY: number }) => {
     const { x, y } = screen.getCursorScreenPoint();
@@ -108,24 +112,19 @@ function createWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
-  startAuthServer();
   createWindow();
 });
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (!MACOS) {
-    clearTimeout(mousePoller);
-    app.quit();
-  }
+  clearTimeout(mousePoller);
+  app.quit();
 });
 
 app.on('activate', () => {
   // On OS X it"s common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
+  if (MACOS && mainWindow === null) {
     createWindow();
   }
 });

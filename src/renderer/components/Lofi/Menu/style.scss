@@ -51,7 +51,15 @@
 }
 
 .menu li a.danger:active {
-    color: #810000;
+    color: #a53e3e;
+}
+
+.menu li a.help:hover {
+    color: #979eff;
+}
+
+.menu li a.help:active {
+    color: #50569e;
 }
 
 .menu li a.vis:hover {
@@ -59,7 +67,7 @@
 }
 
 .menu li a.vis:active {
-    color: #187c42;
+    color: #3d9963;
 }
 
 .menu .logo-typo {

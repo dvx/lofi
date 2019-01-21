@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { ipcRenderer, remote, screen } from 'electron'
+import { remote, screen } from 'electron'
 import { MACOS } from '../../../../constants'
-import * as electronLocalshortcut from 'electron-localshortcut';
 import * as path from 'path';
 import * as url from 'url';
 import * as _ from 'lodash';
@@ -21,7 +20,7 @@ class Cover extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      cover_art: '',
+      currently_playing: null,
       visWindow: null,
       visualizationType: VISUALIZATION_TYPE.NONE
     }
@@ -33,24 +32,49 @@ class Cover extends React.Component<any, any> {
     this.listeningTo();
   }
 
-  async listeningTo() {
-    let res = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-      method: 'GET',
-      headers: new Headers({
-        'Authorization': 'Bearer '+ this.props.token
+  togglePlayPause() {
+    if (this.state.currently_playing) {
+      // FIXME: Using nested state is bad in React, need to split up this awful Spotify object
+      let currently_playing = this.state.currently_playing;
+      currently_playing.is_playing = !currently_playing.is_playing;
+      this.setState({
+        currently_playing
       })
-    });
-    const currently_playing = await res.json();
-    console.log(currently_playing);
-    this.setState({
-      cover_art: currently_playing.item.album.images[0].url,
-      track: currently_playing.item.name,
-      artist: _.map(currently_playing.item.artists, 'name').join(", ")
-    });
-
-    if (this.state.bigVisualization) {
-      this.state.visWindow.webContents.send('currently-playing', currently_playing);
     }
+  }
+
+  setPlaying(playing:boolean) {
+    if (this.state.currently_playing) {
+      // FIXME: Using nested state is bad in React, need to split up this awful Spotify object
+      let currently_playing = this.state.currently_playing;
+      currently_playing.is_playing = playing;
+      this.setState({
+        currently_playing
+      })
+    }
+  }
+
+  async listeningTo() {
+      let res = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+        method: 'GET',
+        headers: new Headers({
+          'Authorization': 'Bearer '+ this.props.token
+        })
+      });
+      if (res.status !== 200) {
+        await this.props.lofi.refreshAccessToken();
+        this.listeningTo();
+      } else {
+        const currently_playing = await res.json();
+        console.log(currently_playing);
+        this.setState({
+          currently_playing,
+        });
+        if (this.state.bigVisualization) {
+          this.state.visWindow.webContents.send('currently-playing', currently_playing);
+        }
+      }
+
   }
 
   closeApp() {
@@ -124,14 +148,38 @@ class Cover extends React.Component<any, any> {
     }
   }
 
+  getCoverArt() {
+    if (this.state.currently_playing) {
+      return this.state.currently_playing.item.album.images[0].url;
+    }
+  }
+
+  getTrack() {
+    if (this.state.currently_playing) {
+      return this.state.currently_playing.item.name;
+    }
+  }
+
+  getArtist() {
+    if (this.state.currently_playing) {
+      return _.map(this.state.currently_playing.item.artists, 'name').join(", ");
+    }
+  }
+
+  getPlayState() {
+    if (this.state.currently_playing) {
+      return this.state.currently_playing.is_playing;
+    }
+  }
+
   render() {
     return (
       <>
         <Menu parent={this} visIcon={this.visIconFromType()}/>
-        <TrackInfo track={this.state.track} artist={this.state.artist} />
-        <div className='cover full' style={{ backgroundImage: 'url(' + this.state.cover_art + ')' }} />
+        <TrackInfo track={this.getTrack()} artist={this.getArtist()} />
+        <div className='cover full' style={ this.getCoverArt() ? { backgroundImage: 'url(' + this.getCoverArt() + ')' } : { }} />
         <Visualizer show={this.state.visualizationType === VISUALIZATION_TYPE.SMALL} data={ this.state } />
-        <Controls token={this.props.token} />
+        <Controls parent={this} token={this.props.token} />
       </>
     );
   }

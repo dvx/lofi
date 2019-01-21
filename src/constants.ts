@@ -9,6 +9,8 @@ export const HEIGHT = 150;
 export const WIDTH = 150;
 export const WIDTH_RATIO = 5; // has to be odd
 
+export const AUTH_BACKEND_PORT = 41419;
+
 // Native shadows are buggy, so just make the main (transparent) window big enough so it can hold the shadow as well
 // On Mojave, we want to do away with the ugly white bar on top, so we simply move up the window (way) past the top screen edge
 // See: https://github.com/electron/electron/issues/13164

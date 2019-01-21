@@ -5,6 +5,7 @@
     left: 40%;
     overflow: hidden;
     box-shadow: 0px 0px 76px #0000005e;
+    background: linear-gradient(135deg, rgba(69,72,77,1) 0%,rgba(45,45,45,1) 100%);
 }
 
 #visible-ui:hover {
@@ -17,6 +18,11 @@
 
 #visible-ui:hover .bottom-menu {
     opacity: 1;
+}
+
+#visible-ui:hover .welcome-pane {
+    transform: scale(1.1);
+    filter: blur(8px);
 }
 
 #visible-ui:hover .cover {
@@ -35,19 +41,13 @@
     opacity: 1;
 }
 
+#visible-ui:hover .welcome-controls {
+    transition: .1s;
+    opacity: 1;
+}
+
 #visible-ui:hover .menu .logo-typo {
     background-position: left center;
     color: #ef9671;
     transition: background-position 2000ms ease-out;
-}
-
-.centered {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    overflow: hidden;
-}
-
-.centered a i {
-    color: #1DB954;
 }

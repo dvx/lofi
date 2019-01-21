@@ -65,5 +65,16 @@ html, body {
     margin: auto;
 }
 
+.centered {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+.centered a i {
+    color: #1DB954;
+}
+
 .click-on      {pointer-events: all}
 .click-through {pointer-events: none}
