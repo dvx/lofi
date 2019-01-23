@@ -9,6 +9,48 @@
         "<!@(node -p \"require('node-addon-api').include\")"
       ],
       'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS' ],
+      "conditions": [
+        ['OS=="mac"',
+          {
+            'defines': [
+              '__MACOSX_CORE__'
+            ],
+            'link_settings': {
+                'libraries': [
+                  '-framework AVFoundation',
+                  '-framework CoreMedia',
+                  '-framework CoreAudio'
+                ]
+            },
+            'xcode_settings': {
+                'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
+                'CLANG_CXX_LIBRARY': 'libc++',
+                'OTHER_CFLAGS': [
+                  '-fno-objc-arc',
+                  '-ObjC++',
+                  '-std=c++11'
+                ],
+            },
+          }
+        ]
+      ]
+    },
+    {
+      "target_name": "volume-capture-daemon",
+      "conditions": [
+        ['OS=="mac"',
+          {
+            "actions": [
+                {
+                    "action_name": "make",
+                    "inputs": [],
+                    "outputs": [ "./build/release/" ],
+                    "action": [ "make", "-C", "./src/native/volume/macos" ]
+                }
+            ]
+          }
+        ]
+      ],
     },
     {
       "target_name": "black-magic",
@@ -44,7 +86,7 @@
           {
           }
         ]
-    ],
+      ],
     }
   ]
 }

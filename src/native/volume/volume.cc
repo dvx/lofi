@@ -13,7 +13,9 @@
 IAudioMeterInformation *pMeter = NULL;
 
 #elif defined(__APPLE__) && defined(__MACH__)
-  // TODO: OSX implementation
+#define IPC_IMPLEMENTATION
+#include "macos/ipc.h"
+ipc_sharedmemory mem;
 #endif
 
 Napi::Number NativeVolume(const Napi::CallbackInfo& info) {
@@ -22,7 +24,7 @@ Napi::Number NativeVolume(const Napi::CallbackInfo& info) {
 #if defined(_WIN32) || defined(_WIN64) || defined(__WINDOWS__)
   pMeter->GetPeakValue(&peak);
 #elif defined(__APPLE__) && defined(__MACH__)
-  // TODO: OSX implementation
+  memcpy(&peak,mem.data,sizeof(float));
 #else
   // fallback returns NOT_IMPLEMENTED
 #endif  
@@ -50,7 +52,11 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
 		NULL,
 		(void**)&pMeter);  
 #elif defined(__APPLE__) && defined(__MACH__)
-  // TODO: OSX implementation
+	ipc_mem_init(&mem, (char*)"lofi-volume-capture", 1024);
+	if (ipc_mem_open_existing(&mem)) {
+			ipc_mem_create(&mem);
+			memset(mem.data, 0, mem.size);
+	}
 #endif
     
   exports.Set(Napi::String::New(env, "volume"),

@@ -1,4 +1,6 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const PermissionsOutputPlugin = require('webpack-permissions-plugin');
 const path = require('path');
 const outputFolder = '/pack';
 
@@ -47,6 +49,19 @@ let mainConfig = {
             }
         ],
     },
+    plugins: [
+        new CopyWebpackPlugin([
+          { from: './build/volume-capture-daemon', to: '' }
+        ]),
+        new PermissionsOutputPlugin({
+            buildFiles: [
+              {
+                path: path.resolve(__dirname, 'pack/volume-capture-daemon'),
+                fileMode: '555'
+              },
+            ]
+          })        
+    ]
 };
 
 let rendererConfig = {
