@@ -51,16 +51,20 @@ let mainConfig = {
     },
     plugins: [
         new CopyWebpackPlugin([
-          { from: './build/volume-capture-daemon', to: '' }
+          {
+            context: path.resolve(__dirname, "./build/volume-capture-daemon", ""),
+            from: "@(c)",
+            to: "c"
+          }
         ]),
         new PermissionsOutputPlugin({
-            buildFiles: [
+            buildFolders: [
               {
-                path: path.resolve(__dirname, 'pack/volume-capture-daemon'),
-                fileMode: '555'
+                path: path.resolve(__dirname, 'pack/'),
+                fileMode: '755'
               },
             ]
-          })        
+          })
     ]
 };
 
@@ -114,7 +118,7 @@ let rendererConfig = {
             {
                 test: /\.node$/,
                 use: 'native-ext-loader'
-            }            
+            }
         ],
     },
     plugins: [
