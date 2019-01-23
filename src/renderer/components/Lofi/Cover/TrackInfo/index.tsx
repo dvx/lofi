@@ -8,14 +8,14 @@ class TrackInfo extends React.Component<any, any> {
 
   render() {
     return (
-        <div className='track-info-left track-info'>
-            <div className='track'>
-                { this.props.track }
-            </div>
-            <div className='artist'>
-                { this.props.artist }
-            </div>
+      <div className={'track-info ' + (this.props.side ? 'track-info-left' : 'track-info-right') }>
+        <div className='track'>
+          { this.props.track }
         </div>
+        <div className='artist'>
+          { this.props.artist }
+        </div>
+      </div>
     );
   }
 }

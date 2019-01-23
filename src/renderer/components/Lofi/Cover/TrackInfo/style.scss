@@ -2,10 +2,27 @@
     position: fixed;
     text-align: right;
     padding: 1em;
-    margin: 1em;
+    margin-right: -1em;
+    margin-top: 1em;
     right: calc(60%);
+    left: calc(10%);
     color: white;
-    margin-right: -4em;
+    font-weight: bold;
+    font-feature-settings: normal;
+    transition: .1s;
+    background: #000000a8;
+    text-shadow: 0px 1px 9px black;
+}
+
+.track-info-right {
+    position: fixed;
+    text-align: left;
+    padding: 1em;
+    margin-left: -1em;
+    margin-top: 1em;
+    left: calc(60%);
+    right: calc(10%);
+    color: white;
     font-weight: bold;
     font-feature-settings: normal;
     transition: .1s;

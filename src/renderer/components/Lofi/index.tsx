@@ -1,10 +1,14 @@
 import * as React from 'react';
 import * as settings from 'electron-settings';
-import { ipcRenderer } from 'electron'
+import { ipcRenderer, screen, remote } from 'electron'
 import { startAuthServer, stopAuthServer } from '../../../main/server';
 import Cover from './Cover';
 import Welcome from './Welcome';
 import './style.scss'
+
+enum SIDE {
+  LEFT, RIGHT
+}
 
 class Lofi extends React.Component<any, any> {
   constructor(props: any) {
@@ -13,7 +17,8 @@ class Lofi extends React.Component<any, any> {
     this.state = {
       access_token: settings.get('spotify.access_token'),
       refresh_token: settings.get('spotify.refresh_token'),
-      auth: false
+      window_side: SIDE.LEFT,
+      auth: false,
     }
   }
   
@@ -84,6 +89,7 @@ class Lofi extends React.Component<any, any> {
     // Credit goes out to @danielravina
     // See: https://github.com/electron/electron/issues/1354#issuecomment-404348957
     
+    const that = this;
     let animationId: number;
     let mouseX: number;
     let mouseY: number;
@@ -104,10 +110,15 @@ class Lofi extends React.Component<any, any> {
         }
     }
 
-    function moveWindow() {
+    let moveWindow = (function() {
         ipcRenderer.send('windowMoving', { mouseX, mouseY });
+        if (screen.getCursorScreenPoint().x - screen.getDisplayMatching(remote.getCurrentWindow().getBounds()).bounds.x < screen.getDisplayMatching(remote.getCurrentWindow().getBounds()).bounds.width / 2) {
+          that.setState({window_side: SIDE.LEFT});
+        } else {
+          that.setState({window_side: SIDE.RIGHT});
+        }
         animationId = requestAnimationFrame(moveWindow);
-    }
+    }).bind(that);
 
     function leftMousePressed(e: MouseEvent) {
         var button = e.which || e.button;
@@ -120,7 +131,7 @@ class Lofi extends React.Component<any, any> {
   render() {
     return (
       <div id='visible-ui' className='click-on'>
-        { this.state.auth ? <Cover lofi={this} token={this.state.access_token} /> : <Welcome /> }
+        { this.state.auth ? <Cover side={this.state.window_side} lofi={this} token={this.state.access_token} /> : <Welcome /> }
       </div>
     );
   }

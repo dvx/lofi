@@ -32,6 +32,9 @@ class Controls extends React.Component<any, any> {
       headers: new Headers({
         'Authorization': 'Bearer '+ this.props.token
       })
+    }).then(() => {
+      // Spotify API doesn't update fast enough sometimes, so give it some leeway
+      setTimeout(this.props.parent.listeningTo.bind(this), 2000);
     });
     this.props.parent.setPlaying(true);
   }
@@ -42,6 +45,9 @@ class Controls extends React.Component<any, any> {
       headers: new Headers({
         'Authorization': 'Bearer '+ this.props.token
       })
+    }).then(() => {
+      // Spotify API doesn't update fast enough sometimes, so give it some leeway
+      setTimeout(this.props.parent.listeningTo.bind(this), 2000);
     });
     this.props.parent.setPlaying(true);
   }

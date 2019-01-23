@@ -63,7 +63,7 @@ class Cover extends React.Component<any, any> {
       });
       if (res.status !== 200) {
         await this.props.lofi.refreshAccessToken();
-        this.listeningTo();
+        await this.listeningTo();
       } else {
         const currently_playing = await res.json();
         console.log(currently_playing);
@@ -177,7 +177,7 @@ class Cover extends React.Component<any, any> {
     return (
       <>
         <Menu parent={this} visIcon={this.visIconFromType()}/>
-        <TrackInfo track={this.getTrack()} artist={this.getArtist()} />
+        <TrackInfo side={this.props.side} track={this.getTrack()} artist={this.getArtist()} />
         <div className='cover full' style={ this.getCoverArt() ? { backgroundImage: 'url(' + this.getCoverArt() + ')' } : { }} />
         <Visualizer show={this.state.visualizationType === VISUALIZATION_TYPE.SMALL} data={ this.state } />
         <Controls parent={this} token={this.props.token} />
