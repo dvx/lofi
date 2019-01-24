@@ -4,7 +4,9 @@ import * as url from 'url';
 import '../../build/release/black-magic.node';
 import { spawn } from 'child_process';
 import { fixPathForAsarUnpack }  from 'electron-util';
+import { register } from 'electron-localshortcut';
 import { HEIGHT, WIDTH_RATIO, MACOS, MACOS_MOJAVE, WINDOWS, CONTAINER, WIDTH } from '../constants'
+import { nextVisualization, prevVisualization } from '../visualizations/visualizations.js';
 
 // Visualizations look snappier on 60Hz refresh rate screens if we disable vsync
 app.commandLine.appendSwitch("disable-gpu-vsync");
@@ -16,6 +18,16 @@ if (MACOS) {
 
 let mainWindow: Electron.BrowserWindow;
 let mousePoller: NodeJS.Timeout;
+
+register('A', () => {
+  prevVisualization();
+  mainWindow.webContents.send('prev-visualization');
+});
+
+register('D', () => {
+  nextVisualization();
+  mainWindow.webContents.send('next-visualization');
+});
 
 function createWindow() {
   // Create the browser window
@@ -73,7 +85,7 @@ function createWindow() {
   }, 10);
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools({mode:"detach"});
+  // mainWindow.webContents.openDevTools({mode:"detach"});
 
   ipcMain.on('windowMoving', (e: Event, { mouseX, mouseY }: { mouseX: number, mouseY: number }) => {
     const { x, y } = screen.getCursorScreenPoint();

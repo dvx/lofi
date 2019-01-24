@@ -2,31 +2,40 @@ import * as React from 'react';
 import './style.scss';
 
 import { volume } from '../../../../../../build/release/volume.node';
-import visualize from '../../../../../visualizations/rainbow-road/rainbow-road.visualization'
+import { visualizations } from '../../../../../visualizations/visualizations.js';
 
 class Visualizer extends React.Component<any, any> {
+  private canvasRef: React.RefObject<HTMLCanvasElement>;;
   constructor(props: any) {
     super(props);
+    this.canvasRef = React.createRef();
   }
 
   componentDidMount() {
-    visualize(this.refs.canvas, this.getMusicData.bind(this));
+    visualizations[this.props.visId](this.canvasRef.current, this.getMusicData.bind(this));
+  }
+
+  componentWillUnmount() {
+    // NOTE: "Properly" doing refs with Typescript/React is so ugly...
+    let gl = this.canvasRef.current.getContext('experimental-webgl');
+    gl.getExtension('WEBGL_lose_context').loseContext();
   }
 
   getMusicData() {
     return {
-      cover_art: this.props.data.cover_art,
       volume,
-      track: this.props.data.track,
-      artist: this.props.data.artist
+      cover_art: () => this.props.currentlyPlaying.cover_art,
+      track: () => this.props.currentlyPlaying.track,
+      artist: () => this.props.currentlyPlaying.artist
     };
   }
 
   render() {
     return (
-        <canvas ref='canvas' className={'cover full ' + (this.props.show ? 'show' : 'hide')} height='150' width='150' id='small-visualization'/>
+        <canvas ref={this.canvasRef} className={'cover full ' + (this.props.show ? 'show' : 'hide')} height='150' width='150' id='small-visualization'/>
     );
   }
+  
 }
 
 export default Visualizer;

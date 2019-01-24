@@ -34,16 +34,16 @@ function visualize(canvas, getMusicData) {
   gl.compileShader(vertShader);
 
   var fragment_shader_prog = `
-    precision mediump float;
-    uniform float time;
-    uniform float volume;
-    uniform vec2 resolution;
-    
-    void main() {
-        vec2 p = (gl_FragCoord.xy / resolution.xy) - .5;
-        float sx = (0.01 + volume) * (p.x * p.x * 3. - (0.01 + volume)) * sin(10. * p.x - 5. * time * 0.005);
-        gl_FragColor = vec4(.05, .0, (5. / (420. * abs(p.y + sx))), 1);
-    }
+  precision mediump float;
+  uniform float time;
+  uniform float volume;
+  uniform vec2 resolution;
+  
+  void main() {
+      vec2 p = (gl_FragCoord.xy / resolution.xy) - .5;
+      float sx = (0.01 + volume) * (p.x * p.x * 3. - (0.01 + volume)) * sin(10. * p.x - 5. * time * 0.005);
+      gl_FragColor = vec4(.05, .0, (5. / (420. * abs(p.y + sx))), 1);
+  }
   `;
 
   var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
@@ -64,8 +64,7 @@ function visualize(canvas, getMusicData) {
   var timeUniform = gl.getUniformLocation(shaderProgram, "time");
   var volumeUniform = gl.getUniformLocation(shaderProgram, "volume");
   var resolutionUniform = gl.getUniformLocation(shaderProgram, "resolution");
-  gl.uniform2fv(resolutionUniform, [canvas.height, canvas.width]);
-
+    
   var animate = function (time) {
 
     if (peaks.length >= 10) {
@@ -77,6 +76,7 @@ function visualize(canvas, getMusicData) {
     // should probably be done in the shader
     var avg = peaks.reduce((prev, curr) => prev + curr) / peaks.length
 
+    gl.uniform2fv(resolutionUniform, [canvas.width, canvas.height]);
     gl.uniform1f(timeUniform, time);
     gl.uniform1f(volumeUniform, avg);
     gl.clearColor(0.5, 0.5, 0.5, 0.9);

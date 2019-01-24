@@ -18,8 +18,13 @@ declare module '*.icns' {
     export = value;
 }
 
-declare module "*.visualization" {
-    const value: Function;
+// visualizations provider
+declare module "*visualizations.js" {
+    const value: {
+        visualizations: Array<Function>,
+        nextVisualization: Function,
+        prevVisualization: Function
+    };
     export = value;
 }
 

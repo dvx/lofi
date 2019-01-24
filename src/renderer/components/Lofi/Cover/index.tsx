@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { remote, screen } from 'electron'
+import { remote, screen, ipcMain, ipcRenderer } from 'electron'
 import { MACOS } from '../../../../constants'
 import * as path from 'path';
 import * as url from 'url';
@@ -8,6 +8,8 @@ import Menu from './../Menu';
 import Controls from './Controls';
 import TrackInfo from './TrackInfo';
 import Visualizer from './Visualizer';
+import RecreateChildOnPropsChange from '../../util/RecreateChildOnPropsChange';
+import { nextVisualization, prevVisualization } from '../../../../visualizations/visualizations.js';
 import './style.scss';
 
 enum VISUALIZATION_TYPE {
@@ -22,8 +24,25 @@ class Cover extends React.Component<any, any> {
     this.state = {
       currently_playing: null,
       visWindow: null,
-      visualizationType: VISUALIZATION_TYPE.NONE
+      visualizationType: VISUALIZATION_TYPE.NONE,
+      visualizationId: 0
     }
+
+    const that = this;
+
+    ipcRenderer.on('next-visualization', function (event:Event, data:any) {
+      that.setState({ visualizationId: nextVisualization(that.state.visualizationId) });
+      if (that.state.visWindow) {
+        that.state.visWindow.send('next-visualization');
+      }
+    });
+
+    ipcRenderer.on('prev-visualization', function (event:Event, data:any) {
+      that.setState({ visualizationId: prevVisualization(that.state.visualizationId) });
+      if (that.state.visWindow) {
+        that.state.visWindow.send('prev-visualization');
+      }
+    });
   }
 
   componentDidMount() {
@@ -61,7 +80,10 @@ class Cover extends React.Component<any, any> {
           'Authorization': 'Bearer '+ this.props.token
         })
       });
-      if (res.status !== 200) {
+      if (res.status === 204) {
+        console.log('playing nothing ...');
+        // TODO: handle this
+      } else if (res.status !== 200) {
         await this.props.lofi.refreshAccessToken();
         await this.listeningTo();
       } else {
@@ -110,11 +132,12 @@ class Cover extends React.Component<any, any> {
         // We need slightly different logic for where the window pops up because Windows is full screen while MacOS isn't
         if (MACOS) {
           // Just show regular window instead
-          visWindow.setPosition(screen.getCursorScreenPoint().x, screen.getCursorScreenPoint().y);
+          visWindow.setPosition(screen.getCursorScreenPoint().x - 400, screen.getCursorScreenPoint().y);
           visWindow.setSize(800, 600);
         } else {
           visWindow.setPosition(remote.getCurrentWindow().getBounds().x, remote.getCurrentWindow().getBounds().y);
           visWindow.setSimpleFullScreen(true);
+          // visWindow.webContents.openDevTools({mode:"detach"});
         }
        
         this.setState({
@@ -179,7 +202,9 @@ class Cover extends React.Component<any, any> {
         <Menu parent={this} visIcon={this.visIconFromType()}/>
         <TrackInfo side={this.props.side} track={this.getTrack()} artist={this.getArtist()} />
         <div className='cover full' style={ this.getCoverArt() ? { backgroundImage: 'url(' + this.getCoverArt() + ')' } : { }} />
-        <Visualizer show={this.state.visualizationType === VISUALIZATION_TYPE.SMALL} data={ this.state } />
+        <RecreateChildOnPropsChange visType={this.state.visualizationType} visId={this.state.visualizationId}>
+          <Visualizer visId={this.state.visualizationId} currentlyPlaying={this.state.currently_playing} show={this.state.visualizationType === VISUALIZATION_TYPE.SMALL} />
+        </RecreateChildOnPropsChange>
         <Controls parent={this} token={this.props.token} />
       </>
     );
