@@ -139,6 +139,10 @@ class Cover extends React.Component<any, any> {
           visWindow.setSimpleFullScreen(true);
           // visWindow.webContents.openDevTools({mode:"detach"});
         }
+
+        visWindow.webContents.once('dom-ready', () => {
+          visWindow.webContents.send('set-visualization', this.state.visualizationId);
+        });
        
         this.setState({
           visWindow,

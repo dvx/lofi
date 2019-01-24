@@ -41,8 +41,7 @@ function createWindow() {
     maximizable: false,
     transparent: true,
     hasShadow: false,
-    // On MacOS, we get weird shadow artifacts if the window is focusable
-    focusable: MACOS ? false : true,
+    focusable: false,
     webPreferences: {
       allowRunningInsecureContent: false,
       nodeIntegration: true,

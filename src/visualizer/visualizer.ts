@@ -20,14 +20,18 @@ const doVisualization = function(vis: Function) {
     let canvas = document.createElement("canvas");
     document.body.appendChild(canvas);
     window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth / 10;
+        canvas.height = window.innerHeight / 10;
     });
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth / 10;
+    canvas.height = window.innerHeight / 10;
 
     vis(canvas, function() { return { volume } });
 }
+
+ipcRenderer.on('set-visualization', function (event:Event, id:number) {
+    doVisualization(visualizations[id]);
+});
 
 ipcRenderer.on('next-visualization', function (event:Event, data:any) {
     visualizationId = nextVisualization(visualizationId);
