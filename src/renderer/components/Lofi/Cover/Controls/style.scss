@@ -45,6 +45,11 @@
     color: #00ff7ebf;
 }
 
+.control-btn:active {
+    background: #000000;
+    border-color: rgb(59, 59, 59);
+}
+
 .secondary-control {
     font-size: 65%;
 }
