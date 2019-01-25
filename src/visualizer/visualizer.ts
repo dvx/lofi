@@ -20,11 +20,11 @@ const doVisualization = function(vis: Function) {
     let canvas = document.createElement("canvas");
     document.body.appendChild(canvas);
     window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth / 10;
-        canvas.height = window.innerHeight / 10;
+        canvas.width = window.innerWidth / 4;
+        canvas.height = window.innerHeight / 4;
     });
-    canvas.width = window.innerWidth / 10;
-    canvas.height = window.innerHeight / 10;
+    canvas.width = window.innerWidth / 4;
+    canvas.height = window.innerHeight / 4;
 
     vis(canvas, function() { return { volume } });
 }

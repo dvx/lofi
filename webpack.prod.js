@@ -50,13 +50,15 @@ let mainConfig = {
         ],
     },
     plugins: [
-        // Probably a better way of doing this...
-        process.platform == 'darwin' ? new CopyWebpackPlugin([
-            {
-                from: './build/volume-capture-daemon',
-                to: ""
-            }
-        ]) : null,
+        new CopyWebpackPlugin(
+            // Probably a better way of doing this...
+            process.platform == 'darwin' ? [
+                {
+                    from: './build/volume-capture-daemon',
+                    to: ""
+                }
+            ] : [ ]
+        ),
     ]
 };
 
