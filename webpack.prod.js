@@ -50,21 +50,13 @@ let mainConfig = {
         ],
     },
     plugins: [
-        new CopyWebpackPlugin([
-          {
-            context: path.resolve(__dirname, "./build/volume-capture-daemon", ""),
-            from: "@(c)",
-            to: "c"
-          }
-        ]),
-        new PermissionsOutputPlugin({
-            buildFolders: [
-              {
-                path: path.resolve(__dirname, 'pack/'),
-                fileMode: '755'
-              },
-            ]
-          })
+        // Probably a better way of doing this...
+        process.platform == 'darwin' ? new CopyWebpackPlugin([
+            {
+                from: './build/volume-capture-daemon',
+                to: ""
+            }
+        ]) : null,
     ]
 };
 

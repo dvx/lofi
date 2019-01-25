@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as url from 'url';
 import '../../build/release/black-magic.node';
 import { spawn } from 'child_process';
+import { chmodSync } from 'fs';
 import { fixPathForAsarUnpack }  from 'electron-util';
 import { register } from 'electron-localshortcut';
 import { HEIGHT, WIDTH_RATIO, MACOS, MACOS_MOJAVE, WINDOWS, CONTAINER, WIDTH } from '../constants'
@@ -13,6 +14,8 @@ app.commandLine.appendSwitch("disable-gpu-vsync");
 app.commandLine.appendArgument("disable-gpu-vsync");
 
 if (MACOS) {
+  // FIXME: Probably a better way of doing this
+  chmodSync(fixPathForAsarUnpack(__dirname + "/volume-capture-daemon"), '555');
   spawn(fixPathForAsarUnpack(__dirname + "/volume-capture-daemon"));
 }
 
@@ -20,12 +23,10 @@ let mainWindow: Electron.BrowserWindow;
 let mousePoller: NodeJS.Timeout;
 
 register('A', () => {
-  prevVisualization();
   mainWindow.webContents.send('prev-visualization');
 });
 
 register('D', () => {
-  nextVisualization();
   mainWindow.webContents.send('next-visualization');
 });
 
@@ -63,7 +64,7 @@ function createWindow() {
 
   // Every 10 milliseconds, poll to see if we should ignore mouse events or not
   mousePoller = setInterval(() => {
-    if (screen && mainWindow) {
+    try {
       let p = screen.getCursorScreenPoint();
       let b = mainWindow.getBounds();
       // Bounding box for the area that's "clickable" -- e.g. main player square
@@ -79,12 +80,16 @@ function createWindow() {
       } else {
         mainWindow.setIgnoreMouseEvents(true);
       }
+    } catch (e) {
+      // FIXME: Sometimes the visualization window gets destroyed before the main window
+      //        This causes an error to briefly pop up, so suppress it here. How should this be fixed?
+      //        Only happens when using OS-y ways of closing windows (e.g. OSX "File->Quit" menu)
     }
     
   }, 10);
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools({mode:"detach"});
+  mainWindow.webContents.openDevTools({mode:"detach"});
 
   ipcMain.on('windowMoving', (e: Event, { mouseX, mouseY }: { mouseX: number, mouseY: number }) => {
     const { x, y } = screen.getCursorScreenPoint();

@@ -118,7 +118,10 @@ class Cover extends React.Component<any, any> {
         break;
       case VISUALIZATION_TYPE.SMALL:
         const BrowserWindow = remote.BrowserWindow;
-        const visWindow = new BrowserWindow({ closable: MACOS ? false : true });
+        const visWindow = new BrowserWindow();
+        visWindow.on('close', () => {
+          this.cycleVisualizationType();
+        });
         visWindow.setMenuBarVisibility(false);
         visWindow.loadURL(
           url.format({

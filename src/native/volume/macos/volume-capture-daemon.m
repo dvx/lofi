@@ -10,18 +10,21 @@
 @interface VolumeDelegator : NSObject<AVCaptureAudioDataOutputSampleBufferDelegate>
 - (void)captureOutput:(AVCaptureOutput *)output didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection;
 @property float volume;
-@property int pID;
+@property void* data;
 @end
 
 @implementation VolumeDelegator
+
+- (id)init:(void*)data {
+    self.data = data;
+    return self;
+}
+
 - (void)captureOutput:(AVCaptureOutput *)output didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection {
     CMItemCount numSamplesInBuffer = CMSampleBufferGetNumSamples(sampleBuffer);
     
     AudioBufferList audioBufferList;
     CMBlockBufferRef buffer;
-    ipc_sharedmemory mem;
-    ipc_mem_init(&mem, "lofi-volume-capture", 1024);
-    ipc_mem_open_existing(&mem);
     
     OSStatus err = CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(sampleBuffer, nil, &audioBufferList, sizeof(audioBufferList), nil, nil, kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment, &buffer);
     
@@ -33,7 +36,7 @@
         }
         //self.volume = sum / numSamplesInBuffer;
         float vol = sum / numSamplesInBuffer;
-        memcpy(mem.data,&vol,sizeof(float));        
+        memcpy(self.data,&vol,sizeof(float));        
         //NSLog(@"%f", self.volume);
     }
     CFRelease(buffer);
@@ -43,9 +46,17 @@
 int main() {
     ipc_sharedmemory mem;
     AVCaptureSession *captureSession = [[AVCaptureSession alloc] init];
-    VolumeDelegator *volumeDelegator = [[VolumeDelegator alloc] init];
     NSArray<AVCaptureDevice *> *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeAudio];
     AVCaptureDevice *audioCaptureDevice = Nil;
+
+    NSLog(@"Setting up shared memory...");
+    ipc_mem_init(&mem, "lofi-volume-capture", 1024);
+	if (ipc_mem_open_existing(&mem)) {
+			ipc_mem_create(&mem);
+			memset(mem.data, 0, mem.size);
+	}
+    
+    VolumeDelegator *volumeDelegator = [[VolumeDelegator alloc] init:mem.data];
     
     for (AVCaptureDevice *device in devices) {
         NSLog(@"Found: %@", [device localizedName]);
@@ -53,6 +64,10 @@ int main() {
             NSLog(@"OK: %@", [device localizedName]);
             audioCaptureDevice = device;
         }
+    }
+
+    if (!audioCaptureDevice) {
+        return -1;
     }
     
     NSError *error = nil;
@@ -80,18 +95,15 @@ int main() {
         [captureSession commitConfiguration];
     }
 
-    NSLog(@"Setting up shared memory...");
-    ipc_mem_init(&mem, "lofi-volume-capture", 1024);
-	if (ipc_mem_open_existing(&mem)) {
-			ipc_mem_create(&mem);
-			memset(mem.data, 0, mem.size);
-	}    
     NSLog(@"Dispatching thread...");
     dispatch_async(queue, ^(void) {
         [captureSession startRunning];
     });
-
+    
     while (1) {
         usleep(5000000);
-  }
+    }
+
+    // Should never get here
+    return 1;
 }

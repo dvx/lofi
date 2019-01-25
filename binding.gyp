@@ -36,7 +36,7 @@
       ]
     },
     {
-      "target_name": "volume-capture-daemon",
+      "target_name": "make-volume-capture-daemon",
       "conditions": [
         ['OS=="mac"',
           {
