@@ -33,14 +33,14 @@ class Cover extends React.Component<any, any> {
     ipcRenderer.on('next-visualization', function (event:Event, data:any) {
       that.setState({ visualizationId: nextVisualization(that.state.visualizationId) });
       if (that.state.visWindow) {
-        that.state.visWindow.send('next-visualization');
+        that.state.visWindow.send('set-visualization', that.state.visualizationId);
       }
     });
 
     ipcRenderer.on('prev-visualization', function (event:Event, data:any) {
       that.setState({ visualizationId: prevVisualization(that.state.visualizationId) });
       if (that.state.visWindow) {
-        that.state.visWindow.send('prev-visualization');
+        that.state.visWindow.send('set-visualization', that.state.visualizationId);
       }
     });
   }

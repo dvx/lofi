@@ -23,4 +23,3 @@ export const prevVisualization = function(currentVisualization) {
     }
     return currentVisualization;
 }
-

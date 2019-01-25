@@ -30,16 +30,7 @@ const doVisualization = function(vis: Function) {
 }
 
 ipcRenderer.on('set-visualization', function (event:Event, id:number) {
-    doVisualization(visualizations[id]);
-});
-
-ipcRenderer.on('next-visualization', function (event:Event, data:any) {
-    visualizationId = nextVisualization(visualizationId);
-    doVisualization(visualizations[visualizationId]);
-});
-
-ipcRenderer.on('prev-visualization', function (event:Event, data:any) {
-    visualizationId = prevVisualization(visualizationId);
+    visualizationId = id;
     doVisualization(visualizations[visualizationId]);
 });
 
