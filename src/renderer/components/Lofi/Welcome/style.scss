@@ -55,8 +55,17 @@
     font-size:11px;
 }
 
+.login-btn i {
+    color: #84bd00;
+}
+
 .login-btn:hover {
     background: #222;
     transform: scale(1.05);
     border:1px solid #000;
+}
+
+.login-btn:active {
+    background: #000;
+    border:1px solid rgb(65, 65, 65);
 }

@@ -24,7 +24,7 @@ class Welcome extends React.Component<any, any> {
           </div>
         </div>
         <div className="centered controls">
-          <a className='login-btn' target="_blank" href="http://auth.lofi.rocks/login"><i className="fab fa-spotify"></i>&nbsp;&nbsp;<span>Log in</span></a>
+          <a className='login-btn not-draggable' target="_blank" href="http://auth.lofi.rocks/login"><i className="fab fa-spotify not-draggable"></i>&nbsp;&nbsp;<span className="not-draggable">Log in</span></a>
         </div>
       </div>
     );
