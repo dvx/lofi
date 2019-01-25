@@ -12,7 +12,8 @@
     "development": "rimraf pack && webpack --watch --config ./webpack.dev.js --progress --colors",
     "production": "rimraf pack && webpack --config ./webpack.prod.js --progress --colors",
     "pack": "yarn run build && yarn run production && rimraf dist && electron-builder --dir",
-    "dist": "yarn run build && yarn run production && rimraf dist && electron-builder"
+    "dist": "yarn run build && yarn run production && rimraf dist && electron-builder",
+    "clean": "rimraf build && rimraf pack && rimraf dist"
   },
   "repository": "https://github.com/dvx/lofi.git",
   "author": "David Titarenco <david.titarenco@gmail.com>",
