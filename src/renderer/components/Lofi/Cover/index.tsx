@@ -141,7 +141,7 @@ class Cover extends React.Component<any, any> {
         } else {
           visWindow.setPosition(remote.getCurrentWindow().getBounds().x, remote.getCurrentWindow().getBounds().y);
           visWindow.setSimpleFullScreen(true);
-          visWindow.webContents.openDevTools({mode:"detach"});
+          // visWindow.webContents.openDevTools({mode:"detach"});
         }
 
         visWindow.webContents.once('dom-ready', () => {
