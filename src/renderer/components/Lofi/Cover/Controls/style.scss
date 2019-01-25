@@ -24,10 +24,15 @@
 
 .control-btn {
     vertical-align: middle;
-    background: black;
-    color: white;
+    color: #6affb3bf;
+    background: #00000040;
     padding: .55em;
-    border: 1px solid black;
+    border-radius: 100px;
+    height: 2vh;
+    width: 2vh;
+    text-align: center;
+    line-height: 2vh;
+    border: 1px solid #4c4c4c54;
     margin: .25em;
     text-decoration: none;
     transition: transform .2s;
@@ -35,9 +40,9 @@
 }
 
 .control-btn:hover {
-    background: #222;
-    transform: scale(1.05);
-    border:1px solid #000;
+    background: #000000ed;
+    transform: scale(1.25);
+    color: #00ff7ebf;
 }
 
 .secondary-control {
@@ -45,6 +50,9 @@
 }
 
 .pause-play {
-    border-left: 4px solid #1DB954;
-    padding-left: 4px;
+
+}
+
+.skip {
+
 }

@@ -47,7 +47,8 @@ class Cover extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    const intervalId = setInterval(() => this.listeningTo(), 5000);
+    // Polling Spotify every 1 second, probably a bad idea
+    const intervalId = setInterval(() => this.listeningTo(), 1000);
     this.setState({ intervalId });
     this.listeningTo();
   }
