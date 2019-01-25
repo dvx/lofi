@@ -8,6 +8,7 @@ import Menu from './../Menu';
 import Controls from './Controls';
 import TrackInfo from './TrackInfo';
 import Visualizer from './Visualizer';
+import Waiting from './Waiting';
 import RecreateChildOnPropsChange from '../../util/RecreateChildOnPropsChange';
 import { nextVisualization, prevVisualization } from '../../../../visualizations/visualizations.js';
 import './style.scss';
@@ -81,8 +82,8 @@ class Cover extends React.Component<any, any> {
         })
       });
       if (res.status === 204) {
-        console.log('playing nothing ...');
-        // TODO: handle this
+        // 204 is the "Nothing playing" Spotify response
+        // See: https://github.com/zmb3/spotify/issues/56
       } else if (res.status !== 200) {
         await this.props.lofi.refreshAccessToken();
         await this.listeningTo();
@@ -182,6 +183,8 @@ class Cover extends React.Component<any, any> {
   getCoverArt() {
     if (this.state.currently_playing) {
       return this.state.currently_playing.item.album.images[0].url;
+    } else {
+      return '';
     }
   }
 
@@ -207,12 +210,12 @@ class Cover extends React.Component<any, any> {
     return (
       <>
         <Menu parent={this} visIcon={this.visIconFromType()}/>
-        <TrackInfo side={this.props.side} track={this.getTrack()} artist={this.getArtist()} />
+        { this.state.currently_playing ? <TrackInfo side={this.props.side} track={this.getTrack()} artist={this.getArtist()} /> : null }
         <div className='cover full' style={ this.getCoverArt() ? { backgroundImage: 'url(' + this.getCoverArt() + ')' } : { }} />
         <RecreateChildOnPropsChange visType={this.state.visualizationType} visId={this.state.visualizationId}>
           <Visualizer visId={this.state.visualizationId} currentlyPlaying={this.state.currently_playing} show={this.state.visualizationType === VISUALIZATION_TYPE.SMALL} />
         </RecreateChildOnPropsChange>
-        <Controls parent={this} token={this.props.token} />
+        { this.state.currently_playing ? <Controls parent={this} token={this.props.token} /> : <Waiting /> }
       </>
     );
   }
