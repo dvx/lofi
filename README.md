@@ -16,11 +16,27 @@ It is possible to make Lofi work with other audio sources (including YouTube and
 
 # Building
 
-To build, you'll need `node-gyp`, a compatible Python version (2.x), and your operating system's SDK (Microsoft Build Tools or Xcode). Linux native compilation is currently not supported. First, you'll need to run `yarn install`.
+To build, you'll need `node-gyp`, a compatible Python version (2.x), and your operating system's SDK (Microsoft Build Tools or Xcode). Linux native compilation is currently not supported. First, you'll need to run:
 
-To **build from scratch**, run `yarn run dist` or `yarn run pack`. Find the output in `/dist`.
+````
+$ yarn install
+````
 
-To **develop**, run `yarn run build` to build required natives, followed by either `yarn run development` or `yarn run production` to start the front-end in either interactive or non-interactive mode. Finally, kick off Electron via `yarn run start`.
+To **build from scratch**, run `yarn run dist`. Find the output in `/dist`.
+
+```
+$ yarn run dist
+```
+
+To **develop**, open up a Terminal and type:
+
+```
+$ yarn run build
+$ yarn run development
+$ yarn run start
+```
+
+Use `yarn run production` (instead of `development`) to start the front-end in non-interactive mode.
 
 ## Folder structure
 
