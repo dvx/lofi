@@ -2,6 +2,8 @@
 
 This is a list of assets used by Lofi, including, but not limited to, fonts, graphics, images, and vector icons.
 
+
+- [ipc](https://github.com/jarikomppa/ipc) by [Jari Komppa](http://iki.fi/sol/)
 - [Inter-UI](https://rsms.me/inter/) font pack by [Rasmus Andersson](https://twitter.com/rsms)
 - [Font Awesome](https://fontawesome.com) vector icons
 - [Ｖａｐｏｒｗａｖｅ　ぎレブ](https://steamcommunity.com/sharedfiles/filedetails/?id=1551937777) by [mrchernobyl](https://steamcommunity.com/id/mrchernobyl)
