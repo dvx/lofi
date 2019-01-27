@@ -34,7 +34,7 @@
     "mac": {
       "category": "music.player",
       "extendInfo": {
-        "NSMicrophoneUsageDescription": "Gotta use the mic, dawg"
+        "NSMicrophoneUsageDescription": "Lofi needs to access the iShowU Audio Capture device for visualization support. It does not use your actual microphone. See the FAQ for details."
       }
     }
   },
