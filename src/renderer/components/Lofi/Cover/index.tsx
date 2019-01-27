@@ -90,7 +90,7 @@ class Cover extends React.Component<any, any> {
         await this.listeningTo();
       } else {
         const currently_playing = await res.json();
-        console.log(currently_playing);
+        // console.log(currently_playing);
         this.setState({
           currently_playing,
         });
@@ -183,7 +183,15 @@ class Cover extends React.Component<any, any> {
 
   getCoverArt() {
     if (this.state.currently_playing) {
-      return this.state.currently_playing.item.album.images[0].url;
+      if(this.state.currently_playing.currently_playing_type == 'track') {
+        return this.state.currently_playing.item.album.images[0].url;
+      } else if (this.state.currently_playing.currently_playing_type == 'ad') {
+        // TODO: Cover art for ads?
+        return '';
+      } else if (this.state.currently_playing.currently_playing_type == 'episode') {
+        // TODO: Cover art for music videos?
+        return '';
+      }
     } else {
       return '';
     }
@@ -191,14 +199,28 @@ class Cover extends React.Component<any, any> {
 
   getTrack() {
     if (this.state.currently_playing) {
-      return this.state.currently_playing.item.name;
+      if(this.state.currently_playing.currently_playing_type == 'track') {
+        return this.state.currently_playing.item.name;
+      } else if (this.state.currently_playing.currently_playing_type == 'ad') {
+        return 'Advertisement';
+      } else if (this.state.currently_playing.currently_playing_type == 'episode') {
+        return 'Music Video';
+      }
     }
+    return 'n/a';
   }
 
   getArtist() {
     if (this.state.currently_playing) {
-      return _.map(this.state.currently_playing.item.artists, 'name').join(", ");
+      if(this.state.currently_playing.currently_playing_type == 'track') {
+        return _.map(this.state.currently_playing.item.artists, 'name').join(", ");
+      } else if (this.state.currently_playing.currently_playing_type == 'ad') {
+        return 'Spotify';
+      } else if (this.state.currently_playing.currently_playing_type == 'episode') {
+        return 'Spotify';
+      }      
     }
+    return 'n/a';
   }
 
   getPlayState() {

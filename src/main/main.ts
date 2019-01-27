@@ -89,7 +89,7 @@ function createWindow() {
   }, 10);
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools({mode:"detach"});
+  mainWindow.webContents.openDevTools({mode:"detach"});
 
   ipcMain.on('windowMoving', (e: Event, { mouseX, mouseY }: { mouseX: number, mouseY: number }) => {
     const { x, y } = screen.getCursorScreenPoint();
