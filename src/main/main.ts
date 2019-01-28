@@ -42,7 +42,7 @@ function createWindow() {
     maximizable: false,
     transparent: true,
     hasShadow: false,
-    focusable: false,
+    focusable: true,
     webPreferences: {
       allowRunningInsecureContent: false,
       nodeIntegration: true,
