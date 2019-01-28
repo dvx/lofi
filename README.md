@@ -2,7 +2,7 @@
   <img height="64" src="https://raw.githubusercontent.com/dvx/lofi/master/icon.png">
 </p>
 
-<h4 align="center"><strong>Lofi: a tiny Spotify player</strong></h3>
+<h2 align="center"><strong>Lofi: a tiny Spotify player</strong></h2>
 
 Lofi is a mini Spotify player with visualizations. It is *not* a replacement for the Spotify Desktop app, nor does it play music independently of the Spotify app; instead, Lofi works alongside it to provide a more intuitive and pleasant access to common features, including pausing/playing, and previous/next track. Lofi also displays cover art and track info stylishly and it facilitates WebGL-powered audio visualizations for both Windows and MacOS. In other words, it's a "tiny Spotify player" or a "mini mode" for the Spotify desktop app.
 
@@ -42,8 +42,8 @@ $ yarn run start
 
 Use `yarn run production` (instead of `development`) to start the front-end in non-interactive mode.
 
-## Bugs, issues, and contributing
+# Bugs, issues, and contributing
 See something you don't like? Have a feature request? Is your computer on fire? Feel free to open an issue or make a pull request. The more the merrier.
 
-## License
+# License
 MIT
