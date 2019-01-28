@@ -50,4 +50,4 @@ Use `yarn run production` (instead of `development`) to start the front-end in n
 See something you don't like? Have a feature request? Is your computer on fire? Feel free to open an issue or make a pull request. The more the merrier.
 
 # License
-MIT
+MIT.
