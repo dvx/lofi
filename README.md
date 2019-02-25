@@ -5,7 +5,7 @@
 <h2 align="center"><strong>Lofi: a tiny Spotify player</strong></h2>
 
 <p align="center">
-  <a target="_blank" href="http://www.lofi.rocks">Website</a> • <a target="_blank" href="http://www.lofi.rocks/help">FAQ</a> 
+  <a target="_blank" href="https://www.lofi.rocks">Website</a> • <a target="_blank" href="https://www.lofi.rocks/help">FAQ</a> 
 </p>
 
 Lofi is a mini Spotify player with visualizations. It is *not* a replacement for the Spotify Desktop app, nor does it play music independently of the Spotify app; instead, Lofi works alongside it to provide a more intuitive and pleasant access to common features, including pausing/playing, and previous/next track. Lofi also displays cover art and track info stylishly and it facilitates WebGL-powered audio visualizations for both Windows and MacOS. In other words, it's a "tiny Spotify player" or a "mini mode" for the Spotify desktop app.
