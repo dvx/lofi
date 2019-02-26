@@ -30,6 +30,21 @@ To build, you'll need `node-gyp`, a compatible Python version (2.x), and your op
 $ yarn install
 ````
 
+If you have more than one Python installation on your system, you can prevent the build from failing by editing the `package.json` file in the root directory.
+Edit the build argument from
+
+```
+"build": "node-gyp rebuild --target=4.0.1 --arch=x64 --dist-url=https://atom.io/download/electron"
+```
+
+to
+
+```
+"build": "node-gyp rebuild --target=4.0.1 --arch=x64 --dist-url=https://atom.io/download/electron --python path/to/python27"
+```
+
+Now you can run `yarn install` again.
+
 To **build from scratch**, run `yarn run dist`. Find the output in `/dist`.
 
 ```
