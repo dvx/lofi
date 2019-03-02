@@ -78,7 +78,7 @@ class Cover extends React.Component<any, any> {
   getTrackProgress() {
     if (this.state.currently_playing) {
       // dodge division by zero
-      if (this.state.currently_playing.progress_ms == 0) {
+      if (this.state.currently_playing.item.duration_ms == 0) {
         return 100
       } else {
         return (this.state.currently_playing.progress_ms / this.state.currently_playing.item.duration_ms) * 100
