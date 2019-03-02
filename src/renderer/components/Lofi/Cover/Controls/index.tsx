@@ -60,6 +60,7 @@ class Controls extends React.Component<any, any> {
         <a onClick={this.pausePlay.bind(this)} className='control-btn not-draggable pause-play' ><i className={"fa not-draggable " + (this.props.parent.getPlayState() ? "fa-pause" : "fa-play") } ></i></a>
         <a onClick={this.forward.bind(this)} className='control-btn secondary-control not-draggable skip'><i className="fa fa-step-forward not-draggable"></i></a>
         </p>
+        <div className='progress' style={{width: this.props.parent.getTrackProgress() + '%'}}/>
       </div>
     );
   }
