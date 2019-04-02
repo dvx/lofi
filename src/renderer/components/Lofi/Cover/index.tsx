@@ -24,6 +24,7 @@ class Cover extends React.Component<any, any> {
     super(props);
     this.state = {
       currently_playing: null,
+      playbackInfo: null,
       visWindow: null,
       visualizationType: VISUALIZATION_TYPE.NONE,
       visualizationId: 0
@@ -49,8 +50,10 @@ class Cover extends React.Component<any, any> {
   componentDidMount() {
     // Polling Spotify every 1 second, probably a bad idea
     const intervalId = setInterval(() => this.listeningTo(), 1000);
-    this.setState({ intervalId });
+    const interval2Id = setInterval(() => this.listeningInfo(), 1000);
+    this.setState({ intervalId, interval2Id});
     this.listeningTo();
+    this.listeningInfo();
   }
 
   togglePlayPause() {
@@ -60,6 +63,16 @@ class Cover extends React.Component<any, any> {
       currently_playing.is_playing = !currently_playing.is_playing;
       this.setState({
         currently_playing
+      })
+    }
+  }
+
+  toggleShuffleInstant() {
+    if (this.state.playbackInfo) {
+      let playbackInfo = this.state.playbackInfo;
+      playbackInfo.shuffle_state = !playbackInfo.shuffle_state;
+      this.setState({
+        playbackInfo
       })
     }
   }
@@ -100,6 +113,26 @@ class Cover extends React.Component<any, any> {
       }
 
   }
+
+    async listeningInfo() {
+        let res = await fetch('https://api.spotify.com/v1/me/player', {
+            method: 'GET',
+            headers: new Headers({
+                'Authorization': 'Bearer ' + this.props.token
+            })
+        });
+        if (res.status !== 200) {
+            await this.props.lofi.refreshAccessToken();
+            await this.listeningInfo();
+        } else {
+            const playbackInfo = await res.json();
+            console.log(playbackInfo);
+            this.setState({
+                playbackInfo,
+            });
+        }
+
+    }
 
   closeApp() {
     if (this.state.visWindow) {
@@ -229,11 +262,17 @@ class Cover extends React.Component<any, any> {
     }
   }
 
+  getShuffleState() {
+    if (this.state.playbackInfo) {
+      return this.state.playbackInfo.shuffle_state;
+    }
+  }
+
   render() {
     return (
       <>
         <Menu parent={this} visIcon={this.visIconFromType()}/>
-        { this.state.currently_playing ? <TrackInfo side={this.props.side} track={this.getTrack()} artist={this.getArtist()} /> : null }
+        { this.state.currently_playing && this.state.playbackInfo ? <TrackInfo side={this.props.side} track={this.getTrack()} artist={this.getArtist()} /> : null }
         <div className='cover full' style={ this.getCoverArt() ? { backgroundImage: 'url(' + this.getCoverArt() + ')' } : { }} />
         <RecreateChildOnPropsChange visType={this.state.visualizationType} visId={this.state.visualizationId}>
           <Visualizer visId={this.state.visualizationId} currentlyPlaying={this.state.currently_playing} show={this.state.visualizationType === VISUALIZATION_TYPE.SMALL} />
