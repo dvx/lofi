@@ -75,6 +75,18 @@ class Cover extends React.Component<any, any> {
     }
   }
 
+  getTrackProgress() {
+    if (this.state.currently_playing) {
+      // dodge division by zero
+      if (this.state.currently_playing.item.duration_ms == 0) {
+        return 100
+      } else {
+        return (this.state.currently_playing.progress_ms / this.state.currently_playing.item.duration_ms) * 100
+      }
+    }
+    return 0
+  }
+
   async listeningTo() {
       let res = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
         method: 'GET',
