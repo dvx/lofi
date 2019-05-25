@@ -26,7 +26,9 @@ class Cover extends React.Component<any, any> {
       currently_playing: null,
       visWindow: null,
       visualizationType: VISUALIZATION_TYPE.NONE,
-      visualizationId: 0
+      visualizationId: 0,
+      volume: 0,
+      stateChange: new Date(1900, 1, 1)
     }
 
     const that = this;
@@ -47,10 +49,21 @@ class Cover extends React.Component<any, any> {
   }
 
   componentDidMount() {
+    const that = this;
     // Polling Spotify every 1 second, probably a bad idea
     const intervalId = setInterval(() => this.listeningTo(), 1000);
     this.setState({ intervalId });
-    this.listeningTo();
+
+    function onMouseWheel(e: WheelEvent) {
+      console.log('delta: ' + e.deltaY * 0.1);
+      if (e.deltaY > 0 && that.state.volume < 100) {
+        that.setVolume(that.state.volume + e.deltaY * 0.1);
+      } else if (e.deltaY < 0 && that.state.volume > 0) {
+        that.setVolume(that.state.volume - Math.abs(e.deltaY * 0.1));
+      }
+    }
+
+    document.getElementById('visible-ui').addEventListener("mousewheel", onMouseWheel);    
   }
 
   togglePlayPause() {
@@ -75,6 +88,22 @@ class Cover extends React.Component<any, any> {
     }
   }
 
+  getVolume() {
+    return this.state.volume;
+  }
+
+  async setVolume(percent: number) {
+    if (percent > 100) percent = 100;
+    if (percent < 0) percent = 0;
+    this.setState({volume: percent, stateChange: new Date() });
+    let res = await fetch('https://api.spotify.com/v1/me/player/volume?volume_percent=' + Math.round(percent), {
+      method: 'PUT',
+      headers: new Headers({
+        'Authorization': 'Bearer '+ this.props.token
+      })
+    });    
+  }
+
   getTrackProgress() {
     if (this.state.currently_playing) {
       // dodge division by zero
@@ -88,7 +117,7 @@ class Cover extends React.Component<any, any> {
   }
 
   async listeningTo() {
-      let res = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+      let res = await fetch('https://api.spotify.com/v1/me/player', {
         method: 'GET',
         headers: new Headers({
           'Authorization': 'Bearer '+ this.props.token
@@ -104,8 +133,16 @@ class Cover extends React.Component<any, any> {
         const currently_playing = await res.json();
         // console.log(currently_playing);
         this.setState({
-          currently_playing,
+          currently_playing
         });
+
+        // trust UI while scroll wheel level, e.g. volume, stabilizes (10 second leeway)
+        if (((new Date()).getTime() - this.state.stateChange.getTime()) > 10000) {
+          this.setState( {
+            volume: currently_playing.device.volume_percent
+          })
+        }
+
         if (this.state.bigVisualization) {
           this.state.visWindow.webContents.send('currently-playing', currently_playing);
         }
