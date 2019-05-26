@@ -93,6 +93,7 @@ class Lofi extends React.Component<any, any> {
     let animationId: number;
     let mouseX: number;
     let mouseY: number;
+
     function onMouseDown(e: any) {
         if (leftMousePressed(e) && !e.target['classList'].contains('not-draggable')) {
             mouseX = e.clientX;  

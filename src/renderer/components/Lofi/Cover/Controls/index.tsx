@@ -61,6 +61,7 @@ class Controls extends React.Component<any, any> {
         <a onClick={this.forward.bind(this)} className='control-btn secondary-control not-draggable skip'><i className="fa fa-step-forward not-draggable"></i></a>
         </p>
         <div className='progress' style={{width: this.props.parent.getTrackProgress() + '%'}}/>
+        <div className='volume' style={{height: this.props.parent.getVolume() + '%'}} />
       </div>
     );
   }
