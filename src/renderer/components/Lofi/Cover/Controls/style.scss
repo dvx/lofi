@@ -55,7 +55,7 @@
 }
 
 .progress {
-    height: 2px;
+    height: 1px;
     background: #ccffe15c;
     position: absolute;
     bottom: 0;
@@ -63,9 +63,9 @@
 
 .volume {
     height: 100%;
-    background: #ffccf25c;
-    bottom: 0;
-    width: 2px;
+    background: #ccffe15c;
+    bottom: 1px;
+    width: 1px;
     position: absolute;
 
 }
