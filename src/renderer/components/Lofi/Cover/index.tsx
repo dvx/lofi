@@ -131,6 +131,17 @@ class Cover extends React.Component<any, any> {
         await this.listeningTo();
       } else {
         const currently_playing = await res.json();
+        // Fixes https://github.com/dvx/lofi/issues/31
+        // The solution is a bit ugly: seek to current position so Spotify doesn't kill our current active_device
+        if (!currently_playing.is_playing) {
+          await fetch('https://api.spotify.com/v1/me/player/seek?position_ms=' + currently_playing.progress_ms, {
+            method: 'PUT',
+            headers: new Headers({
+              'Authorization': 'Bearer '+ this.props.token
+            })
+          });
+        }
+
         // console.log(currently_playing);
         this.setState({
           currently_playing
