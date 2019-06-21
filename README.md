@@ -61,6 +61,17 @@ $ yarn run start
 
 Use `yarn run production` (instead of `development`) to start the front-end in non-interactive mode.
 
+## `node-sass` compatibility
+
+You might need to change the `node-sass` version inside `package.json` to be compliant with your `nodejs` version or the `node-gyp` build might fail.
+  
+NodeJS  | Minimum node-sass version | Node Module
+--------|--------------------------|------------
+Node 12 | 4.12+                    | 72
+Node 11 | 4.10+                    | 67
+Node 10 | 4.9+                     | 64
+Node 8  | 4.5.3+                   | 57
+
 # Bugs, issues, and contributing
 See something you don't like? Have a feature request? Is your computer on fire? Feel free to open an issue or make a pull request. The more the merrier.
 
