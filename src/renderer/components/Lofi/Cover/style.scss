@@ -3,3 +3,9 @@
     transition: .2s;
     box-shadow: 0px 0px 64px black;
 }
+
+.cover.pause {
+    transition: .1s;
+    filter: blur(2px) grayscale(50%);
+    transform: scale(1.05);
+}
