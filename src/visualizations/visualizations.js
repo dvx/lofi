@@ -7,7 +7,7 @@ export const visualizations = [
     blue_wave,
     rainbow_road,
     string_theory,
-    seascape,
+    // seascape,
 ];
 
 export const nextVisualization = function(currentVisualization) {
