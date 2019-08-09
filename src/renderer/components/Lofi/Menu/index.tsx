@@ -15,7 +15,7 @@ class Menu extends React.Component<any, any> {
   }
 
   showSettings() {
-    window.open("https://www.google.com");
+    this.props.parent.showSettings();
   }
 
   toggleShuffle() {

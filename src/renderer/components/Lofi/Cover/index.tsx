@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { remote, screen, ipcMain, ipcRenderer } from 'electron'
+import NewWindow from 'react-new-window';
 import { MACOS } from '../../../../constants'
 import * as path from 'path';
 import * as url from 'url';
@@ -25,6 +26,7 @@ class Cover extends React.Component<any, any> {
     this.state = {
       currently_playing: null,
       visWindow: null,
+      showSettings: false,
       visualizationType: VISUALIZATION_TYPE.NONE,
       visualizationId: 0,
       volume: 0,
@@ -170,6 +172,13 @@ class Cover extends React.Component<any, any> {
 
   }
 
+  showSettings() {
+    console.log(this.refs.wnd);
+    if (!this.state.showSettings) {
+      this.setState({showSettings: true})
+    }
+  }
+
   closeApp() {
     if (this.state.visWindow) {
       this.state.visWindow.close();
@@ -206,7 +215,7 @@ class Cover extends React.Component<any, any> {
         // We need slightly different logic for where the window pops up because Windows is full screen while MacOS isn't
         if (MACOS) {
           // Just show regular window instead
-          visWindow.setPosition(screen.getCursorScreenPoint().x - 400, screen.getCursorScreenPoint().y);
+          visWindow.setPosition(remote.screen.getCursorScreenPoint().x - 400, remote.screen.getCursorScreenPoint().y);
           visWindow.setSize(800, 600);
         } else {
           visWindow.setPosition(remote.getCurrentWindow().getBounds().x, remote.getCurrentWindow().getBounds().y);
@@ -287,7 +296,7 @@ class Cover extends React.Component<any, any> {
         return 'Spotify';
       } else if (this.state.currently_playing.currently_playing_type == 'episode') {
         return 'Spotify';
-      }      
+      }
     }
     return 'n/a';
   }
@@ -301,6 +310,7 @@ class Cover extends React.Component<any, any> {
   render() {
     return (
       <>
+        { this.state.showSettings ? <NewWindow ref='wnd' center='screen' title="asd"><h1>Hi 👋</h1></NewWindow> : null }
         <Menu parent={this} visIcon={this.visIconFromType()}/>
         { this.state.currently_playing ? <TrackInfo side={this.props.side} track={this.getTrack()} artist={this.getArtist()} /> : null }
         <div className={'cover full ' +  (this.getPlayState() ? '' : 'pause') } style={ this.getCoverArt() ? { backgroundImage: 'url(' + this.getCoverArt() + ')' } : { }} />

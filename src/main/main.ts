@@ -50,6 +50,19 @@ function createWindow() {
     }
   });
 
+  mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
+    if (frameName === 'modal') {
+      // open window as modal
+      event.preventDefault()
+      Object.assign(options, {
+        modal: true,
+        parent: mainWindow,
+        width: 100,
+        height: 100
+      })
+    }
+  })
+  
   mainWindow.setAlwaysOnTop(true, "floating", 1);
   mainWindow.setVisibleOnAllWorkspaces(true);
 
@@ -124,9 +137,16 @@ function createWindow() {
   });
 
   // Open external URLs in default OS browser
-  mainWindow.webContents.on('new-window', function (event: Electron.Event, url: string) {
-    event.preventDefault();
-    shell.openExternal(url);
+  mainWindow.webContents.on('new-window', function (event: Electron.NewWindowEvent, url: string, frameName: string, disposition: string, options: any) {
+    if (frameName == 'help') {
+      event.preventDefault();
+      shell.openExternal(url);
+    } else {
+      console.log(event);
+      //let modal = new BrowserWindow();
+      //modal.webContents.loadURL(url);
+      //modal.webContents.openDevTools({mode:"detach"});
+    }
   });
 }
 

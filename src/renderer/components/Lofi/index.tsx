@@ -113,7 +113,7 @@ class Lofi extends React.Component<any, any> {
 
     let moveWindow = (function() {
         ipcRenderer.send('windowMoving', { mouseX, mouseY });
-        if (screen.getCursorScreenPoint().x - screen.getDisplayMatching(remote.getCurrentWindow().getBounds()).bounds.x < screen.getDisplayMatching(remote.getCurrentWindow().getBounds()).bounds.width / 2) {
+        if (remote.screen.getCursorScreenPoint().x - remote.screen.getDisplayMatching(remote.getCurrentWindow().getBounds()).bounds.x < remote.screen.getDisplayMatching(remote.getCurrentWindow().getBounds()).bounds.width / 2) {
           that.setState({window_side: SIDE.LEFT});
         } else {
           that.setState({window_side: SIDE.RIGHT});
