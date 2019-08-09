@@ -54,11 +54,11 @@
     color: #a53e3e;
 }
 
-.menu li a.help:hover {
+.menu li a.settings:hover {
     color: #979eff;
 }
 
-.menu li a.help:active {
+.menu li a.settings:active {
     color: #50569e;
 }
 
@@ -68,6 +68,14 @@
 
 .menu li a.vis:active {
     color: #3d9963;
+}
+
+.menu li a.shuffle:hover {
+    color: #fadfa4;
+}
+
+.menu li a.shuffle:active {
+    color: #b47f2e;
 }
 
 .menu .logo-typo {

@@ -28,7 +28,8 @@ class Cover extends React.Component<any, any> {
       visualizationType: VISUALIZATION_TYPE.NONE,
       visualizationId: 0,
       volume: 0,
-      stateChange: new Date(1900, 1, 1)
+      stateChange: new Date(1900, 1, 1),
+      shuffle: null
     }
 
     const that = this;
@@ -55,11 +56,11 @@ class Cover extends React.Component<any, any> {
     this.setState({ intervalId });
 
     function onMouseWheel(e: WheelEvent) {
-      console.log('delta: ' + e.deltaY * 0.1);
-      if (e.deltaY > 0 && that.state.volume < 100) {
-        that.setVolume(that.state.volume + e.deltaY * 0.1);
-      } else if (e.deltaY < 0 && that.state.volume > 0) {
-        that.setVolume(that.state.volume - Math.abs(e.deltaY * 0.1));
+      // console.log('delta: ' + e.deltaY * 0.1);
+      if (e.deltaY > 0 && that.state.volume > 0) {
+        that.setVolume(that.state.volume - e.deltaY * 0.1);
+      } else if (e.deltaY < 0 && that.state.volume < 100) {
+        that.setVolume(that.state.volume + Math.abs(e.deltaY * 0.1));
       }
     }
 
@@ -142,7 +143,15 @@ class Cover extends React.Component<any, any> {
           });
         }
 
-        // console.log(currently_playing);
+        // NOTE: debugging purposes
+        //console.log(currently_playing);
+
+        if (currently_playing.context && currently_playing.context.type === "playlist") {
+          console.log("playing a playlist; we can potentially shuffle");
+        } else {
+          console.log("shuffle unavailable for this track")
+        }
+
         this.setState({
           currently_playing
         });
