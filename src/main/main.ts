@@ -149,7 +149,9 @@ function createWindow() {
         width: 400,
         height: 200,
         frame: true,
-        resizable: true
+        resizable: true,
+        skipTaskbar: true,
+        title: "Lofi Settings"
       });
       //@ts-ignore
       event.newGuest = new BrowserWindow(options);
