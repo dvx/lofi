@@ -138,14 +138,23 @@ function createWindow() {
 
   // Open external URLs in default OS browser
   mainWindow.webContents.on('new-window', function (event: Electron.NewWindowEvent, url: string, frameName: string, disposition: string, options: any) {
-    if (frameName == 'help') {
-      event.preventDefault();
+    event.preventDefault();
+    if (frameName === 'help') {
       shell.openExternal(url);
-    } else {
-      console.log(event);
-      //let modal = new BrowserWindow();
-      //modal.webContents.loadURL(url);
-      //modal.webContents.openDevTools({mode:"detach"});
+    } else if(frameName === 'settings') {
+      // open window as modal
+      Object.assign(options, {
+        modal: true,
+        parent: mainWindow,
+        width: 400,
+        height: 200,
+        frame: true,
+        resizable: true
+      });
+      //@ts-ignore
+      event.newGuest = new BrowserWindow(options);
+      //@ts-ignore
+      event.newGuest.setMenu(null);
     }
   });
 }

@@ -10,6 +10,7 @@ import Controls from './Controls';
 import TrackInfo from './TrackInfo';
 import Visualizer from './Visualizer';
 import Waiting from './Waiting';
+import Settings from '../Settings';
 import RecreateChildOnPropsChange from '../../util/RecreateChildOnPropsChange';
 import { nextVisualization, prevVisualization } from '../../../../visualizations/visualizations.js';
 import './style.scss';
@@ -173,7 +174,6 @@ class Cover extends React.Component<any, any> {
   }
 
   showSettings() {
-    console.log(this.refs.wnd);
     if (!this.state.showSettings) {
       this.setState({showSettings: true})
     }
@@ -310,7 +310,7 @@ class Cover extends React.Component<any, any> {
   render() {
     return (
       <>
-        { this.state.showSettings ? <NewWindow ref='wnd' center='screen' title="asd"><h1>Hi 👋</h1></NewWindow> : null }
+        { this.state.showSettings ? <NewWindow copyStyles={false} center='screen' name="settings"><Settings className="settings-wnd"/></NewWindow> : null }
         <Menu parent={this} visIcon={this.visIconFromType()}/>
         { this.state.currently_playing ? <TrackInfo side={this.props.side} track={this.getTrack()} artist={this.getArtist()} /> : null }
         <div className={'cover full ' +  (this.getPlayState() ? '' : 'pause') } style={ this.getCoverArt() ? { backgroundImage: 'url(' + this.getCoverArt() + ')' } : { }} />
