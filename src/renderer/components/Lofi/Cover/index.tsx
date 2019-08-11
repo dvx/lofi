@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { remote, screen, ipcMain, ipcRenderer } from 'electron'
-import NewWindow from 'react-new-window';
 import { MACOS } from '../../../../constants'
 import * as path from 'path';
 import * as url from 'url';
@@ -10,7 +9,6 @@ import Controls from './Controls';
 import TrackInfo from './TrackInfo';
 import Visualizer from './Visualizer';
 import Waiting from './Waiting';
-import Settings from '../Settings';
 import RecreateChildOnPropsChange from '../../util/RecreateChildOnPropsChange';
 import { nextVisualization, prevVisualization } from '../../../../visualizations/visualizations.js';
 import './style.scss';
@@ -68,6 +66,13 @@ class Cover extends React.Component<any, any> {
     }
 
     document.getElementById('visible-ui').addEventListener("mousewheel", onMouseWheel);    
+  }
+
+  componentWillUnmount() {
+    if (this.state.intervalId) {
+      console.log('Clearing playing interval')
+      clearInterval(this.state.intervalId);
+    }
   }
 
   togglePlayPause() {
@@ -130,7 +135,7 @@ class Cover extends React.Component<any, any> {
       if (res.status === 204) {
         // 204 is the "Nothing playing" Spotify response
         // See: https://github.com/zmb3/spotify/issues/56
-      } else if (res.status !== 200) {
+      } else if (res.status !== 200 && this.props.lofi.state.auth) {
         await this.props.lofi.refreshAccessToken();
         await this.listeningTo();
       } else {
@@ -160,7 +165,7 @@ class Cover extends React.Component<any, any> {
         });
 
         // trust UI while scroll wheel level, e.g. volume, stabilizes (10 second leeway)
-        if (((new Date()).getTime() - this.state.stateChange.getTime()) > 10000) {
+        if (this.state.stateChange && ((new Date()).getTime() - this.state.stateChange.getTime()) > 10000) {
           this.setState( {
             volume: currently_playing.device.volume_percent
           })
@@ -170,13 +175,6 @@ class Cover extends React.Component<any, any> {
           this.state.visWindow.webContents.send('currently-playing', currently_playing);
         }
       }
-
-  }
-
-  showSettings() {
-    if (!this.state.showSettings) {
-      this.setState({showSettings: true})
-    }
   }
 
   closeApp() {
@@ -310,7 +308,6 @@ class Cover extends React.Component<any, any> {
   render() {
     return (
       <>
-        { this.state.showSettings ? <NewWindow copyStyles={true} name="settings"><Settings className="settings-wnd"/></NewWindow> : null }
         <Menu parent={this} visIcon={this.visIconFromType()}/>
         { this.state.currently_playing ? <TrackInfo side={this.props.side} track={this.getTrack()} artist={this.getArtist()} /> : null }
         <div className={'cover full ' +  (this.getPlayState() ? '' : 'pause') } style={ this.getCoverArt() ? { backgroundImage: 'url(' + this.getCoverArt() + ')' } : { }} />

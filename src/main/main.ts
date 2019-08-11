@@ -125,7 +125,7 @@ function createWindow() {
 
   mainWindow.webContents.on('new-window', function (event: Electron.NewWindowEvent, url: string, frameName: string, disposition: string, options: any) {
     event.preventDefault();
-    if (frameName === 'help') {
+    if (frameName === 'help' || frameName === 'auth') {
       // Open help URL in default OS browser
       shell.openExternal(url);
     } else if(frameName === 'settings') {

@@ -2,7 +2,9 @@ import * as React from 'react';
 import * as settings from 'electron-settings';
 import { ipcRenderer, screen, remote } from 'electron'
 import { startAuthServer, stopAuthServer } from '../../../main/server';
+import NewWindow from 'react-new-window';
 import Cover from './Cover';
+import Settings from './Settings';
 import Welcome from './Welcome';
 import './style.scss'
 
@@ -17,6 +19,7 @@ class Lofi extends React.Component<any, any> {
     this.state = {
       access_token: settings.get('spotify.access_token'),
       refresh_token: settings.get('spotify.refresh_token'),
+      showSettings: false,
       window_side: SIDE.LEFT,
       auth: false,
     }
@@ -53,8 +56,9 @@ class Lofi extends React.Component<any, any> {
         auth: true
       });
     } else {
-      // Something is very, very wrong -- nuke the settings
-      settings.setAll({});
+      // Something is very, very wrong -- nuke auth settings
+      settings.delete('spotify.access_token');
+      settings.delete('spotify.refresh_token');
       this.setState({
         refresh_token: null,
         access_token: null,
@@ -65,6 +69,7 @@ class Lofi extends React.Component<any, any> {
   }
 
   async handleAuth() {
+    console.log('Starting authentication process...');
     startAuthServer();
     // No token data! Make sure we wait for authentication
     if (!this.state.refresh_token) {
@@ -129,10 +134,21 @@ class Lofi extends React.Component<any, any> {
     document.getElementById('visible-ui').addEventListener("mousedown", onMouseDown);
   }
 
+  showSettings() {
+    if (!this.state.showSettings) {
+      this.setState({showSettings: true})
+    }
+  }
+
+  hideSettings() {
+    this.setState({showSettings: false});
+  }
+
   render() {
     return (
       <div id='visible-ui' className='click-on'>
-        { this.state.auth ? <Cover side={this.state.window_side} lofi={this} token={this.state.access_token} /> : <Welcome /> }
+        { this.state.showSettings ? <NewWindow onUnload={this.hideSettings.bind(this)} copyStyles={true} name="settings"><Settings lofi={this} className="settings-wnd"/></NewWindow> : null }
+        { this.state.auth ? <Cover side={this.state.window_side} lofi={this} token={this.state.access_token} /> : <Welcome lofi={this} /> }
       </div>
     );
   }

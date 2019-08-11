@@ -21,6 +21,6 @@ export const CONTAINER = {
 };
 
 export const SETTINGS_CONTAINER = {
-    VERTICAL: 300,
-    HORIZONTAL: 600
+    VERTICAL: 400,
+    HORIZONTAL: 640
 }
