@@ -19,3 +19,8 @@ export const CONTAINER = {
     VERTICAL: MACOS_MOJAVE ? 4000 : 800,
     HORIZONTAL: 800
 };
+
+export const SETTINGS_CONTAINER = {
+    VERTICAL: 300,
+    HORIZONTAL: 600
+}

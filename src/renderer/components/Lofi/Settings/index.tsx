@@ -8,26 +8,42 @@ class Settings extends React.Component<any, any> {
 
   render() {
       return(
-        <form className="form-horizontal settings-wnd">
-        <fieldset>
+        <div className="settings-wnd">
+          <form className="form-horizontal">
+          <fieldset>
 
-        <legend>Shuffle settings</legend>
+          <legend>Shuffle Settings</legend>
 
-        <div className="form-group">
-        <label className="control-label">Duplicates</label>
-        <div>
-            <input type="checkbox" name="vehicle1" value="Bike" /> Allow playing the same song in a row
+          <div className="form-group">
+          <label className="control-label">Duplicates</label>
+          <div>
+              <input type="checkbox" name="repeat" id="repeat"/> <label htmlFor="repeat">Allow playing the same song in a row</label>
+          </div>
+          <label className="control-label">Song priority</label>
+              <div>
+
+                <select className="priority-picker">
+                  <option value="random">Totally random</option>
+                  <option value="fav">Play favorites more often</option>
+                  <option value="nofav">Play favorites less often</option>
+                </select>
+              </div>
+          </div>
+
+          </fieldset>
+          <fieldset>
+
+          <legend>Spotify</legend>
+
+          <div className="form-group">
+          <div>
+              <button>Log out</button>
+          </div>
+          </div>
+
+          </fieldset>
+          </form>
         </div>
-        <label className="control-label">Song priority</label>
-            <div>
-                <input type="radio" name="gender" value="male" /> Totally random<br/>
-                <input type="radio" name="gender" value="female" /> Prioritize favorites<br/>
-                <input type="radio" name="gender" value="other" /> Prioritize non-favorites<br/>  
-            </div>
-        </div>
-
-        </fieldset>
-        </form>
       )
   }
 }

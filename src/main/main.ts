@@ -6,7 +6,7 @@ import { spawn } from 'child_process';
 import { chmodSync } from 'fs';
 import { fixPathForAsarUnpack }  from 'electron-util';
 import { register } from 'electron-localshortcut';
-import { HEIGHT, WIDTH_RATIO, MACOS, MACOS_MOJAVE, WINDOWS, CONTAINER, WIDTH } from '../constants'
+import { HEIGHT, WIDTH_RATIO, MACOS, MACOS_MOJAVE, WINDOWS, CONTAINER, SETTINGS_CONTAINER, WIDTH } from '../constants'
 import { nextVisualization, prevVisualization } from '../visualizations/visualizations.js';
 
 // Visualizations look snappier on 60Hz refresh rate screens if we disable vsync
@@ -50,19 +50,6 @@ function createWindow() {
     }
   });
 
-  mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    if (frameName === 'modal') {
-      // open window as modal
-      event.preventDefault()
-      Object.assign(options, {
-        modal: true,
-        parent: mainWindow,
-        width: 100,
-        height: 100
-      })
-    }
-  })
-  
   mainWindow.setAlwaysOnTop(true, "floating", 1);
   mainWindow.setVisibleOnAllWorkspaces(true);
 
@@ -136,27 +123,33 @@ function createWindow() {
     mainWindow.setIgnoreMouseEvents(false);
   });
 
-  // Open external URLs in default OS browser
   mainWindow.webContents.on('new-window', function (event: Electron.NewWindowEvent, url: string, frameName: string, disposition: string, options: any) {
     event.preventDefault();
     if (frameName === 'help') {
+      // Open help URL in default OS browser
       shell.openExternal(url);
     } else if(frameName === 'settings') {
-      // open window as modal
+      // Open settings window as modal
       Object.assign(options, {
-        modal: true,
+        x: 0 - SETTINGS_CONTAINER.HORIZONTAL / 2 + screen.getPrimaryDisplay().size.width / 2,
+        y: 0 - SETTINGS_CONTAINER.VERTICAL / 2 + screen.getPrimaryDisplay().size.height / 2,
+        height: SETTINGS_CONTAINER.VERTICAL,
+        width: SETTINGS_CONTAINER.HORIZONTAL,
+        modal: false,
         parent: mainWindow,
-        width: 400,
-        height: 200,
         frame: true,
         resizable: true,
-        skipTaskbar: true,
+        maximizable: true,
         title: "Lofi Settings"
       });
       //@ts-ignore
       event.newGuest = new BrowserWindow(options);
       //@ts-ignore
       event.newGuest.setMenu(null);
+      //@ts-ignore
+      event.newGuest.setResizable(true);
+      //@ts-ignore
+      event.newGuest.webContents.openDevTools({mode:"detach"});
     }
   });
 }
