@@ -110,7 +110,7 @@ class Cover extends React.Component<any, any> {
       headers: new Headers({
         'Authorization': 'Bearer '+ this.props.token
       })
-    });    
+    });
   }
 
   getTrackProgress() {
@@ -135,7 +135,7 @@ class Cover extends React.Component<any, any> {
       if (res.status === 204) {
         // 204 is the "Nothing playing" Spotify response
         // See: https://github.com/zmb3/spotify/issues/56
-      } else if (res.status !== 200 && this.props.lofi.state.auth) {
+      } else if (res.status !== 200) {
         await this.props.lofi.refreshAccessToken();
         await this.listeningTo();
       } else {
@@ -184,6 +184,41 @@ class Cover extends React.Component<any, any> {
     }
     let mainWindow = remote.getCurrentWindow()
     mainWindow.close()
+  }
+
+  async shuffleAndPlay() {
+    console.log('Shuffling and playing...');
+    if (this.state.currently_playing.context && this.state.currently_playing.context.type === "playlist") {
+      const playlist_id = this.state.currently_playing.context.uri.split(":").reverse()[0];
+      const res = await fetch('https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks', {
+        method: 'GET',
+        headers: new Headers({
+          'Authorization': 'Bearer '+ this.props.token
+        })
+      });
+      if (res.status === 200) {
+        let tracks: string[] = [ ];
+        const playlist = (await res.json());
+        playlist.items.map((item: any) => {
+          if (item.track.type === 'track') {
+            tracks.push('spotify:track:' + item.track.id);
+          }
+        });
+
+        // One-line array shuffle
+        // See: https://gist.github.com/guilhermepontes/17ae0cc71fa2b13ea8c20c94c5c35dc4#gistcomment-2271465
+        // Also: http://www.robweir.com/blog/2010/02/microsoft-random-browser-ballot.html
+        let shuffled = tracks.map((a: any) => [Math.random(),a]).sort((a,b) => a[0]-b[0]).map((a) => a[1]);
+        console.log(shuffled);
+        fetch('https://api.spotify.com/v1/me/player/play', {
+          method: 'PUT',
+          headers: new Headers({
+            'Authorization': 'Bearer '+ this.props.token
+          }),
+          body: JSON.stringify({ uris: ["spotify:album:1Je1IMUlBXcx1Fz0WE7oPT"], context_uri: 'spotify:album:1Je1IMUlBXcx1Fz0WE7oPT'})
+        })
+      }
+    }
   }
 
   cycleVisualizationType() {

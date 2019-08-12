@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as settings from 'electron-settings';
-import { startAuthServer } from '../../../../main/server';
+import { remote } from 'electron'
 import './style.scss';
 
 class Settings extends React.Component<any, any> {
@@ -9,14 +9,9 @@ class Settings extends React.Component<any, any> {
   }
 
   nukeSpotifySettings() {
-    settings.delete('spotify.access_token');
-    settings.delete('spotify.refresh_token');
-    this.props.lofi.setState({
-      refresh_token: null,
-      access_token: null,
-      auth: false
-    });
-    this.props.lofi.handleAuth();
+    settings.deleteAll();
+    remote.app.relaunch();
+    remote.app.exit(0);
   }
 
   render() {
@@ -62,17 +57,17 @@ class Settings extends React.Component<any, any> {
                   <option value="fav">Play popular songs more often</option>
                   <option value="nofav">Play popular songs less often</option>
                 </select>
-              </div>              
+              </div>
           </div>
 
           </fieldset>
           <fieldset>
 
-          <legend>Spotify</legend>
+          <legend>Reset</legend>
 
           <div className="form-group">
           <div>
-            <a href="#" onClick={this.nukeSpotifySettings.bind(this)} className="red-button">Log out</a>
+            <a href="#" onClick={this.nukeSpotifySettings.bind(this)} className="red-button">Reset to factory defaults</a>
           </div>
           </div>
 

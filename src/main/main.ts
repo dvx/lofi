@@ -1,13 +1,15 @@
-import { app, BrowserWindow, ipcMain, screen, shell, ipcRenderer } from 'electron';
+import { app, BrowserWindow, ipcMain, screen, shell } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import '../../build/release/black-magic.node';
 import { spawn } from 'child_process';
 import { chmodSync } from 'fs';
 import { fixPathForAsarUnpack }  from 'electron-util';
 import { register } from 'electron-localshortcut';
-import { HEIGHT, WIDTH_RATIO, MACOS, MACOS_MOJAVE, WINDOWS, CONTAINER, SETTINGS_CONTAINER, WIDTH } from '../constants'
-import { nextVisualization, prevVisualization } from '../visualizations/visualizations.js';
+import * as settings from 'electron-settings';
+import { HEIGHT, MACOS, WINDOWS, CONTAINER, SETTINGS_CONTAINER, WIDTH } from '../constants';
+
+// binaries
+import '../../build/release/black-magic.node';
 
 // Visualizations look snappier on 60Hz refresh rate screens if we disable vsync
 app.commandLine.appendSwitch("disable-gpu-vsync");
@@ -31,10 +33,18 @@ register('D', () => {
 });
 
 function createWindow() {
+  if (!settings.has('lofi.window')) {
+    settings.set('lofi.window', {
+      x: 0 - CONTAINER.HORIZONTAL / 2 + screen.getPrimaryDisplay().size.width / 2,
+      y: 0 - CONTAINER.VERTICAL / 2 + screen.getPrimaryDisplay().size.height / 2,
+      remember: true
+    });
+  }
+
   // Create the browser window
   mainWindow = new BrowserWindow({
-    x: 0 - CONTAINER.HORIZONTAL / 2 + screen.getPrimaryDisplay().size.width / 2,
-    y: 0 - CONTAINER.VERTICAL / 2 + screen.getPrimaryDisplay().size.height / 2,
+    x: Number(settings.get('lofi.window.x')),
+    y: Number(settings.get('lofi.window.y')),
     height: CONTAINER.VERTICAL,
     width: CONTAINER.HORIZONTAL,
     frame: false,
@@ -111,8 +121,15 @@ function createWindow() {
     }
   });
 
-  ipcMain.on('windowMoved', () => {
-    // Do somehting when dragging stop
+  ipcMain.on('windowMoved', (e: Event, { mouseX, mouseY }: { mouseX: number, mouseY: number }) => {
+    if (Boolean(settings.get('lofi.window.remember'))) {
+      const { x, y } = screen.getCursorScreenPoint();
+      settings.set('lofi.window', {
+        x: x - mouseX,
+        y: y - mouseY,
+        remember: true
+      });
+    }
   });
 
   ipcMain.on('windowIgnoreMouseEvents', () => {

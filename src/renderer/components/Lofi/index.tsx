@@ -110,7 +110,7 @@ class Lofi extends React.Component<any, any> {
 
     function onMouseUp(e: MouseEvent) {
         if (leftMousePressed(e)) {
-            ipcRenderer.send('windowMoved');
+            ipcRenderer.send('windowMoved', { mouseX, mouseY });
             document.removeEventListener('mouseup', onMouseUp)
             cancelAnimationFrame(animationId)
         }
