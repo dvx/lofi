@@ -10,6 +10,7 @@ import TrackInfo from './TrackInfo';
 import Visualizer from './Visualizer';
 import Waiting from './Waiting';
 import RecreateChildOnPropsChange from '../../util/RecreateChildOnPropsChange';
+import { LOFI_SHUFFLED_PLAYLIST_NAME } from '../../../../constants'
 import { nextVisualization, prevVisualization } from '../../../../visualizations/visualizations.js';
 import './style.scss';
 
@@ -196,8 +197,7 @@ class Cover extends React.Component<any, any> {
     // 3) Create a "Shuffled by Lofi" playlist and get ID
     // 4) Shuffle the tracks
     // 5) Put them in the shuffled order in the playlist ID
-    // 6) Play that playlist ID
-
+    // 6) Play that playlist ID    
     const playlist_id = this.state.currently_playing.context.uri.split(":").reverse()[0];
     let res = await fetch('https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks', {
       method: 'GET',
@@ -214,12 +214,21 @@ class Cover extends React.Component<any, any> {
           tracks.push('spotify:track:' + item.track.id);
         }
       });
+      
 
       // One-line array shuffle
       // See: https://gist.github.com/guilhermepontes/17ae0cc71fa2b13ea8c20c94c5c35dc4#gistcomment-2271465
       // Also: http://www.robweir.com/blog/2010/02/microsoft-random-browser-ballot.html
       let shuffled = tracks.map((a: any) => [Math.random(),a]).sort((a,b) => a[0]-b[0]).map((a) => a[1]);
       console.log(shuffled);
+
+      const all_playlists = await this.getAllPlaylists();
+      for (let playlist of all_playlists) {
+        if (playlist.name === LOFI_SHUFFLED_PLAYLIST_NAME) {
+          
+        }
+      }      
+      return;
 
       // Play the generated playlist
       fetch('https://api.spotify.com/v1/me/player/play', {
@@ -232,9 +241,13 @@ class Cover extends React.Component<any, any> {
     }
   }
 
-  async getAllPlaylists(limit = 2) {
+  async createLofiPlaylist() {
+
+  }
+
+  async getAllPlaylists(limit = 50) {
     let playlists: any[] = [ ];
-    let res = await fetch('https://api.spotify.com/v1/me/playlits?limit=' + limit,  {
+    let res = await fetch('https://api.spotify.com/v1/me/playlists?limit=' + limit,  {
       method: 'GET',
       headers: new Headers({
         'Authorization': 'Bearer '+ this.props.token
@@ -243,7 +256,7 @@ class Cover extends React.Component<any, any> {
 
     if (res.status === 200) {
       let playlist_object = (await res.json());
-      playlists.concat(playlist_object.items);
+      playlists = playlists.concat(playlist_object.items);
       while (playlist_object.next) {
         res = await fetch(playlist_object.next,  {
           headers: new Headers({
@@ -252,11 +265,12 @@ class Cover extends React.Component<any, any> {
         })
 
         if (res.status === 200) {
-          let playlist_object = (await res.json());
-          playlists.concat(playlist_object.items);
+          playlist_object = (await res.json());
+          playlists = playlists.concat(playlist_object.items);
         }
       }
-    }    
+    }
+    return playlists;
   }
 
   cycleVisualizationType() {
