@@ -153,7 +153,7 @@ class Cover extends React.Component<any, any> {
         }
 
         // NOTE: debugging purposes
-        //console.log(currently_playing);
+        console.log(currently_playing);
 
         if (currently_playing.context && currently_playing.context.type === "playlist") {
           console.log("playing a playlist; we can potentially shuffle");
