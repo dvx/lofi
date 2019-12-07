@@ -89,3 +89,38 @@
     transition: color 200ms linear;
     text-shadow: 0px 0px 16px #0000003d;
 }
+
+/* Add this attribute to the element that needs a tooltip */
+[data-tooltip] {
+    position: relative;
+    z-index: 2;
+}
+  
+/* Hide the tooltip content by default */
+[data-tooltip]:before,
+[data-tooltip]:after {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Position tooltip above the element */
+[data-tooltip]:before {
+    position: fixed;
+    padding: 8px;
+    width: 72px;
+    margin-left: -36px;
+    bottom: 44%;
+    background-color: rgba(0, 0, 0, 0.38);
+    color: #fff;
+    content: attr(data-tooltip);
+    text-align: center;
+    font-size: 10px;
+    line-height: 1;
+}
+
+/* Show tooltip content on hover */
+[data-tooltip]:hover:before {
+visibility: visible;
+opacity: 1;
+}
