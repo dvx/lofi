@@ -187,6 +187,48 @@ class Cover extends React.Component<any, any> {
     mainWindow.close()
   }
 
+  async getAllTracksFromPlaylist(playlist_id: string): Promise<string[]> {
+    const allTracks: string[] | PromiseLike<string[]> = [ ];
+
+    let res = await fetch('https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks', {
+      method: 'GET',
+      headers: new Headers({
+        'Authorization': 'Bearer '+ this.props.token
+      })
+    });
+    let playlist = (await res.json());
+
+    playlist.items.map((item: any) => {
+      if (item.track.type === 'track') {
+        allTracks.push('spotify:track:' + item.track.id);
+      }
+    });
+
+    // Paginate if we need to
+    // TODO: Add response checking here, we can fail catastrophically
+    while (playlist.next) {
+      res = await fetch(playlist.next, {
+        method: 'GET',
+        headers: new Headers({
+          'Authorization': 'Bearer '+ this.props.token
+        })
+      });
+
+      playlist = (await res.json());
+
+      playlist.items.map((item: any) => {
+        if (item.track.type === 'track') {
+          allTracks.push('spotify:track:' + item.track.id);
+        }
+      });
+    }
+    return allTracks;
+  }
+
+  async findLofiShuffledPlaylist(): Promise<string> {
+    return null;
+  }
+
   async shuffleAndPlay() {
     console.log('Shuffling and playing...');
     // How to shuffle a playlist:
@@ -197,8 +239,10 @@ class Cover extends React.Component<any, any> {
     // 3) Create a "Shuffled by Lofi" playlist and get ID
     // 4) Shuffle the tracks
     // 5) Put them in the shuffled order in the playlist ID
-    // 6) Play that playlist ID    
+    // 6) Play that playlist ID
     const playlist_id = this.state.currently_playing.context.uri.split(":").reverse()[0];
+    const tracks = (await this.getAllTracksFromPlaylist(playlist_id));
+
     let res = await fetch('https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks', {
       method: 'GET',
       headers: new Headers({
@@ -209,12 +253,12 @@ class Cover extends React.Component<any, any> {
     if (res.status === 200) {
       let tracks: string[] = [ ];
       const playlist = (await res.json());
+      console.log(playlist)
       playlist.items.map((item: any) => {
         if (item.track.type === 'track') {
           tracks.push('spotify:track:' + item.track.id);
         }
       });
-      
 
       // One-line array shuffle
       // See: https://gist.github.com/guilhermepontes/17ae0cc71fa2b13ea8c20c94c5c35dc4#gistcomment-2271465
@@ -227,7 +271,7 @@ class Cover extends React.Component<any, any> {
         if (playlist.name === LOFI_SHUFFLED_PLAYLIST_NAME) {
           
         }
-      }      
+      }
       return;
 
       // Play the generated playlist
