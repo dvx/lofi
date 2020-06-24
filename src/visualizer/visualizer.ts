@@ -8,7 +8,9 @@ const byeVisualization = function() {
     let canvas = document.getElementsByTagName('canvas')[0];
     if (canvas) {
         let gl = canvas.getContext('experimental-webgl');
+        // @ts-ignore
         if (gl.getExtension('WEBGL_lose_context')) {
+            // @ts-ignore
             gl.getExtension('WEBGL_lose_context').loseContext();
         }
         document.body.removeChild(canvas);
