@@ -115,8 +115,9 @@ class Cover extends React.Component<any, any> {
   }
 
   getTrackProgress() {
-    if (this.state.currently_playing) {
-      // dodge division by zero
+    // Sometimes `currently_playing.item` ends up being null, probably a Spotify quirk
+    if (this.state.currently_playing && this.state.currently_playing.item) {
+      // Dodge division by zero
       if (this.state.currently_playing.item.duration_ms == 0) {
         return 100
       } else {
@@ -349,7 +350,7 @@ class Cover extends React.Component<any, any> {
         } else {
           visWindow.setPosition(remote.getCurrentWindow().getBounds().x, remote.getCurrentWindow().getBounds().y);
           visWindow.setSimpleFullScreen(true);
-          // visWindow.webContents.openDevTools({mode:"detach"});
+          visWindow.webContents.openDevTools({mode:"detach"});
         }
 
         visWindow.webContents.once('dom-ready', () => {
@@ -390,7 +391,8 @@ class Cover extends React.Component<any, any> {
 
   getCoverArt() {
     if (this.state.currently_playing) {
-      if(this.state.currently_playing.currently_playing_type == 'track') {
+      // Some tracks (notably, local ones) will not have album art provided via API
+      if(this.state.currently_playing.currently_playing_type == 'track' && this.state.currently_playing.item.album.images.length > 0) {
         return this.state.currently_playing.item.album.images[0].url;
       } else if (this.state.currently_playing.currently_playing_type == 'ad') {
         // TODO: Cover art for ads?
@@ -399,9 +401,8 @@ class Cover extends React.Component<any, any> {
         // TODO: Cover art for music videos?
         return '';
       }
-    } else {
-      return '';
     }
+    return '';
   }
 
   getTrack() {

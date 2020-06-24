@@ -52,6 +52,7 @@ function createWindow() {
     maximizable: false,
     transparent: true,
     hasShadow: false,
+    skipTaskbar: true,
     focusable: true,
     webPreferences: {
       allowRunningInsecureContent: false,
