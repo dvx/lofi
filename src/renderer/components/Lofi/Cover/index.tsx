@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { remote, screen, ipcMain, ipcRenderer } from 'electron'
+import { remote, ipcRenderer } from 'electron'
+import settings from 'electron-settings';
 import { MACOS } from '../../../../constants'
 import * as path from 'path';
 import * as url from 'url';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import Menu from './../Menu';
 import Controls from './Controls';
 import TrackInfo from './TrackInfo';
@@ -58,7 +59,6 @@ class Cover extends React.Component<any, any> {
     this.setState({ intervalId });
 
     function onMouseWheel(e: WheelEvent) {
-      // console.log('delta: ' + e.deltaY * 0.1);
       if (e.deltaY > 0 && that.state.volume > 0) {
         that.setVolume(that.state.volume - e.deltaY * 0.1);
       } else if (e.deltaY < 0 && that.state.volume < 100) {
@@ -127,6 +127,17 @@ class Cover extends React.Component<any, any> {
     return 0
   }
 
+  componentDidUpdate() {
+    if (this.state.currently_playing) {
+      remote.getCurrentWindow().show()
+    } else
+    if (this.props.settings.hide) {
+      remote.getCurrentWindow().hide();
+    } else {
+      remote.getCurrentWindow().show()
+    }
+  }
+
   async listeningTo() {
       let res = await fetch('https://api.spotify.com/v1/me/player', {
         method: 'GET',
@@ -156,11 +167,11 @@ class Cover extends React.Component<any, any> {
         // NOTE: debugging purposes
         console.log(currently_playing);
 
-        if (currently_playing.context && currently_playing.context.type === "playlist") {
-          console.log("playing a playlist; we can potentially shuffle");
-        } else {
-          console.log("shuffle unavailable for this track")
-        }
+        // if (currently_playing.context && currently_playing.context.type === "playlist") {
+        //   console.log("playing a playlist; we can potentially shuffle");
+        // } else {
+        //   console.log("shuffle unavailable for this track")
+        // }
 
         this.setState({
           currently_playing
@@ -350,7 +361,9 @@ class Cover extends React.Component<any, any> {
         } else {
           visWindow.setPosition(remote.getCurrentWindow().getBounds().x, remote.getCurrentWindow().getBounds().y);
           visWindow.setSimpleFullScreen(true);
-          visWindow.webContents.openDevTools({mode:"detach"});
+          if (Boolean(settings.getSync('debug')) === true) {
+            visWindow.webContents.openDevTools({mode:"detach"});
+          }
         }
 
         visWindow.webContents.once('dom-ready', () => {
@@ -415,7 +428,7 @@ class Cover extends React.Component<any, any> {
         return 'Music Video';
       }
     }
-    return 'n/a';
+    return 'Nothing Playing';
   }
 
   getArtist() {
@@ -428,7 +441,7 @@ class Cover extends React.Component<any, any> {
         return 'Spotify';
       }
     }
-    return 'n/a';
+    return 'No artist information found...';
   }
 
   getPlayState() {
@@ -441,7 +454,7 @@ class Cover extends React.Component<any, any> {
     return (
       <>
         <Menu parent={this} visIcon={this.visIconFromType()}/>
-        { this.state.currently_playing ? <TrackInfo side={this.props.side} track={this.getTrack()} artist={this.getArtist()} /> : null }
+        { this.state.currently_playing ? <TrackInfo persistent={this.props.settings.metadata} side={this.props.side} track={this.getTrack()} artist={this.getArtist()} /> : null }
         <div className={'cover full ' +  (this.getPlayState() ? '' : 'pause') } style={ this.getCoverArt() ? { backgroundImage: 'url(' + this.getCoverArt() + ')' } : { }} />
         <RecreateChildOnPropsChange visType={this.state.visualizationType} visId={this.state.visualizationId}>
           <Visualizer visId={this.state.visualizationId} currentlyPlaying={this.state.currently_playing} show={this.state.visualizationType === VISUALIZATION_TYPE.SMALL} />

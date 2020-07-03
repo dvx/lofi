@@ -1,6 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const PermissionsOutputPlugin = require('webpack-permissions-plugin');
+const CopyPkgJsonPlugin = require("copy-pkg-json-webpack-plugin")
 const path = require('path');
 const outputFolder = '/pack';
 
@@ -50,15 +49,9 @@ let mainConfig = {
         ],
     },
     plugins: [
-        new CopyWebpackPlugin(
-            // Probably a better way of doing this...
-            process.platform == 'darwin' ? [
-                {
-                    from: './build/volume-capture-daemon',
-                    to: ""
-                }
-            ] : [ ]
-        ),
+        new CopyPkgJsonPlugin({
+            remove: ['devDependencies']
+        })
     ]
 };
 

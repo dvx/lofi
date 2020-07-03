@@ -31,6 +31,7 @@ class RecreateChildOnPropsChange extends React.Component <any, any> {
   render() {
     this._forceRecreateCounter++;
     return React.cloneElement(
+      // @ts-ignore
       React.Children.only(this.props.children),
       { key: this._forceRecreateCounter }
     );

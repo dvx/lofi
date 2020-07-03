@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ipcRenderer } from 'electron'
 import './style.scss'
 
 class Menu extends React.Component<any, any> {
@@ -14,8 +15,8 @@ class Menu extends React.Component<any, any> {
     this.props.parent.cycleVisualizationType();
   }
 
-  showSettings() {
-    this.props.parent.props.lofi.showSettings();
+  showSettingsWindow() {
+    this.props.parent.props.lofi.showSettingsWindow();
   }
 
   toggleShuffle() {
@@ -26,7 +27,7 @@ class Menu extends React.Component<any, any> {
     return (
       <>
         <ul className='menu top-menu'>
-            <li><a style={{float:'left'}} onClick={this.showSettings.bind(this)} className='settings not-draggable'><i className="fa fa-cog not-draggable"></i></a><a style={{float:'left'}}className='logo-typo'><span style={{fontWeight:'bold'}}>Lo</span>fi</a></li>
+            <li><a style={{float:'left'}} onClick={this.showSettingsWindow.bind(this)} className='settings not-draggable'><i className="fa fa-cog not-draggable"></i></a><a style={{float:'left'}}className='logo-typo'><span style={{fontWeight:'bold'}}>lo</span>fi</a></li>
             <li className='pull-right'><a onClick={this.closeApp.bind(this)} className='danger not-draggable'><i className="fa fa-times-circle not-draggable"></i></a></li>
         </ul>
         {

@@ -32,15 +32,13 @@
 
 #visible-ui:hover .track-info-left {
     transition: .15s;
-    margin-right: 1em;
-    right: calc(60%);
+    right: calc(60% + 1.5em);
     opacity: 1;
 }
 
 #visible-ui:hover .track-info-right {
     transition: .15s;
-    margin-left: 1em;
-    left: calc(60%);
+    left: calc(60% + 1.5em);
     opacity: 1;
 }
 
@@ -58,4 +56,8 @@
     background-position: left center;
     color: #ef9671;
     transition: background-position 2000ms ease-out;
+}
+
+.hide-window {
+    display: none;
 }

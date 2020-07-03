@@ -18,7 +18,7 @@ class Visualizer extends React.Component<any, any> {
   componentWillUnmount() {
     // NOTE: "Properly" doing refs with Typescript/React is so ugly...
     let gl = this.canvasRef.current.getContext('experimental-webgl');
-    gl.getExtension('WEBGL_lose_context').loseContext();
+    gl.canvas.getContext("webgl").getExtension("WEBGL_lose_context").loseContext()
   }
 
   getMusicData() {

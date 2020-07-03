@@ -2,11 +2,12 @@ import * as React from 'react';
 import * as settings from 'electron-settings';
 import { ipcRenderer, screen, remote } from 'electron'
 import { startAuthServer, stopAuthServer } from '../../../main/server';
-import NewWindow from 'react-new-window';
 import Cover from './Cover';
 import Settings from './Settings';
 import Welcome from './Welcome';
+import WindowPortal from '../util/WindowPortal'
 import './style.scss'
+import { ChangeEvent } from 'electron-settings';
 
 enum SIDE {
   LEFT, RIGHT
@@ -17,12 +18,43 @@ class Lofi extends React.Component<any, any> {
     super(props);
 
     this.state = {
-      access_token: settings.get('spotify.access_token'),
-      refresh_token: settings.get('spotify.refresh_token'),
+      access_token: settings.getSync('spotify.access_token'),
+      refresh_token: settings.getSync('spotify.refresh_token'),
       showSettings: false,
-      window_side: SIDE.LEFT,
+      lofiSettings: settings.getSync('lofi'),
+      window_side: () => {
+        if (remote.screen.getCursorScreenPoint().x - remote.screen.getDisplayMatching(remote.getCurrentWindow().getBounds()).bounds.x < remote.screen.getDisplayMatching(remote.getCurrentWindow().getBounds()).bounds.width / 2) {
+         return SIDE.LEFT
+        }
+        return SIDE.RIGHT
+      },
       auth: false,
     }
+
+    // Allow to open settings via IPC channel (e.g. triggered by a taskbar click)
+    ipcRenderer.on('show-settings', () => {
+      this.showSettingsWindow();
+    })
+
+    // Allow to open settings via IPC channel (e.g. triggered by a taskbar click)
+    ipcRenderer.on('show-about', () => {
+      alert(`Lofi v${settings.getSync('version')}
+A mini Spotify player with WebGL visualizations.
+https://www.lofi.rocks
+
+Copyright (c) 2019-2020 David Titarenco
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+`)
+    })
+  }
+
+  reloadSettings() {
+    this.setState({lofiSettings: settings.getSync('lofi')})
   }
   
   async verifyAccessToken(observer?: SettingsObserver) {
@@ -73,11 +105,10 @@ class Lofi extends React.Component<any, any> {
     startAuthServer();
     // No token data! Make sure we wait for authentication
     if (!this.state.refresh_token) {
-      // FIXME: This observer needs to be disposed at some point
-      let observer: SettingsObserver = settings.watch('spotify', (newValue, oldValue) => {
+      let observer: SettingsObserver = settings.observe('spotify', (evt: ChangeEvent) => {
         this.setState({
-          refresh_token: newValue.refresh_token,
-          access_token: newValue.access_token
+          refresh_token: evt.newValue.refresh_token,
+          access_token: evt.newValue.access_token
         });
         this.verifyAccessToken(observer);
         stopAuthServer();
@@ -101,18 +132,21 @@ class Lofi extends React.Component<any, any> {
 
     function onMouseDown(e: any) {
         if (leftMousePressed(e) && !e.target['classList'].contains('not-draggable')) {
-            mouseX = e.clientX;  
-            mouseY = e.clientY;
-            document.addEventListener('mouseup', onMouseUp)
-            requestAnimationFrame(moveWindow);
+          // Cancel old animation frame, fixes mouse getting "stuck" in the drag state
+          cancelAnimationFrame(animationId);
+          mouseX = e.clientX;  
+          mouseY = e.clientY;
+          document.addEventListener('mouseup', onMouseUp)
+          requestAnimationFrame(moveWindow);
         }
     }
 
     function onMouseUp(e: MouseEvent) {
         if (leftMousePressed(e)) {
-            ipcRenderer.send('windowMoved', { mouseX, mouseY });
-            document.removeEventListener('mouseup', onMouseUp)
-            cancelAnimationFrame(animationId)
+          console.log('a')
+          ipcRenderer.send('windowMoved', { mouseX, mouseY });
+          document.removeEventListener('mouseup', onMouseUp)
+          cancelAnimationFrame(animationId)
         }
     }
 
@@ -134,21 +168,21 @@ class Lofi extends React.Component<any, any> {
     document.getElementById('visible-ui').addEventListener("mousedown", onMouseDown);
   }
 
-  showSettings() {
+  showSettingsWindow() {
     if (!this.state.showSettings) {
       this.setState({showSettings: true})
     }
   }
 
-  hideSettings() {
+  hideSettingsWindow() {
     this.setState({showSettings: false});
   }
 
   render() {
     return (
       <div id='visible-ui' className='click-on'>
-        { this.state.showSettings ? <NewWindow onUnload={this.hideSettings.bind(this)} copyStyles={true} name="settings"><Settings lofi={this} className="settings-wnd"/></NewWindow> : null }
-        { this.state.auth ? <Cover side={this.state.window_side} lofi={this} token={this.state.access_token} /> : <Welcome lofi={this} /> }
+        { this.state.showSettings ? <WindowPortal fullscreen onUnload={this.hideSettingsWindow.bind(this)} name="settings"><Settings lofi={this} className="settings-wnd"/></WindowPortal> : null }
+        { this.state.auth ? <Cover settings={this.state.lofiSettings.window} side={this.state.window_side} lofi={this} token={this.state.access_token} /> : <Welcome lofi={this} /> }
       </div>
     );
   }

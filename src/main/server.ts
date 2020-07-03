@@ -1,6 +1,6 @@
 import * as http from 'http'
 import * as url from 'url'
-import * as settings from 'electron-settings';
+import settings from 'electron-settings';
 import { AUTH_BACKEND_PORT } from '../constants';
 
 let server: http.Server;

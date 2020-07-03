@@ -5,7 +5,6 @@
     margin-right: -1em;
     margin-top: 1em;
     right: calc(60%);
-    left: calc(10%);
     color: white;
     font-weight: bold;
     font-feature-settings: normal;
@@ -21,7 +20,6 @@
     margin-left: -1em;
     margin-top: 1em;
     left: calc(60%);
-    right: calc(10%);
     color: white;
     font-weight: bold;
     font-feature-settings: normal;
@@ -36,9 +34,33 @@
     pointer-events: none;
 }
 
+.track {
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
 .artist {
     font-weight: normal;
     color: #ddd;
     font-size: 80%;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
+.always-show.track-info-left {
+    transition: .15s;
+    right: calc(60% + 1.5em);
+    opacity: 1;
+}
+
+.always-show.track-info-right {
+    transition: .15s;
+    left: calc(60% + 1.5em);
+    opacity: 1;
+}

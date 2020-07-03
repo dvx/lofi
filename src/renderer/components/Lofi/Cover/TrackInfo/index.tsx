@@ -8,7 +8,7 @@ class TrackInfo extends React.Component<any, any> {
 
   render() {
     return (
-      <div className={'not-draggable track-info ' + (this.props.side ? 'track-info-left' : 'track-info-right') }>
+      <div className={`not-draggable track-info ${this.props.side ? 'track-info-left' : 'track-info-right'} ${this.props.persistent ? 'always-show' : ''}` }>
         <div className='track not-draggable'>
           { this.props.track }
         </div>
