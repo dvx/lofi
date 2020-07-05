@@ -66,7 +66,7 @@ class Cover extends React.Component<any, any> {
       }
     }
 
-    document.getElementById('visible-ui').addEventListener("mousewheel", onMouseWheel);    
+    document.getElementById('visible-ui').addEventListener("mousewheel", onMouseWheel);
   }
 
   componentWillUnmount() {
@@ -106,7 +106,7 @@ class Cover extends React.Component<any, any> {
     if (percent > 100) percent = 100;
     if (percent < 0) percent = 0;
     this.setState({volume: percent, stateChange: new Date() });
-    let res = await fetch('https://api.spotify.com/v1/me/player/volume?volume_percent=' + Math.round(percent), {
+    await fetch('https://api.spotify.com/v1/me/player/volume?volume_percent=' + Math.round(percent), {
       method: 'PUT',
       headers: new Headers({
         'Authorization': 'Bearer '+ this.props.token
@@ -128,13 +128,17 @@ class Cover extends React.Component<any, any> {
   }
 
   componentDidUpdate() {
+    // Should we hide or show the window?
     if (this.state.currently_playing) {
-      remote.getCurrentWindow().show()
-    } else
-    if (this.props.settings.hide) {
-      remote.getCurrentWindow().hide();
+      if (!remote.getCurrentWindow().isVisible()) {
+        remote.getCurrentWindow().show()
+      }
     } else {
-      remote.getCurrentWindow().show()
+      if (this.props.settings.hide && remote.getCurrentWindow().isVisible()) {
+        remote.getCurrentWindow().hide();
+      } else if (!this.props.settings.hide && !remote.getCurrentWindow().isVisible()) {
+        remote.getCurrentWindow().show()
+      }
     }
   }
 

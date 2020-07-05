@@ -22,6 +22,7 @@ class Settings extends React.Component<any, any> {
 
   commitSettings() {
     // Commit window settings
+    settings.setSync('lofi.window.always_on_top', this.state.lofi.window.always_on_top)
     settings.setSync('lofi.window.remember', this.state.lofi.window.remember)
     settings.setSync('lofi.window.hide', this.state.lofi.window.hide)
     settings.setSync('lofi.window.metadata', this.state.lofi.window.metadata)
@@ -77,6 +78,9 @@ class Settings extends React.Component<any, any> {
             <legend>Window</legend>
 
             <div className="form-group">
+              <div>
+                  <input type="checkbox" name="always_on_top" id="always_on_top" onChange={this.changeLofiCheckboxSettings.bind(this, 'window', 'always_on_top')} checked={this.state.lofi.window.always_on_top}/> <label htmlFor="always_on_top">Show Lofi window always on top (requires restart)</label>
+              </div>
               <div>
                   <input type="checkbox" name="pos" id="pos" onChange={this.changeLofiCheckboxSettings.bind(this, 'window', 'remember')} checked={this.state.lofi.window.remember}/> <label htmlFor="pos">Remember Lofi window position</label>
               </div>

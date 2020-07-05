@@ -6,8 +6,9 @@ import Cover from './Cover';
 import Settings from './Settings';
 import Welcome from './Welcome';
 import WindowPortal from '../util/WindowPortal'
-import './style.scss'
 import { ChangeEvent } from 'electron-settings';
+
+import './style.scss'
 
 enum SIDE {
   LEFT, RIGHT
@@ -22,12 +23,12 @@ class Lofi extends React.Component<any, any> {
       refresh_token: settings.getSync('spotify.refresh_token'),
       showSettings: false,
       lofiSettings: settings.getSync('lofi'),
-      window_side: () => {
-        if (remote.screen.getCursorScreenPoint().x - remote.screen.getDisplayMatching(remote.getCurrentWindow().getBounds()).bounds.x < remote.screen.getDisplayMatching(remote.getCurrentWindow().getBounds()).bounds.width / 2) {
-         return SIDE.LEFT
+      window_side: (() => {
+        if (((remote.getCurrentWindow().getBounds().x + remote.getCurrentWindow().getBounds().width) / 2) - remote.screen.getDisplayMatching(remote.getCurrentWindow().getBounds()).bounds.x < remote.screen.getDisplayMatching(remote.getCurrentWindow().getBounds()).bounds.width / 2) {
+          return SIDE.LEFT
         }
         return SIDE.RIGHT
-      },
+      })(),
       auth: false,
     }
 

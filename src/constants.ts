@@ -27,11 +27,12 @@ export const SETTINGS_CONTAINER = {
 }
 
 export const DEFAULT_SETTINGS = {
-  version: "1.5",
+  version: "1.51",
   debug: false,
   hardware_acceleration: false,
   lofi: {
     window: {
+      always_on_top: true,
       x: 0,
       y: 0,
       remember: true,

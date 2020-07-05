@@ -23,8 +23,14 @@ if (Boolean(settings.getSync('hardware_acceleration')) === false) {
   app.disableHardwareAcceleration()
 }
 
-let mainWindow: Electron.BrowserWindow;
+let mainWindow: Electron.BrowserWindow | null = null;
 let mousePoller: NodeJS.Timeout;
+
+// Only allow a single instance
+let isSingleInstance: boolean = app.requestSingleInstanceLock()
+if (!isSingleInstance) {
+  app.quit()
+}
 
 register('A', () => {
   mainWindow.webContents.send('prev-visualization');
@@ -44,18 +50,19 @@ function createWindow() {
     frame: false,
     resizable: false,
     maximizable: false,
+    minimizable: true,
     transparent: true,
     hasShadow: false,
-    skipTaskbar: true,
-    focusable: false,
+    skipTaskbar: Boolean(settings.getSync('lofi.window.always_on_top')) ? true : false,
+    focusable: Boolean(settings.getSync('lofi.window.always_on_top')) ? false : true,
     webPreferences: {
       allowRunningInsecureContent: false,
       nodeIntegration: true,
       nativeWindowOpen: true
     }
   });
-
-  mainWindow.setAlwaysOnTop(true, "floating", 1);
+  
+  mainWindow.setAlwaysOnTop(Boolean(settings.getSync('lofi.window.always_on_top')), "floating", 1)
   mainWindow.setVisibleOnAllWorkspaces(true);
 
   // And load the index.html of the app
