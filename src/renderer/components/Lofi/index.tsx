@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as settings from 'electron-settings';
-import { ipcRenderer, screen, remote } from 'electron'
+import { ipcRenderer, remote } from 'electron'
 import { startAuthServer, stopAuthServer } from '../../../main/server';
 import Cover from './Cover';
 import Settings from './Settings';
@@ -23,6 +23,7 @@ class Lofi extends React.Component<any, any> {
       refresh_token: settings.getSync('spotify.refresh_token'),
       showSettings: false,
       lofiSettings: settings.getSync('lofi'),
+      side_length: settings.getSync('lofi.window.side'),
       window_side: (() => {
         if (((remote.getCurrentWindow().getBounds().x + remote.getCurrentWindow().getBounds().width) / 2) - remote.screen.getDisplayMatching(remote.getCurrentWindow().getBounds()).bounds.x < remote.screen.getDisplayMatching(remote.getCurrentWindow().getBounds()).bounds.width / 2) {
           return SIDE.LEFT
@@ -130,26 +131,93 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     let animationId: number;
     let mouseX: number;
     let mouseY: number;
+    let mouseDeltaX: number;
+    let mouseDeltaY: number;
+
+    function onMouseMove(e: any) {
+      mouseDeltaX = e.clientX;
+      mouseDeltaY = e.clientY;
+    }
 
     function onMouseDown(e: any) {
         if (leftMousePressed(e) && !e.target['classList'].contains('not-draggable')) {
           // Cancel old animation frame, fixes mouse getting "stuck" in the drag state
           cancelAnimationFrame(animationId);
-          mouseX = e.clientX;  
+          mouseX = e.clientX;
           mouseY = e.clientY;
           document.addEventListener('mouseup', onMouseUp)
-          requestAnimationFrame(moveWindow);
+          if (e.target['classList'].contains('grab-resize')) {
+            requestAnimationFrame(resizeWindow.bind(that, e.target['classList'].contains('top'), e.target['classList'].contains('right')));
+            document.body.classList.remove("click-through");
+          } else {
+            requestAnimationFrame(moveWindow);
+          }
         }
     }
 
     function onMouseUp(e: MouseEvent) {
         if (leftMousePressed(e)) {
-          console.log('a')
           ipcRenderer.send('windowMoved', { mouseX, mouseY });
           document.removeEventListener('mouseup', onMouseUp)
           cancelAnimationFrame(animationId)
+          document.body.classList.add("click-through");
         }
     }
+
+    let resizeWindow = (function(top: boolean, right: boolean) {
+      let length = that.state.side_length;
+
+      // TODO: The math here can be simplified, but leaving it explicit for now
+      if (top && right) {
+        const handleX = 400 + that.state.side_length / 2;
+        const handleY = 400 - that.state.side_length / 2;
+        const dX = handleX + mouseDeltaX;
+        const dY = handleY - mouseDeltaY;
+        if (Math.abs(dX) >= Math.abs(dY)) {
+          length += dY;
+        } else {
+          length += dX;
+        }
+      } else if (top && !right) {
+        const handleX = 400 - that.state.side_length / 2;
+        const handleY = 400 - that.state.side_length / 2;
+        const dX = handleX - mouseDeltaX;
+        const dY = handleY - mouseDeltaY;
+        if (Math.abs(dX) >= Math.abs(dY)) {
+          length += dY;
+        } else {
+          length += dX;
+        }
+      } else if (!top && right) {
+        const handleX = 400 + that.state.side_length / 2;
+        const handleY = 400 + that.state.side_length / 2;
+        const dX = mouseDeltaX - handleX;
+        const dY = mouseDeltaY - handleY;
+        if (Math.abs(dX) >= Math.abs(dY)) {
+          length += dY;
+        } else {
+          length += dX;
+        }
+      } else if (!top && !right) {
+        const handleX = 400 - that.state.side_length / 2;
+        const handleY = 400 + that.state.side_length / 2;
+        const dX = handleX - mouseDeltaX;
+        const dY = handleY + mouseDeltaY;
+        if (Math.abs(dX) >= Math.abs(dY)) {
+          length += dY;
+        } else {
+          length += dX;
+        }
+      }
+
+      // Maximum side length constraints
+      if (length <= 250 && length >= 150) {
+        ipcRenderer.send('windowResizing', length);
+        that.setState({ side_length: length })
+      }
+
+      animationId = requestAnimationFrame(resizeWindow.bind(that, top, right));
+    })
 
     let moveWindow = (function() {
         ipcRenderer.send('windowMoving', { mouseX, mouseY });
@@ -167,6 +235,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     }
     
     document.getElementById('visible-ui').addEventListener("mousedown", onMouseDown);
+    document.getElementById('app-body').addEventListener("mousemove", onMouseMove);
   }
 
   showSettingsWindow() {
@@ -181,7 +250,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
   render() {
     return (
-      <div id='visible-ui' className='click-on'>
+      <div id='visible-ui' className='click-on' style={{height: this.state.side_length, width: this.state.side_length, left: `calc(50% - ${this.state.side_length / 2}px)`}}>
+        <div className="top left grab-resize"></div>
+        <div className="top right grab-resize"></div>
+        <div className="bottom left grab-resize"></div>
+        <div className="bottom right grab-resize"></div>
         { this.state.showSettings ? <WindowPortal fullscreen onUnload={this.hideSettingsWindow.bind(this)} name="settings"><Settings lofi={this} className="settings-wnd"/></WindowPortal> : null }
         { this.state.auth ? <Cover settings={this.state.lofiSettings.window} side={this.state.window_side} lofi={this} token={this.state.access_token} /> : <Welcome lofi={this} /> }
       </div>

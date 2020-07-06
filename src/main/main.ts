@@ -1,12 +1,9 @@
 import { app, BrowserWindow, ipcMain, screen, shell, Tray, Menu, nativeImage } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import { spawn } from 'child_process';
-import { chmodSync } from 'fs';
-import { fixPathForAsarUnpack }  from 'electron-util';
 import { register } from 'electron-localshortcut';
 import settings from 'electron-settings';
-import { HEIGHT, MACOS, WINDOWS, CONTAINER, SETTINGS_CONTAINER, WIDTH, DEFAULT_SETTINGS } from '../constants';
+import { MACOS, WINDOWS, CONTAINER, SETTINGS_CONTAINER, DEFAULT_SETTINGS } from '../constants';
 
 // webpack imports
 import '../../build/release/black-magic.node';
@@ -19,7 +16,17 @@ app.commandLine.appendSwitch("disable-gpu-vsync");
 app.commandLine.appendArgument("disable-gpu-vsync");
 app.commandLine.appendSwitch('enable-transparent-visuals');
 
-if (Boolean(settings.getSync('hardware_acceleration')) === false) {
+// Settings bootstrap
+const HARDWARE_ACCELERATION: boolean = Boolean(settings.getSync('hardware_acceleration'));
+const LOFI_WINDOW = {
+  x: Number(settings.getSync('lofi.window.x')),
+  y: Number(settings.getSync('lofi.window.y')),
+  remember: Boolean(settings.getSync('lofi.window.remember')),
+  always_on_top: Boolean(settings.getSync('lofi.window.always_on_top')),
+  side: Number(settings.getSync('lofi.window.side'))
+}
+
+if (!HARDWARE_ACCELERATION) {
   app.disableHardwareAcceleration()
 }
 
@@ -43,8 +50,8 @@ register('D', () => {
 function createWindow() {
   // Create the browser window
   mainWindow = new BrowserWindow({
-    x: settings.getSync('lofi.window.remember') ? Number(settings.getSync('lofi.window.x')) : 0 - CONTAINER.HORIZONTAL / 2 + screen.getPrimaryDisplay().size.width / 2,
-    y: settings.getSync('lofi.window.remember') ? Number(settings.getSync('lofi.window.y')) : 0 - CONTAINER.VERTICAL / 2 + screen.getPrimaryDisplay().size.height / 2,
+    x: LOFI_WINDOW.remember ? LOFI_WINDOW.x : 0 - CONTAINER.HORIZONTAL / 2 + screen.getPrimaryDisplay().size.width / 2,
+    y: LOFI_WINDOW.remember ? LOFI_WINDOW.y : 0 - CONTAINER.VERTICAL / 2 + screen.getPrimaryDisplay().size.height / 2,
     height: CONTAINER.VERTICAL,
     width: CONTAINER.HORIZONTAL,
     frame: false,
@@ -53,8 +60,8 @@ function createWindow() {
     minimizable: true,
     transparent: true,
     hasShadow: false,
-    skipTaskbar: Boolean(settings.getSync('lofi.window.always_on_top')) ? true : false,
-    focusable: Boolean(settings.getSync('lofi.window.always_on_top')) ? false : true,
+    skipTaskbar: LOFI_WINDOW.always_on_top ? true : false,
+    focusable: LOFI_WINDOW.always_on_top ? false : true,
     webPreferences: {
       allowRunningInsecureContent: false,
       nodeIntegration: true,
@@ -62,7 +69,7 @@ function createWindow() {
     }
   });
   
-  mainWindow.setAlwaysOnTop(Boolean(settings.getSync('lofi.window.always_on_top')), "floating", 1)
+  mainWindow.setAlwaysOnTop(LOFI_WINDOW.always_on_top, "floating", 1)
   mainWindow.setVisibleOnAllWorkspaces(true);
 
   // And load the index.html of the app
@@ -81,16 +88,16 @@ function createWindow() {
       let b = mainWindow.getBounds();
       // Bounding box for the area that's "clickable" -- e.g. main player square
       let bb = {
-        ix: b.x + ((CONTAINER.HORIZONTAL - WIDTH * settings.getSync('lofi.window.scale')) / 2) ,
-        iy: b.y + ((CONTAINER.VERTICAL - HEIGHT * settings.getSync('lofi.window.scale')) / 2),
-        ax: b.x + (WIDTH * settings.getSync('lofi.window.scale') + (CONTAINER.HORIZONTAL - WIDTH * settings.getSync('lofi.window.scale')) / 2),
-        ay: b.y + (HEIGHT * settings.getSync('lofi.window.scale') + (CONTAINER.VERTICAL - HEIGHT * settings.getSync('lofi.window.scale')) / 2)
+        ix: b.x + ((CONTAINER.HORIZONTAL - LOFI_WINDOW.side) / 2) ,
+        iy: b.y + ((CONTAINER.VERTICAL - LOFI_WINDOW.side) / 2),
+        ax: b.x + (LOFI_WINDOW.side + (CONTAINER.HORIZONTAL - LOFI_WINDOW.side) / 2),
+        ay: b.y + (LOFI_WINDOW.side + (CONTAINER.VERTICAL - LOFI_WINDOW.side) / 2)
       }
 
       if (bb.ix <= p.x && p.x <= bb.ax && bb.iy <= p.y && p.y <= bb.ay) {
         mainWindow.setIgnoreMouseEvents(false);
       } else {
-        mainWindow.setIgnoreMouseEvents(true);
+          mainWindow.setIgnoreMouseEvents(true);
       }
     } catch (e) {
       // FIXME: Sometimes the visualization window gets destroyed before the main window
@@ -122,27 +129,21 @@ function createWindow() {
     // TODO: only happens on Windows?
     if (WINDOWS) {
       // This breaks the UI if hardware acceleration is disabled
-      if (Boolean(settings.getSync('hardware_acceleration')) === true) {
+      if (HARDWARE_ACCELERATION) {
         mainWindow.setOpacity(1);
       }
     }
   });
 
   ipcMain.on('windowMoved', (e: Event, { mouseX, mouseY }: { mouseX: number, mouseY: number }) => {
-    if (Boolean(settings.get('lofi.window.remember'))) {
-      const { x, y } = screen.getCursorScreenPoint();
-      settings.setSync('lofi.window.x', x - mouseX);
-      settings.setSync('lofi.window.y', y - mouseY);
-    }
+    const { x, y } = screen.getCursorScreenPoint();
+    LOFI_WINDOW.x = x - mouseX
+    LOFI_WINDOW.y = y - mouseY
   });
 
-  ipcMain.on('windowIgnoreMouseEvents', () => {
-    mainWindow.setIgnoreMouseEvents(true);
-  });
-
-  ipcMain.on('windowDontIgnoreMouseEvents', () => {
-    mainWindow.setIgnoreMouseEvents(false);
-  });
+  ipcMain.on('windowResizing', (e: Event, length: number) => {
+    LOFI_WINDOW.side = length;
+  })
 
   mainWindow.webContents.on('new-window', function (event: Electron.NewWindowEvent, url: string, frameName: string, disposition: string, options: any) {
     event.preventDefault();
@@ -214,7 +215,10 @@ app.on('window-all-closed', () => {
 });
 
 app.on('will-quit', () => {
-  // any cleanup?
+  // Save window position for next launch
+  settings.setSync('lofi.window.x', LOFI_WINDOW.x);
+  settings.setSync('lofi.window.y', LOFI_WINDOW.y);
+  settings.setSync('lofi.window.side', LOFI_WINDOW.side);
 });
 
 app.on('activate', () => {

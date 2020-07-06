@@ -92,22 +92,6 @@ class Settings extends React.Component<any, any> {
               </div>
             </div>
             </fieldset>
-
-            <fieldset>
-
-            <legend>Size</legend>
-
-            <div className="form-group">
-              <div>
-                <select className="picker">
-                  <option value="tiny">Tiny</option>
-                  <option value="classic">Classic</option>
-                  <option value="bigger">Big</option>
-                </select>
-              </div>
-            </div>
-            </fieldset>
-
             <fieldset>
 
             <legend>Advanced</legend>
@@ -121,41 +105,6 @@ class Settings extends React.Component<any, any> {
               </div>
             </div>
             </fieldset>
-
-              {/*
-            <fieldset disabled>
-
-            <legend>Shuffle</legend>
-
-            <div className="form-group">
-            <label className="control-label">Behavior</label>
-            <div>
-                <input type="checkbox" name="repeat" id="repeat"/> <label htmlFor="repeat">Avoid playing the same song in a row</label><br/>
-                <input type="checkbox" name="similar" id="similar"/> <label htmlFor="similar">Avoid playing similar songs in a row</label>
-            </div>
-            <label className="control-label">Favorites</label>
-                <div>
-
-                  <select className="picker">
-                    <option value="random">Totally random</option>
-                    <option value="fav">Play favorites more often</option>
-                    <option value="nofav">Play favorites less often</option>
-                  </select>
-                </div>
-                <label className="control-label">Popularity</label>
-                <div>
-
-                  <select className="picker">
-                    <option value="random">Totally random</option>
-                    <option value="fav">Play popular songs more often</option>
-                    <option value="nofav">Play popular songs less often</option>
-                  </select>
-                </div>
-            </div>
-
-            </fieldset>
-              */}
-              
             </form>
             <div className="button-container">
               <div className="red-holder"><a href="#" onClick={this.nukeSettings} className="red-button">Reset to factory defaults</a></div>

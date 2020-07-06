@@ -458,7 +458,7 @@ class Cover extends React.Component<any, any> {
     return (
       <>
         <Menu parent={this} visIcon={this.visIconFromType()}/>
-        { this.state.currently_playing ? <TrackInfo persistent={this.props.settings.metadata} side={this.props.side} track={this.getTrack()} artist={this.getArtist()} /> : null }
+        { this.state.currently_playing ? <TrackInfo offset={this.props.lofi.state.side_length} persistent={this.props.settings.metadata} side={this.props.side} track={this.getTrack()} artist={this.getArtist()} /> : null }
         <div className={'cover full ' +  (this.getPlayState() ? '' : 'pause') } style={ this.getCoverArt() ? { backgroundImage: 'url(' + this.getCoverArt() + ')' } : { }} />
         <RecreateChildOnPropsChange visType={this.state.visualizationType} visId={this.state.visualizationId}>
           <Visualizer visId={this.state.visualizationId} currentlyPlaying={this.state.currently_playing} show={this.state.visualizationType === VISUALIZATION_TYPE.SMALL} />

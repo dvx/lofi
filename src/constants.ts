@@ -27,7 +27,7 @@ export const SETTINGS_CONTAINER = {
 }
 
 export const DEFAULT_SETTINGS = {
-  version: "1.51",
+  version: "1.52",
   debug: false,
   hardware_acceleration: false,
   lofi: {
@@ -38,7 +38,8 @@ export const DEFAULT_SETTINGS = {
       remember: true,
       hide: false,
       metadata: false,
-      scale: 1
+      scale: 1,
+      side: 150
     }
   },
   spotify: {

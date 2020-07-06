@@ -61,3 +61,43 @@
 .hide-window {
     display: none;
 }
+
+.top {
+    top: 0;
+}
+
+.right {
+    right: 0;
+}
+
+.bottom {
+    bottom: 0;
+}
+
+.left {
+    left: 0;
+}
+
+.top.left:hover {
+    cursor: nwse-resize;
+}
+
+.bottom.right:hover {
+    cursor: nwse-resize;
+}
+
+.top.right:hover {
+    cursor: nesw-resize;
+}
+
+.bottom.left:hover {
+    cursor: nesw-resize;
+}
+
+.grab-resize {
+    z-index: 4;
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: none;
+}
