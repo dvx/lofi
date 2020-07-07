@@ -4,6 +4,8 @@ import { remote } from 'electron'
 import TitleBar from 'frameless-titlebar'
 import './style.scss';
 
+import { visualizations } from '../../../../visualizations/visualizations.js';
+
 class Settings extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
@@ -27,6 +29,9 @@ class Settings extends React.Component<any, any> {
     settings.setSync('lofi.window.hide', this.state.lofi.window.hide)
     settings.setSync('lofi.window.metadata', this.state.lofi.window.metadata)
 
+    // Commit visualization settings
+    settings.setSync('lofi.visualization', this.state.lofi.visualization)
+
     // Commit advanced settings
     settings.setSync('hardware_acceleration', this.state.hardware_acceleration)
     settings.setSync('debug', this.state.debug)
@@ -38,7 +43,6 @@ class Settings extends React.Component<any, any> {
 
   // Don't do this at home
   changeLofiCheckboxSettings(parent: string, child: string) {
-    console.log({parent, child})
     if (parent && child) {
       this.setState((prevState: { [x: string]: any; }) => {
         const lofi = {...prevState['lofi']};
@@ -50,7 +54,12 @@ class Settings extends React.Component<any, any> {
       settings[child] = !settings[child];
       this.setState(settings);
     }
-    console.log(this.state)
+  }
+
+  changeLofiVisualizationSettings( event: { target: HTMLSelectElement } ) {
+    const settings: { [x: string]: any; } = this.state;
+    settings.lofi.visualization = Number(event.target.value);
+    this.setState(settings);
   }
 
   render() {
@@ -92,6 +101,21 @@ class Settings extends React.Component<any, any> {
               </div>
             </div>
             </fieldset>
+            <fieldset>
+
+            <legend>Visualization</legend>
+
+            <div className="form-group">
+              <div>
+                <select value={this.state.lofi.visualization} className="picker" onChange={this.changeLofiVisualizationSettings.bind(this)}>
+                  {visualizations.map((vis, idx) =>
+                    <option key={idx} value={idx}>{vis.name}</option>
+                  )};
+                </select>
+              </div>
+            </div>
+            </fieldset>
+
             <fieldset>
 
             <legend>Advanced</legend>

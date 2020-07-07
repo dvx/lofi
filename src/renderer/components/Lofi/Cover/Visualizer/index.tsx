@@ -12,7 +12,7 @@ class Visualizer extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    visualizations[this.props.visId](this.canvasRef.current, this.getMusicData.bind(this));
+    visualizations[this.props.visId].visualize(this.canvasRef.current, this.getMusicData.bind(this));
   }
 
   componentWillUnmount() {

@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as settings from 'electron-settings';
 import { ipcRenderer, remote } from 'electron'
 import { startAuthServer, stopAuthServer } from '../../../main/server';
+import { CONTAINER, MAX_SIDE_LENGTH, MIN_SIDE_LENGTH } from '../../../constants'; 
 import Cover from './Cover';
 import Settings from './Settings';
 import Welcome from './Welcome';
@@ -169,8 +170,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
       // TODO: The math here can be simplified, but leaving it explicit for now
       if (top && right) {
-        const handleX = 400 + that.state.side_length / 2;
-        const handleY = 400 - that.state.side_length / 2;
+        const handleX = (CONTAINER.HORIZONTAL / 2) + that.state.side_length / 2;
+        const handleY = (CONTAINER.VERTICAL / 2) - that.state.side_length / 2;
         const dX = handleX + mouseDeltaX;
         const dY = handleY - mouseDeltaY;
         if (Math.abs(dX) >= Math.abs(dY)) {
@@ -179,8 +180,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
           length += dX;
         }
       } else if (top && !right) {
-        const handleX = 400 - that.state.side_length / 2;
-        const handleY = 400 - that.state.side_length / 2;
+        const handleX = (CONTAINER.HORIZONTAL / 2) - that.state.side_length / 2;
+        const handleY = (CONTAINER.VERTICAL / 2) - that.state.side_length / 2;
         const dX = handleX - mouseDeltaX;
         const dY = handleY - mouseDeltaY;
         if (Math.abs(dX) >= Math.abs(dY)) {
@@ -189,8 +190,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
           length += dX;
         }
       } else if (!top && right) {
-        const handleX = 400 + that.state.side_length / 2;
-        const handleY = 400 + that.state.side_length / 2;
+        const handleX = (CONTAINER.HORIZONTAL / 2) + that.state.side_length / 2;
+        const handleY = (CONTAINER.VERTICAL / 2) + that.state.side_length / 2;
         const dX = mouseDeltaX - handleX;
         const dY = mouseDeltaY - handleY;
         if (Math.abs(dX) >= Math.abs(dY)) {
@@ -199,8 +200,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
           length += dX;
         }
       } else if (!top && !right) {
-        const handleX = 400 - that.state.side_length / 2;
-        const handleY = 400 + that.state.side_length / 2;
+        const handleX = (CONTAINER.HORIZONTAL / 2) - that.state.side_length / 2;
+        const handleY = (CONTAINER.VERTICAL / 2) + that.state.side_length / 2;
         const dX = handleX - mouseDeltaX;
         const dY = handleY + mouseDeltaY;
         if (Math.abs(dX) >= Math.abs(dY)) {
@@ -211,7 +212,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       }
 
       // Maximum side length constraints
-      if (length <= 250 && length >= 150) {
+      if (length <= MAX_SIDE_LENGTH && length >= MIN_SIDE_LENGTH) {
         ipcRenderer.send('windowResizing', length);
         that.setState({ side_length: length })
       }
@@ -256,7 +257,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         <div className="bottom left grab-resize"></div>
         <div className="bottom right grab-resize"></div>
         { this.state.showSettings ? <WindowPortal fullscreen onUnload={this.hideSettingsWindow.bind(this)} name="settings"><Settings lofi={this} className="settings-wnd"/></WindowPortal> : null }
-        { this.state.auth ? <Cover settings={this.state.lofiSettings.window} side={this.state.window_side} lofi={this} token={this.state.access_token} /> : <Welcome lofi={this} /> }
+        { this.state.auth ? <Cover visualizationId={this.state.lofiSettings.visualization} settings={this.state.lofiSettings.window} side={this.state.window_side} lofi={this} token={this.state.access_token} /> : <Welcome lofi={this} /> }
       </div>
     );
   }

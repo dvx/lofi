@@ -12,7 +12,7 @@ import Visualizer from './Visualizer';
 import Waiting from './Waiting';
 import RecreateChildOnPropsChange from '../../util/RecreateChildOnPropsChange';
 import { LOFI_SHUFFLED_PLAYLIST_NAME } from '../../../../constants'
-import { nextVisualization, prevVisualization } from '../../../../visualizations/visualizations.js';
+
 import './style.scss';
 
 enum VISUALIZATION_TYPE {
@@ -29,29 +29,12 @@ class Cover extends React.Component<any, any> {
       visWindow: null,
       showSettings: false,
       visualizationType: VISUALIZATION_TYPE.NONE,
-      visualizationId: 0,
       volume: 0,
       stateChange: new Date(1900, 1, 1),
       shuffle: null
     }
-
-    const that = this;
-
-    ipcRenderer.on('next-visualization', function (event:Event, data:any) {
-      that.setState({ visualizationId: nextVisualization(that.state.visualizationId) });
-      if (that.state.visWindow) {
-        that.state.visWindow.send('set-visualization', that.state.visualizationId);
-      }
-    });
-
-    ipcRenderer.on('prev-visualization', function (event:Event, data:any) {
-      that.setState({ visualizationId: prevVisualization(that.state.visualizationId) });
-      if (that.state.visWindow) {
-        that.state.visWindow.send('set-visualization', that.state.visualizationId);
-      }
-    });
   }
-
+  
   componentDidMount() {
     const that = this;
     // Polling Spotify every 1 second, probably a bad idea
@@ -139,6 +122,9 @@ class Cover extends React.Component<any, any> {
       } else if (!this.props.settings.hide && !remote.getCurrentWindow().isVisible()) {
         remote.getCurrentWindow().show()
       }
+    }
+    if (this.state.visWindow) {
+      this.state.visWindow.webContents.send('set-visualization', this.props.visualizationId);
     }
   }
 
@@ -343,7 +329,7 @@ class Cover extends React.Component<any, any> {
         break;
       case VISUALIZATION_TYPE.SMALL:
         const BrowserWindow = remote.BrowserWindow;
-        const visWindow = new BrowserWindow();
+        const visWindow = new BrowserWindow({ webPreferences: { nodeIntegration: true } });
         visWindow.on('close', () => {
           this.cycleVisualizationType();
         });
@@ -371,7 +357,7 @@ class Cover extends React.Component<any, any> {
         }
 
         visWindow.webContents.once('dom-ready', () => {
-          visWindow.webContents.send('set-visualization', this.state.visualizationId);
+          visWindow.webContents.send('set-visualization', this.props.lofi.state.lofiSettings.visualizationId);
         });
        
         this.setState({
@@ -460,8 +446,8 @@ class Cover extends React.Component<any, any> {
         <Menu parent={this} visIcon={this.visIconFromType()}/>
         { this.state.currently_playing ? <TrackInfo offset={this.props.lofi.state.side_length} persistent={this.props.settings.metadata} side={this.props.side} track={this.getTrack()} artist={this.getArtist()} /> : null }
         <div className={'cover full ' +  (this.getPlayState() ? '' : 'pause') } style={ this.getCoverArt() ? { backgroundImage: 'url(' + this.getCoverArt() + ')' } : { }} />
-        <RecreateChildOnPropsChange visType={this.state.visualizationType} visId={this.state.visualizationId}>
-          <Visualizer visId={this.state.visualizationId} currentlyPlaying={this.state.currently_playing} show={this.state.visualizationType === VISUALIZATION_TYPE.SMALL} />
+        <RecreateChildOnPropsChange visType={this.state.visualizationType} visId={this.props.visualizationId}>
+          <Visualizer visId={this.props.visualizationId} currentlyPlaying={this.state.currently_playing} show={this.state.visualizationType === VISUALIZATION_TYPE.SMALL} />
         </RecreateChildOnPropsChange>
         { this.state.currently_playing ? <Controls parent={this} token={this.props.token} /> : <Waiting /> }
       </>

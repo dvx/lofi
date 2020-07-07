@@ -18,13 +18,7 @@ app.commandLine.appendSwitch('enable-transparent-visuals');
 
 // Settings bootstrap
 const HARDWARE_ACCELERATION: boolean = Boolean(settings.getSync('hardware_acceleration'));
-const LOFI_WINDOW = {
-  x: Number(settings.getSync('lofi.window.x')),
-  y: Number(settings.getSync('lofi.window.y')),
-  remember: Boolean(settings.getSync('lofi.window.remember')),
-  always_on_top: Boolean(settings.getSync('lofi.window.always_on_top')),
-  side: Number(settings.getSync('lofi.window.side'))
-}
+const windowConfig: any = { };
 
 if (!HARDWARE_ACCELERATION) {
   app.disableHardwareAcceleration()
@@ -39,19 +33,11 @@ if (!isSingleInstance) {
   app.quit()
 }
 
-register('A', () => {
-  mainWindow.webContents.send('prev-visualization');
-});
-
-register('D', () => {
-  mainWindow.webContents.send('next-visualization');
-});
-
 function createWindow() {
   // Create the browser window
   mainWindow = new BrowserWindow({
-    x: LOFI_WINDOW.remember ? LOFI_WINDOW.x : 0 - CONTAINER.HORIZONTAL / 2 + screen.getPrimaryDisplay().size.width / 2,
-    y: LOFI_WINDOW.remember ? LOFI_WINDOW.y : 0 - CONTAINER.VERTICAL / 2 + screen.getPrimaryDisplay().size.height / 2,
+    x: windowConfig.remember ? windowConfig.x : 0 - CONTAINER.HORIZONTAL / 2 + screen.getPrimaryDisplay().size.width / 2,
+    y: windowConfig.remember ? windowConfig.y : 0 - CONTAINER.VERTICAL / 2 + screen.getPrimaryDisplay().size.height / 2,
     height: CONTAINER.VERTICAL,
     width: CONTAINER.HORIZONTAL,
     frame: false,
@@ -60,8 +46,8 @@ function createWindow() {
     minimizable: true,
     transparent: true,
     hasShadow: false,
-    skipTaskbar: LOFI_WINDOW.always_on_top ? true : false,
-    focusable: LOFI_WINDOW.always_on_top ? false : true,
+    skipTaskbar: windowConfig.always_on_top ? true : false,
+    focusable: windowConfig.always_on_top ? false : true,
     webPreferences: {
       allowRunningInsecureContent: false,
       nodeIntegration: true,
@@ -69,7 +55,7 @@ function createWindow() {
     }
   });
   
-  mainWindow.setAlwaysOnTop(LOFI_WINDOW.always_on_top, "floating", 1)
+  mainWindow.setAlwaysOnTop(windowConfig.always_on_top, "floating", 1)
   mainWindow.setVisibleOnAllWorkspaces(true);
 
   // And load the index.html of the app
@@ -88,10 +74,10 @@ function createWindow() {
       let b = mainWindow.getBounds();
       // Bounding box for the area that's "clickable" -- e.g. main player square
       let bb = {
-        ix: b.x + ((CONTAINER.HORIZONTAL - LOFI_WINDOW.side) / 2) ,
-        iy: b.y + ((CONTAINER.VERTICAL - LOFI_WINDOW.side) / 2),
-        ax: b.x + (LOFI_WINDOW.side + (CONTAINER.HORIZONTAL - LOFI_WINDOW.side) / 2),
-        ay: b.y + (LOFI_WINDOW.side + (CONTAINER.VERTICAL - LOFI_WINDOW.side) / 2)
+        ix: b.x + ((CONTAINER.HORIZONTAL - windowConfig.side) / 2) ,
+        iy: b.y + ((CONTAINER.VERTICAL - windowConfig.side) / 2),
+        ax: b.x + (windowConfig.side + (CONTAINER.HORIZONTAL - windowConfig.side) / 2),
+        ay: b.y + (windowConfig.side + (CONTAINER.VERTICAL - windowConfig.side) / 2)
       }
 
       if (bb.ix <= p.x && p.x <= bb.ax && bb.iy <= p.y && p.y <= bb.ay) {
@@ -137,12 +123,12 @@ function createWindow() {
 
   ipcMain.on('windowMoved', (e: Event, { mouseX, mouseY }: { mouseX: number, mouseY: number }) => {
     const { x, y } = screen.getCursorScreenPoint();
-    LOFI_WINDOW.x = x - mouseX
-    LOFI_WINDOW.y = y - mouseY
+    windowConfig.x = x - mouseX
+    windowConfig.y = y - mouseY
   });
 
   ipcMain.on('windowResizing', (e: Event, length: number) => {
-    LOFI_WINDOW.side = length;
+    windowConfig.side = length;
   })
 
   mainWindow.webContents.on('new-window', function (event: Electron.NewWindowEvent, url: string, frameName: string, disposition: string, options: any) {
@@ -171,6 +157,9 @@ function createWindow() {
       if (Boolean(settings.getSync('debug')) === true) {
         event.newGuest.webContents.openDevTools({mode:"detach"});
       }
+    } else {
+      event.preventDefault();
+      shell.openExternal(url);
     }
   });
 }
@@ -187,7 +176,15 @@ app.on('ready', () => {
   if (!settings.hasSync('version') || (String(settings.getSync('version')) !== String(DEFAULT_SETTINGS.version))) {
     settings.resetToDefaultsSync()
   }
-  
+
+  Object.assign(windowConfig, {
+    x: Number(settings.getSync('lofi.window.x')),
+    y: Number(settings.getSync('lofi.window.y')),
+    remember: Boolean(settings.getSync('lofi.window.remember')),
+    always_on_top: Boolean(settings.getSync('lofi.window.always_on_top')),
+    side: Number(settings.getSync('lofi.window.side'))
+  });
+    
   createWindow();
   
   tray = new Tray(nativeImage.createFromPath(__dirname + '/icon.square.png').resize({height: 16}))
@@ -216,9 +213,9 @@ app.on('window-all-closed', () => {
 
 app.on('will-quit', () => {
   // Save window position for next launch
-  settings.setSync('lofi.window.x', LOFI_WINDOW.x);
-  settings.setSync('lofi.window.y', LOFI_WINDOW.y);
-  settings.setSync('lofi.window.side', LOFI_WINDOW.side);
+  settings.setSync('lofi.window.x', windowConfig.x);
+  settings.setSync('lofi.window.y', windowConfig.y);
+  settings.setSync('lofi.window.side', windowConfig.side);
 });
 
 app.on('activate', () => {

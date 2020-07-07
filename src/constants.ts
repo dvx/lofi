@@ -8,6 +8,9 @@ export const MACOS_MOJAVE = (MACOS && parseInt(os.release().split('.')[0]) >= 18
 export const HEIGHT = 150;
 export const WIDTH = 150;
 
+export const MIN_SIDE_LENGTH = 150
+export const MAX_SIDE_LENGTH = 300
+
 export const AUTH_BACKEND_PORT = 41419;
 
 export const LOFI_SHUFFLED_PLAYLIST_NAME = "Shuffled by Lofi";
@@ -27,10 +30,11 @@ export const SETTINGS_CONTAINER = {
 }
 
 export const DEFAULT_SETTINGS = {
-  version: "1.52",
+  version: "1.5.1",
   debug: false,
   hardware_acceleration: false,
   lofi: {
+    visualization: 2,
     window: {
       always_on_top: true,
       x: 0,
