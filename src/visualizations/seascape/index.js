@@ -283,4 +283,7 @@ function visualize(canvas, getMusicData) {
     animate(0);
   }
   
-  export default visualize;
+export default {
+  name: "Seascape",
+  visualize
+}

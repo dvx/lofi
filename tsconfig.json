@@ -3,6 +3,7 @@
         "allowSyntheticDefaultImports": true,
         "jsx": "react",
         "module": "ESNext",
+        "resolveJsonModule": true,
         "moduleResolution": "node",
         "noImplicitAny": true,
         "noImplicitThis": true,

@@ -2,10 +2,10 @@
     overflow: hidden;
     position: absolute;
     top: 0;
-    width: calc(150px - 1em);
+    width: calc(100% - 1em);
     padding: .5em;
     text-align: center;
-    height: calc(150px - 1em);
+    height: calc(100% - 1em);
     background-image: url('../../../static/waves.gif');
     background-size: cover;
     transition: .2s;
@@ -39,8 +39,8 @@
     position: absolute;
     top: 0;
     opacity: 0;
-    width: 148px;
-    height: 148px;
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
     border: 1px solid #5252524d;
 }
 

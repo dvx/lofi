@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './style.scss';
 
-import { volume } from '../../../../../../build/release/volume.node';
+import { volume } from '../../../../../../build/Release/volume.node';
 import { visualizations } from '../../../../../visualizations/visualizations.js';
 
 class Visualizer extends React.Component<any, any> {
@@ -12,13 +12,13 @@ class Visualizer extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    visualizations[this.props.visId](this.canvasRef.current, this.getMusicData.bind(this));
+    visualizations[this.props.visId].visualize(this.canvasRef.current, this.getMusicData.bind(this));
   }
 
   componentWillUnmount() {
     // NOTE: "Properly" doing refs with Typescript/React is so ugly...
     let gl = this.canvasRef.current.getContext('experimental-webgl');
-    gl.getExtension('WEBGL_lose_context').loseContext();
+    gl.canvas.getContext("webgl").getExtension("WEBGL_lose_context").loseContext()
   }
 
   getMusicData() {

@@ -5,4 +5,6 @@
   #include "windows/module.cc"
 #elif defined(__APPLE__) && defined(__MACH__)
   #include "macos/module.cc"
+#elif defined(__linux__) || defined(__unix__)
+  #include "linux/module.cc"
 #endif

@@ -4,8 +4,8 @@
     position: absolute;
     top: 0;
     opacity: 0;
-    width: 148px;
-    height: 148px;
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
     border: 1px solid #5252524d;
     transition: .1s;
     opacity: 0;

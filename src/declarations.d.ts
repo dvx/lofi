@@ -21,7 +21,7 @@ declare module '*.icns' {
 // visualizations provider
 declare module "*visualizations.js" {
     const value: {
-        visualizations: Array<Function>,
+        visualizations: Array<{name: string, visualize: Function}>,
         nextVisualization: Function,
         prevVisualization: Function
     };
@@ -47,3 +47,4 @@ interface SettingsObserver {
 
 declare module 'electron-transparency-mouse-fix';
 declare module 'electron-localshortcut';
+declare module 'react-electron-titlebar';
