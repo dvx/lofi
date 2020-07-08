@@ -6,7 +6,6 @@ import { MACOS, WINDOWS, LINUX, CONTAINER, SETTINGS_CONTAINER, DEFAULT_SETTINGS 
 
 // Webpack imports
 import '../../build/Release/black-magic.node';
-import '../../icon.square.png'
 import '../../icon.png'
 import '../../icon.ico'
 
@@ -198,7 +197,7 @@ app.on('ready', () => {
 
     // Default position is based on OS; (0,0) sometimes breaks
     settings.setSync('lofi.window.x', 0 - CONTAINER.HORIZONTAL / 2 + screen.getPrimaryDisplay().size.width / 2)
-    settings.setSync('lofi.window.y', 0 - CONTAINER.VERTICAL / 2 + screen.getPrimaryDisplay().size.width / 2 )
+    settings.setSync('lofi.window.y', 0 - CONTAINER.VERTICAL / 2 + screen.getPrimaryDisplay().size.height / 2 )
   }
 
   Object.assign(windowConfig, {
@@ -216,9 +215,9 @@ app.on('ready', () => {
     createWindow();
   }
   
-  tray = new Tray(nativeImage.createFromPath(__dirname + '/icon.square.png').resize({height: 16}))
+  tray = new Tray(nativeImage.createFromPath(__dirname + '/icon.png').resize({height: 16}))
   const contextMenu = Menu.buildFromTemplate([
-    { label: `lofi v${DEFAULT_SETTINGS.version}`, enabled: false, icon: nativeImage.createFromPath(__dirname + '/icon.square.png').resize({height: 16})},
+    { label: `lofi v${DEFAULT_SETTINGS.version}`, enabled: false, icon: nativeImage.createFromPath(__dirname + '/icon.png').resize({height: 16})},
     { type: 'separator' },
     { label: 'Settings', type: 'normal', click: () => {
       mainWindow.webContents.send('show-settings');
