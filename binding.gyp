@@ -35,23 +35,23 @@
         ]
       ]
     },
-    {
-      "target_name": "make-volume-capture-daemon",
-      "conditions": [
-        ['OS=="mac"',
-          {
-            "actions": [
-                {
-                    "action_name": "make",
-                    "inputs": [],
-                    "outputs": [ "./build/release/" ],
-                    "action": [ "make", "-C", "./src/native/volume/macos" ]
-                }
-            ]
-          }
-        ]
-      ],
-    },
+    # {
+    #   "target_name": "make-volume-capture-daemon",
+    #   "conditions": [
+    #     ['OS=="mac"',
+    #       {
+    #         "actions": [
+    #             {
+    #                 "action_name": "make",
+    #                 "inputs": [],
+    #                 "outputs": [ "./build/release/" ],
+    #                 "action": [ "make", "-C", "./src/native/volume/macos" ]
+    #             }
+    #         ]
+    #       }
+    #     ]
+    #   ],
+    # },
     {
       "target_name": "black-magic",
       "cflags!": [ "-fno-exceptions" ],

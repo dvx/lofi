@@ -156,6 +156,27 @@ function createWindow() {
       if (Boolean(settings.getSync('debug')) === true) {
         event.newGuest.webContents.openDevTools({mode:"detach"});
       }
+    } else if(frameName === 'about') {
+      // Open settings window as modal
+      Object.assign(options, {
+        x: screen.getDisplayMatching(mainWindow.getBounds()).bounds.x - 400 / 2 + screen.getDisplayMatching(mainWindow.getBounds()).bounds.width / 2,
+        y: screen.getDisplayMatching(mainWindow.getBounds()).bounds.y - 400 / 2 + screen.getDisplayMatching(mainWindow.getBounds()).bounds.height / 2,
+        height: 400,
+        width: 400,
+        modal: false,
+        parent: mainWindow,
+        frame: false,
+        resizable: false,
+        maximizable: false,
+        focusable: true,
+        title: "About Lofi"
+      });
+      event.newGuest = new BrowserWindow(options);
+      event.newGuest.setMenu(null);
+      event.newGuest.setResizable(true);
+      if (Boolean(settings.getSync('debug')) === true) {
+        event.newGuest.webContents.openDevTools({mode:"detach"});
+      }
     } else {
       event.preventDefault();
       shell.openExternal(url);

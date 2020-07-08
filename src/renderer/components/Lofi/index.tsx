@@ -5,6 +5,7 @@ import { startAuthServer, stopAuthServer } from '../../../main/server';
 import { CONTAINER, MAX_SIDE_LENGTH, MIN_SIDE_LENGTH } from '../../../constants'; 
 import Cover from './Cover';
 import Settings from './Settings';
+import About from './About';
 import Welcome from './Welcome';
 import WindowPortal from '../util/WindowPortal'
 import { ChangeEvent } from 'electron-settings';
@@ -23,6 +24,7 @@ class Lofi extends React.Component<any, any> {
       access_token: settings.getSync('spotify.access_token'),
       refresh_token: settings.getSync('spotify.refresh_token'),
       showSettings: false,
+      showAbout: false,
       lofiSettings: settings.getSync('lofi'),
       side_length: settings.getSync('lofi.window.side'),
       window_side: (() => {
@@ -41,18 +43,7 @@ class Lofi extends React.Component<any, any> {
 
     // Allow to open settings via IPC channel (e.g. triggered by a taskbar click)
     ipcRenderer.on('show-about', () => {
-      alert(`Lofi v${settings.getSync('version')}
-A mini Spotify player with WebGL visualizations.
-https://www.lofi.rocks
-
-Copyright (c) 2019-2020 David Titarenco
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-`)
+      this.showAboutWindow();
     })
   }
 
@@ -239,6 +230,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     document.getElementById('app-body').addEventListener("mousemove", onMouseMove);
   }
 
+  showAboutWindow() {
+    if (!this.state.showAbout) {
+      this.setState({showAbout: true})
+    }
+  }
+  
+  hideAboutWindow() {
+    this.setState({showAbout: false});
+  }
+
   showSettingsWindow() {
     if (!this.state.showSettings) {
       this.setState({showSettings: true})
@@ -257,6 +258,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         <div className="bottom left grab-resize"></div>
         <div className="bottom right grab-resize"></div>
         { this.state.showSettings ? <WindowPortal fullscreen onUnload={this.hideSettingsWindow.bind(this)} name="settings"><Settings lofi={this} className="settings-wnd"/></WindowPortal> : null }
+        { this.state.showAbout ? <WindowPortal fullscreen onUnload={this.hideAboutWindow.bind(this)} name="about"><About lofi={this} className="about-wnd"/></WindowPortal> : null }
         { this.state.auth ? <Cover visualizationId={this.state.lofiSettings.visualization} settings={this.state.lofiSettings.window} side={this.state.window_side} lofi={this} token={this.state.access_token} /> : <Welcome lofi={this} /> }
       </div>
     );
