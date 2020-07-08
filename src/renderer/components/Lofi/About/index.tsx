@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import TitleBar from 'frameless-titlebar'
 import * as j from '../../../../../package.json'
 import './style.scss';

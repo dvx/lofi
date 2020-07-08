@@ -5,7 +5,6 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import PropTypes from 'prop-types'
 
 /**
  * The NewWindow class object.
@@ -66,7 +65,7 @@ class NewWindow extends React.PureComponent<any, any> {
    * Create the new window when NewWindow component mount.
    */
   openChild() {
-    const { url, title, name, features, onBlock, onOpen, center, fullscreen, size } = this.props
+    const { url, title, name, features, onBlock, onOpen, center } = this.props
 
     // Prepare position of the new window to be centered against the 'parent' window or 'screen'.
     if (

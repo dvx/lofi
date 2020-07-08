@@ -35,7 +35,7 @@ export const DEFAULT_SETTINGS = {
   debug: false,
   hardware_acceleration: true,
   lofi: {
-    visualization: 2,
+    visualization: 0,
     window: {
       always_on_top: true,
       x: 0,

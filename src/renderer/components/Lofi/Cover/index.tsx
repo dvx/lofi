@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { remote, ipcRenderer } from 'electron'
+import { remote } from 'electron'
 import settings from 'electron-settings';
 import { MACOS } from '../../../../constants'
 import * as path from 'path';
@@ -243,7 +243,7 @@ class Cover extends React.Component<any, any> {
     // 5) Put them in the shuffled order in the playlist ID
     // 6) Play that playlist ID
     const playlist_id = this.state.currently_playing.context.uri.split(":").reverse()[0];
-    const tracks = (await this.getAllTracksFromPlaylist(playlist_id));
+    // const tracks = (await this.getAllTracksFromPlaylist(playlist_id));
 
     let res = await fetch('https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks', {
       method: 'GET',
