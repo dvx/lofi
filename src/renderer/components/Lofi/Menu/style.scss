@@ -132,3 +132,7 @@ opacity: 1;
 .menu li a.help:active {
     color: #b47f2e;
 }
+
+.menu li a.disabled {
+    color: #555 !important;
+}

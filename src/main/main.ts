@@ -1,7 +1,6 @@
 import { app, BrowserWindow, ipcMain, screen, shell, Tray, Menu, nativeImage } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import { register } from 'electron-localshortcut';
 import settings from 'electron-settings';
 import { MACOS, WINDOWS, CONTAINER, SETTINGS_CONTAINER, DEFAULT_SETTINGS } from '../constants';
 
@@ -175,6 +174,10 @@ app.on('ready', () => {
   // If we have a settings version mismatch, nuke the settings
   if (!settings.hasSync('version') || (String(settings.getSync('version')) !== String(DEFAULT_SETTINGS.version))) {
     settings.resetToDefaultsSync()
+
+    // Default position is based on OS; (0,0) sometimes breaks
+    settings.setSync('lofi.window.x', 0 - CONTAINER.HORIZONTAL / 2 + screen.getPrimaryDisplay().size.width / 2)
+    settings.setSync('lofi.window.y', 0 - CONTAINER.VERTICAL / 2 + screen.getPrimaryDisplay().size.width / 2 )
   }
 
   Object.assign(windowConfig, {

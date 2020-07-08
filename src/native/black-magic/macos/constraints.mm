@@ -13,10 +13,10 @@
 }
 
 + (void)load {
-  NSLog(@"Attempting to suppress AtomNSWindow constraints...");
+  NSLog(@"Attempting to suppress ElectronNSWindow constraints...");
   static dispatch_once_t once_token;
   dispatch_once(&once_token,  ^{
-    Class clazz = objc_getClass("AtomNSWindow");
+    Class clazz = objc_getClass("ElectronNSWindow");
     SEL constrainFrameRectSelector = @selector(constrainFrameRect:toScreen:);
     SEL dontConstrainFrameRectSelector = @selector(dontConstrainFrameRect:toScreen:);
     Method originalMethod = class_getInstanceMethod(clazz, constrainFrameRectSelector);

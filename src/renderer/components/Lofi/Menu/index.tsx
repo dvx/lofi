@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ipcRenderer } from 'electron'
+import { MACOS } from '../../../../constants'
 import './style.scss'
 
 class Menu extends React.Component<any, any> {
@@ -12,7 +12,9 @@ class Menu extends React.Component<any, any> {
   }
 
   cycleVis() {
-    this.props.parent.cycleVisualizationType();
+    if (!MACOS) {
+      this.props.parent.cycleVisualizationType();
+    }
   }
 
   showSettingsWindow() {
@@ -33,7 +35,7 @@ class Menu extends React.Component<any, any> {
         {
           this.props.parent.constructor.name !== 'Welcome' ?
           <ul className='menu bottom-menu'>
-            <li><a onClick={this.cycleVis.bind(this)} className='vis not-draggable'><i className={'fa not-draggable ' + this.props.visIcon }></i></a></li>
+            <li><a onClick={this.cycleVis.bind(this)} className={`vis not-draggable ${ MACOS ? `disabled` : `` }`}><i className={'fa not-draggable ' + this.props.visIcon }></i></a></li>
             {/* <li className='pull-right'><a data-tooltip="Shuffle playlist" className='shuffle not-draggable'><i onClick={this.toggleShuffle.bind(this)} className="fa fa-random not-draggable"></i></a></li> */}
             <li className='pull-right'><a target="_blank" href="http://lofi.rocks/help" className='help not-draggable'><i className="fa fa-question-circle not-draggable"></i></a></li>
           </ul> : null

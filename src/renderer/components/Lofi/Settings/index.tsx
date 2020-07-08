@@ -5,6 +5,7 @@ import TitleBar from 'frameless-titlebar'
 import './style.scss';
 
 import { visualizations } from '../../../../visualizations/visualizations.js';
+import { MACOS } from '../../../../constants';
 
 class Settings extends React.Component<any, any> {
   constructor(props: any) {
@@ -107,7 +108,7 @@ class Settings extends React.Component<any, any> {
 
             <div className="form-group">
               <div>
-                <select value={this.state.lofi.visualization} className="picker" onChange={this.changeLofiVisualizationSettings.bind(this)}>
+                <select disabled = { MACOS } value={this.state.lofi.visualization} className="picker" onChange={this.changeLofiVisualizationSettings.bind(this)}>
                   {visualizations.map((vis, idx) =>
                     <option key={idx} value={idx}>{vis.name}</option>
                   )};
