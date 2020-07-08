@@ -33,7 +33,7 @@ export const SETTINGS_CONTAINER = {
 export const DEFAULT_SETTINGS = {
   version: "1.5.0",
   debug: false,
-  hardware_acceleration: false,
+  hardware_acceleration: true,
   lofi: {
     visualization: 2,
     window: {
