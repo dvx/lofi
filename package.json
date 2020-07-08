@@ -21,9 +21,6 @@
   "license": "MIT",
   "private": false,
   "build": {
-    "asarUnpack": [
-      "./pack/volume-capture-daemon"
-    ],
     "files": [
       "./pack/**/*",
       "./icon.*"
@@ -34,10 +31,7 @@
     "appId": "lofi.rocks",
     "mac": {
       "identity": null,
-      "category": "music.player",
-      "extendInfo": {
-        "NSMicrophoneUsageDescription": "Lofi needs to access the iShowU Audio Capture device for visualization support. It does not use your actual microphone. See the FAQ for details."
-      }
+      "category": "music.player"
     }
   },
   "devDependencies": {

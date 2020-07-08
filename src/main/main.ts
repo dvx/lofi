@@ -2,10 +2,10 @@ import { app, BrowserWindow, ipcMain, screen, shell, Tray, Menu, nativeImage } f
 import * as path from 'path';
 import * as url from 'url';
 import settings from 'electron-settings';
-import { MACOS, WINDOWS, CONTAINER, SETTINGS_CONTAINER, DEFAULT_SETTINGS } from '../constants';
+import { MACOS, WINDOWS, LINUX, CONTAINER, SETTINGS_CONTAINER, DEFAULT_SETTINGS } from '../constants';
 
-// webpack imports
-import '../../build/release/black-magic.node';
+// Webpack imports
+import '../../build/Release/black-magic.node';
 import '../../icon.square.png'
 import '../../icon.png'
 import '../../icon.ico'
@@ -209,7 +209,12 @@ app.on('ready', () => {
     side: Number(settings.getSync('lofi.window.side'))
   });
     
-  createWindow();
+  if (LINUX) {
+    // Linux transparency fix, delay launch by 1s
+    setTimeout(createWindow, 1000);
+  } else {
+    createWindow();
+  }
   
   tray = new Tray(nativeImage.createFromPath(__dirname + '/icon.square.png').resize({height: 16}))
   const contextMenu = Menu.buildFromTemplate([

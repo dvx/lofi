@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './style.scss';
 
-import { volume } from '../../../../../../build/release/volume.node';
+import { volume } from '../../../../../../build/Release/volume.node';
 import { visualizations } from '../../../../../visualizations/visualizations.js';
 
 class Visualizer extends React.Component<any, any> {

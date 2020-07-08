@@ -1,4 +1,4 @@
-import { volume } from '../../build/release/volume.node';
+import { volume } from '../../build/Release/volume.node';
 import { visualizations } from '../visualizations/visualizations.js';
 import settings from 'electron-settings';
 import { ipcRenderer } from 'electron';

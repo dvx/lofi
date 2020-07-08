@@ -2,6 +2,7 @@
 import * as os from 'os'
 
 export const WINDOWS = (os.platform() === "win32");
+export const LINUX = (os.platform() === "linux");
 export const MACOS = (os.platform() === "darwin");
 export const MACOS_MOJAVE = (MACOS && parseInt(os.release().split('.')[0]) >= 18);
 
