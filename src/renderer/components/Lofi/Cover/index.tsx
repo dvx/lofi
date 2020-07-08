@@ -276,14 +276,14 @@ class Cover extends React.Component<any, any> {
       }
       return;
 
-      // Play the generated playlist
-      fetch('https://api.spotify.com/v1/me/player/play', {
-        method: 'PUT',
-        headers: new Headers({
-          'Authorization': 'Bearer '+ this.props.token
-        }),
-        body: JSON.stringify({ uris: shuffled})
-      })
+      // // Play the generated playlist
+      // fetch('https://api.spotify.com/v1/me/player/play', {
+      //   method: 'PUT',
+      //   headers: new Headers({
+      //     'Authorization': 'Bearer '+ this.props.token
+      //   }),
+      //   body: JSON.stringify({ uris: shuffled})
+      // })
     }
   }
 

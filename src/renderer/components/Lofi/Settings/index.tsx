@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import * as settings from 'electron-settings';
 import { remote } from 'electron'
 import TitleBar from 'frameless-titlebar'
@@ -17,7 +17,7 @@ class Settings extends React.Component<any, any> {
 
   nukeSettings() {
     if (confirm("Are you sure you want to reset all Lofi settings?")) {
-      settings.resetToDefaults();
+      settings.resetToDefaultsSync();
       remote.app.relaunch();
       remote.app.exit(0);
     }
