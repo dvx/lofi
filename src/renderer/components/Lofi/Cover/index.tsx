@@ -129,7 +129,7 @@ class Cover extends React.Component<any, any> {
   }
 
   async listeningTo() {
-      let res = await fetch('https://api.spotify.com/v1/me/player', {
+      let res = await fetch('https://api.spotify.com/v1/me/player?type=episode,track', {
         method: 'GET',
         headers: new Headers({
           'Authorization': 'Bearer '+ this.props.token
@@ -401,8 +401,8 @@ class Cover extends React.Component<any, any> {
         // TODO: Cover art for ads?
         return '';
       } else if (this.state.currently_playing.currently_playing_type == 'episode') {
-        // TODO: Cover art for music videos?
-        return '';
+        // Podcasts fall into this category
+        return this.state.currently_playing.item.images[0].url;
       }
     }
     return '';
@@ -415,7 +415,8 @@ class Cover extends React.Component<any, any> {
       } else if (this.state.currently_playing.currently_playing_type == 'ad') {
         return 'Advertisement';
       } else if (this.state.currently_playing.currently_playing_type == 'episode') {
-        return 'Music Video';
+        // Podcasts fall into this category
+        return this.state.currently_playing.item.name;
       }
     }
     return 'Nothing Playing';
@@ -428,7 +429,8 @@ class Cover extends React.Component<any, any> {
       } else if (this.state.currently_playing.currently_playing_type == 'ad') {
         return 'Spotify';
       } else if (this.state.currently_playing.currently_playing_type == 'episode') {
-        return 'Spotify';
+        // Podcasts fall into this category
+        return this.state.currently_playing.item.description;
       }
     }
     return 'No artist information found...';
