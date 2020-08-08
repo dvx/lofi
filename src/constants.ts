@@ -47,6 +47,7 @@ export const DEFAULT_SETTINGS = {
     },
     audio: {
       volume_increment: 10,
+      display_volume_change: false,
     },
   },
   spotify: {

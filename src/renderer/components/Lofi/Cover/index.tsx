@@ -37,6 +37,7 @@ class Cover extends React.Component<any, any> {
       volume: 0,
       volume_increment: DEFAULT_SETTINGS.lofi.audio.volume_increment,
       volume_changed: false,
+      display_volume_change: DEFAULT_SETTINGS.lofi.audio.display_volume_change,
       stateChange: new Date(1900, 1, 1),
       shuffle: null,
     };
@@ -51,15 +52,18 @@ class Cover extends React.Component<any, any> {
     this.setState({ intervalId });
 
     function onMouseWheel(e: WheelEvent) {
-      const volume_percent =
-        that.props.lofi.state.lofiSettings.audio.volume_increment / 100;
-      const new_volume = e.deltaY * volume_percent;
+      const volume_increment = that.props.lofi.state.lofiSettings.audio
+        ? that.props.lofi.state.lofiSettings.audio.volume_increment
+        : DEFAULT_SETTINGS.lofi.audio.volume_increment;
 
-      if (e.deltaY > 0 && that.state.volume > 0) {
-        that.setVolume(that.state.volume - new_volume);
-      } else if (e.deltaY < 0 && that.state.volume < 100) {
-        that.setVolume(that.state.volume + Math.abs(new_volume));
-      }
+      const volume_percent = volume_increment / 100;
+      const new_volume = _.clamp(
+        that.state.volume - e.deltaY * volume_percent,
+        0,
+        100
+      );
+
+      that.setVolume(new_volume);
     }
 
     document
