@@ -5,15 +5,32 @@ import TitleBar from 'frameless-titlebar';
 import './style.scss';
 
 import { visualizations } from '../../../../visualizations/visualizations.js';
-import { MACOS } from '../../../../constants';
-import { set } from 'lodash';
+import { MACOS, DEFAULT_SETTINGS } from '../../../../constants';
+import { get, set } from 'lodash';
 
 class Settings extends React.Component<any, any> {
+  private oldSettings: any;
+  private settingsToWatch: string[];
   constructor(props: any) {
     super(props);
     this.state = {
       ...settings.getSync(),
     };
+    this.settingsToWatch = [
+      'lofi.window.always_on_top',
+      'lofi.window.remember',
+      'lofi.window.hide',
+      'lofi.window.metadata',
+      'lofi.visualization',
+      'hardware_acceleration',
+      'debug',
+      'lofi.audio.volume_increment',
+    ];
+    this.oldSettings = {};
+    this.settingsToWatch.map((name) => {
+      const setting = get(this.state, name) ?? undefined;
+      this.oldSettings[name] = setting;
+    });
   }
 
   nukeSettings() {
@@ -25,6 +42,10 @@ class Settings extends React.Component<any, any> {
   }
 
   commitSettings() {
+    if (!this.isFormValid()) {
+      return;
+    }
+
     // Commit window settings
     settings.setSync(
       'lofi.window.always_on_top',
@@ -56,6 +77,25 @@ class Settings extends React.Component<any, any> {
     const settings: { [x: string]: any } = this.state;
     set(settings, fullName, newValue);
     this.setState(settings);
+  }
+
+  isFormValid() {
+    const currentSettings: { [x: string]: any } = this.state;
+
+    const changedSettings = this.settingsToWatch.filter(
+      (settingName) =>
+        this.oldSettings[settingName] !== get(currentSettings, settingName)
+    );
+
+    if (changedSettings === undefined || changedSettings.length == 0) {
+      return false;
+    }
+
+    return (
+      this.state.lofi.audio.volume_increment &&
+      this.state.lofi.audio.volume_increment > 0 &&
+      this.state.lofi.audio.volume_increment <= 100
+    );
   }
 
   render() {
@@ -160,7 +200,10 @@ class Settings extends React.Component<any, any> {
                     value={this.state.lofi.visualization}
                     className="picker"
                     onChange={(e) =>
-                      this.setNewSettings('lofi.visualization', e.target.value)
+                      this.setNewSettings(
+                        'lofi.visualization',
+                        Number(e.target.value)
+                      )
                     }
                   >
                     {visualizations.map((vis, idx) => (
@@ -191,7 +234,11 @@ class Settings extends React.Component<any, any> {
                         e.target.value
                       )
                     }
-                    value={this.state.lofi.audio.volume_increment}
+                    value={
+                      this.state.lofi.audio
+                        ? this.state.lofi.audio.volume_increment
+                        : DEFAULT_SETTINGS.lofi.audio.volume_increment
+                    }
                   />
                   <label htmlFor="volume_increment">
                     Scroll wheel volume increment
@@ -237,16 +284,18 @@ class Settings extends React.Component<any, any> {
             </fieldset>
           </form>
           <div className="button-container">
-            <div className="red-holder">
+            <div className="button-holder">
               <a href="#" onClick={this.nukeSettings} className="red-button">
                 Reset to factory defaults
               </a>
             </div>
-            <div className="green-holder">
+            <div className="button-holder">
               <a
                 href="#"
                 onClick={this.commitSettings.bind(this)}
-                className="green-button"
+                className={`${
+                  this.isFormValid() ? 'green-button' : 'button-disabled'
+                }`}
               >
                 Save settings
               </a>

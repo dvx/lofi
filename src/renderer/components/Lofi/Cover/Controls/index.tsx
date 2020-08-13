@@ -53,6 +53,10 @@ class Controls extends React.Component<any, any> {
   }
 
   renderVolumeLabel() {
+    if (!this.props.parent.state.display_volume_change) {
+      return;
+    }
+
     const className = this.props.parent.state.volume_changed
       ? 'volume-number-show'
       : 'volume-number';
