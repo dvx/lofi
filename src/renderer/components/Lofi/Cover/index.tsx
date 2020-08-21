@@ -557,8 +557,7 @@ class Cover extends React.Component<any, any> {
         />
         <RecreateChildOnPropsChange
           visType={this.state.visualizationType}
-          visId={this.props.visualizationId}
-        >
+          visId={this.props.visualizationId}>
           <Visualizer
             visId={this.props.visualizationId}
             currentlyPlaying={this.state.currently_playing}

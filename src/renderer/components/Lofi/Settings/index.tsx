@@ -204,8 +204,7 @@ class Settings extends React.Component<any, any> {
                         'lofi.visualization',
                         Number(e.target.value)
                       )
-                    }
-                  >
+                    }>
                     {visualizations.map((vis, idx) => (
                       <option key={idx} value={idx}>
                         {vis.name}
@@ -295,8 +294,7 @@ class Settings extends React.Component<any, any> {
                 onClick={this.commitSettings.bind(this)}
                 className={`${
                   this.isFormValid() ? 'green-button' : 'button-disabled'
-                }`}
-              >
+                }`}>
                 Save settings
               </a>
             </div>

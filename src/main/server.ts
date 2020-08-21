@@ -1,5 +1,5 @@
-import * as http from 'http'
-import * as url from 'url'
+import * as http from 'http';
+import * as url from 'url';
 import settings from 'electron-settings';
 import { AUTH_BACKEND_PORT } from '../constants';
 
@@ -12,8 +12,8 @@ export function startAuthServer() {
       if (queryData.access_token && queryData.refresh_token) {
         settings.set('spotify', queryData);
       }
-      response.end('<script>window.close()</script>')
-    })
+      response.end('<script>window.close()</script>');
+    });
     server.listen(AUTH_BACKEND_PORT);
   }
 }

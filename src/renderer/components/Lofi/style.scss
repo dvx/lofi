@@ -1,103 +1,103 @@
 #visible-ui {
-    height: 100%;
-    position: relative;
-    width: 20%;
-    left: 40%;
-    overflow: hidden;
-    box-shadow: 0px 0px 76px #0000005e;
-    background: linear-gradient(135deg, #1f1f1f 0%, #2d2d2d 100%);
+  height: 100%;
+  position: relative;
+  width: 20%;
+  left: 40%;
+  overflow: hidden;
+  box-shadow: 0px 0px 76px #0000005e;
+  background: linear-gradient(135deg, #1f1f1f 0%, #2d2d2d 100%);
 }
 
 #visible-ui:hover {
-    box-shadow: 0px 0px 76px #00000077;
+  box-shadow: 0px 0px 76px #00000077;
 }
 
 #visible-ui:hover .top-menu {
-    opacity: 1;
+  opacity: 1;
 }
 
 #visible-ui:hover .bottom-menu {
-    opacity: 1;
+  opacity: 1;
 }
 
 #visible-ui:hover .welcome-pane {
-    transform: scale(1.1);
-    filter: blur(8px);
+  transform: scale(1.1);
+  filter: blur(8px);
 }
 
 #visible-ui:hover .cover {
-    transform: scale(1.1);
-    filter: blur(2px);
+  transform: scale(1.1);
+  filter: blur(2px);
 }
 
 #visible-ui:hover .track-info-left {
-    transition: .15s;
-    right: calc(60% + 1.5em);
-    opacity: 1;
+  transition: 0.15s;
+  right: calc(60% + 1.5em);
+  opacity: 1;
 }
 
 #visible-ui:hover .track-info-right {
-    transition: .15s;
-    left: calc(60% + 1.5em);
-    opacity: 1;
+  transition: 0.15s;
+  left: calc(60% + 1.5em);
+  opacity: 1;
 }
 
 #visible-ui:hover .controls {
-    transition: .1s;
-    opacity: 1;
+  transition: 0.1s;
+  opacity: 1;
 }
 
 #visible-ui:hover .welcome-controls {
-    transition: .1s;
-    opacity: 1;
+  transition: 0.1s;
+  opacity: 1;
 }
 
 #visible-ui:hover .menu .logo-typo {
-    background-position: left center;
-    color: #ef9671;
-    transition: background-position 2000ms ease-out;
+  background-position: left center;
+  color: #ef9671;
+  transition: background-position 2000ms ease-out;
 }
 
 .hide-window {
-    display: none;
+  display: none;
 }
 
 .top {
-    top: 0;
+  top: 0;
 }
 
 .right {
-    right: 0;
+  right: 0;
 }
 
 .bottom {
-    bottom: 0;
+  bottom: 0;
 }
 
 .left {
-    left: 0;
+  left: 0;
 }
 
 .top.left:hover {
-    cursor: nwse-resize;
+  cursor: nwse-resize;
 }
 
 .bottom.right:hover {
-    cursor: nwse-resize;
+  cursor: nwse-resize;
 }
 
 .top.right:hover {
-    cursor: nesw-resize;
+  cursor: nesw-resize;
 }
 
 .bottom.left:hover {
-    cursor: nesw-resize;
+  cursor: nesw-resize;
 }
 
 .grab-resize {
-    z-index: 4;
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    background: none;
+  z-index: 4;
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: none;
 }

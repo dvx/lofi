@@ -2,72 +2,79 @@
 @import url('./static/fontawesome/css/all.min.css');
 
 body {
-    user-select: none;
+  user-select: none;
 }
 
-*, *::after, *::before {
-    -webkit-user-select: none;
-    -webkit-user-drag: none;
-    -webkit-app-region: no-drag;
-    cursor: default;
+*,
+*::after,
+*::before {
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-app-region: no-drag;
+  cursor: default;
 }
 
 .pull-right {
-    float: right !important;
+  float: right !important;
 }
 
 .full {
-    height: 100%;
-    width: 100%;
+  height: 100%;
+  width: 100%;
 }
 
 .controls {
-    height: 100%;
-    float: left;
-    width: 50%;
+  height: 100%;
+  float: left;
+  width: 50%;
 }
 
 .button {
-    padding: .5em;
-    border-radius: 8px;
-    background: #3c3c3c;
-    font-size: 85%;
+  padding: 0.5em;
+  border-radius: 8px;
+  background: #3c3c3c;
+  font-size: 85%;
 }
 
 .button:hover {
-    cursor: default;
+  cursor: default;
 }
 
 .menu-item {
-    text-align: right;
-    padding: 1em;
-    padding-top: 0.5em;
-    color: #ececec;
+  text-align: right;
+  padding: 1em;
+  padding-top: 0.5em;
+  color: #ececec;
 }
 
 .menu-item:first-child {
-    padding-top: 1em;
+  padding-top: 1em;
 }
 
-html, body {
-    font-family: 'Inter UI', sans-serif; 
-    font-feature-settings: 'calt' 1, 'ss02' 1;
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    display: grid;
+html,
+body {
+  font-family: 'Inter UI', sans-serif;
+  font-feature-settings: 'calt' 1, 'ss02' 1;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  display: grid;
 }
 
 .app {
-    margin: auto;
+  margin: auto;
 }
 
 .centered {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
 }
 
-.click-on      {pointer-events: all}
-.click-through {pointer-events: none}
+.click-on {
+  pointer-events: all;
+}
+.click-through {
+  pointer-events: none;
+}

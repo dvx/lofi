@@ -5,7 +5,7 @@ import { ipcRenderer } from 'electron';
 
 let activeVisId = settings.getSync('lofi.visualization');
 
-const byeVisualization = function() {
+const byeVisualization = function () {
   let canvas = document.getElementsByTagName('canvas')[0];
   if (canvas) {
     let gl = canvas.getContext('webgl');
@@ -14,11 +14,11 @@ const byeVisualization = function() {
     }
     document.body.removeChild(canvas);
   }
-}
+};
 
-const doVisualization = function(vis: Function) {
+const doVisualization = function (vis: Function) {
   byeVisualization();
-  let canvas = document.createElement("canvas");
+  let canvas = document.createElement('canvas');
   document.body.appendChild(canvas);
   window.addEventListener('resize', () => {
     canvas.width = window.innerWidth / 2;
@@ -27,11 +27,13 @@ const doVisualization = function(vis: Function) {
   canvas.width = window.innerWidth / 2;
   canvas.height = window.innerHeight / 2;
 
-  vis(canvas, function() { return { volume } });
-}
+  vis(canvas, function () {
+    return { volume };
+  });
+};
 
 ipcRenderer.on('set-visualization', function (event: Event, id: number) {
-  if (typeof id !== "undefined" && id !== activeVisId) {
+  if (typeof id !== 'undefined' && id !== activeVisId) {
     activeVisId = id;
     doVisualization(visualizations[activeVisId].visualize);
   }

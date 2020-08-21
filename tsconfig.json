@@ -1,18 +1,18 @@
 {
-    "compilerOptions": {
-        "allowSyntheticDefaultImports": true,
-        "jsx": "react",
-        "module": "ESNext",
-        "resolveJsonModule": true,
-        "moduleResolution": "node",
-        "noImplicitAny": true,
-        "noImplicitThis": true,
-        "allowUnreachableCode": false,
-        "allowUnusedLabels": false,
-        "noUnusedLocals": true,
-        "sourceMap": true,
-        "target": "es2017",
-        "types" : ["node", "lodash", "express", "electron", "electron-settings"]
-    },
-    "exclude": ["node_modules"]
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react",
+    "module": "ESNext",
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "noUnusedLocals": true,
+    "sourceMap": true,
+    "target": "es2017",
+    "types": ["node", "lodash", "express", "electron", "electron-settings"]
+  },
+  "exclude": ["node_modules"]
 }

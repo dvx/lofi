@@ -1,69 +1,68 @@
 <!DOCTYPE html>
 <html>
-    <head>
+  <head>
     <style>
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-        }
-        canvas {
-            background-color: #ccc;
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 100%;
-            height: 100%;
-        }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+      canvas {
+        background-color: #ccc;
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+      }
 
-        #help-toast {
-            animation: hide 1s ease-in 5s forwards;
-            -webkit-animation-fill-mode: forwards;
-            animation-fill-mode: forwards;
-            animation-fill-mode: forwards;
-            background: #000000ab;
-            z-index: 999;
-            position: absolute;
-            color: white;
-            font-family: 'Inter UI', sans-serif;
-            padding: 1em;
-            margin: 1em;
-            opacity: 1;
-        }
+      #help-toast {
+        animation: hide 1s ease-in 5s forwards;
+        -webkit-animation-fill-mode: forwards;
+        animation-fill-mode: forwards;
+        animation-fill-mode: forwards;
+        background: #000000ab;
+        z-index: 999;
+        position: absolute;
+        color: white;
+        font-family: 'Inter UI', sans-serif;
+        padding: 1em;
+        margin: 1em;
+        opacity: 1;
+      }
 
-        .kbd {
-            padding:0.1em 0.6em;
-            border:1px solid #ccc;
-            font-family: monospace;
-            font-weight: bold;
-            background-color:#f7f7f7;
-            color:#999;
-            -moz-box-shadow:0 1px 0px rgba(0, 0, 0, 0.2),0 0 0 2px #ffffff inset;
-            -webkit-box-shadow:0 1px 0px rgba(0, 0, 0, 0.2),0 0 0 2px #ffffff inset;
-            box-shadow:0 1px 0px rgba(0, 0, 0, 0.2),0 0 0 2px #ffffff inset;
-            -moz-border-radius:3px;
-            -webkit-border-radius:3px;
-            border-radius:3px;
-            display:inline-block;
-            margin:0 0.1em;
-            text-shadow:0 1px 0 #fff;
-            line-height:1.4;
-            white-space:nowrap;
+      .kbd {
+        padding: 0.1em 0.6em;
+        border: 1px solid #ccc;
+        font-family: monospace;
+        font-weight: bold;
+        background-color: #f7f7f7;
+        color: #999;
+        -moz-box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2), 0 0 0 2px #ffffff inset;
+        -webkit-box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2),
+          0 0 0 2px #ffffff inset;
+        box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2), 0 0 0 2px #ffffff inset;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        border-radius: 3px;
+        display: inline-block;
+        margin: 0 0.1em;
+        text-shadow: 0 1px 0 #fff;
+        line-height: 1.4;
+        white-space: nowrap;
+      }
+
+      @keyframes hide {
+        to {
+          opacity: 0;
         }
-            
-        @keyframes hide {
-            to {
-                opacity: 0;
-            }
-        }        
+      }
     </style>
     <title>lofi visualizer</title>
-</head>
-<body>
-
-</body>
+  </head>
+  <body></body>
 </html>
