@@ -5,6 +5,7 @@ import {
   MACOS,
   DEFAULT_SETTINGS,
   LOFI_SHUFFLED_PLAYLIST_NAME,
+  API_URL,
 } from '../../../../constants';
 import * as path from 'path';
 import * as url from 'url';
@@ -122,8 +123,7 @@ class Cover extends React.Component<any, any> {
       this.volumeChanged()
     );
     await fetch(
-      'https://api.spotify.com/v1/me/player/volume?volume_percent=' +
-        Math.round(percent),
+      API_URL + '/me/player/volume?volume_percent=' + Math.round(percent),
       {
         method: 'PUT',
         headers: new Headers({
@@ -175,15 +175,12 @@ class Cover extends React.Component<any, any> {
   }
 
   async listeningTo() {
-    let res = await fetch(
-      'https://api.spotify.com/v1/me/player?type=episode,track',
-      {
-        method: 'GET',
-        headers: new Headers({
-          Authorization: 'Bearer ' + this.props.token,
-        }),
-      }
-    );
+    let res = await fetch(API_URL + '/me/player?type=episode,track', {
+      method: 'GET',
+      headers: new Headers({
+        Authorization: 'Bearer ' + this.props.token,
+      }),
+    });
     if (res.status === 204) {
       // 204 is the "Nothing playing" Spotify response
       // See: https://github.com/zmb3/spotify/issues/56
@@ -196,7 +193,8 @@ class Cover extends React.Component<any, any> {
       // The solution is a bit ugly: seek to current position so Spotify doesn't kill our current active_device
       if (!currently_playing.is_playing) {
         await fetch(
-          'https://api.spotify.com/v1/me/player/seek?position_ms=' +
+          API_URL +
+            '/me/player/seek?position_ms=' +
             currently_playing.progress_ms,
           {
             method: 'PUT',
@@ -251,15 +249,12 @@ class Cover extends React.Component<any, any> {
   async getAllTracksFromPlaylist(playlist_id: string): Promise<string[]> {
     const allTracks: string[] | PromiseLike<string[]> = [];
 
-    let res = await fetch(
-      'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks',
-      {
-        method: 'GET',
-        headers: new Headers({
-          Authorization: 'Bearer ' + this.props.token,
-        }),
-      }
-    );
+    let res = await fetch(API_URL + '/playlists/' + playlist_id + '/tracks', {
+      method: 'GET',
+      headers: new Headers({
+        Authorization: 'Bearer ' + this.props.token,
+      }),
+    });
     let playlist = await res.json();
 
     playlist.items.map((item: any) => {
@@ -309,15 +304,12 @@ class Cover extends React.Component<any, any> {
       .reverse()[0];
     // const tracks = (await this.getAllTracksFromPlaylist(playlist_id));
 
-    let res = await fetch(
-      'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks',
-      {
-        method: 'GET',
-        headers: new Headers({
-          Authorization: 'Bearer ' + this.props.token,
-        }),
-      }
-    );
+    let res = await fetch(API_URL + '/playlists/' + playlist_id + '/tracks', {
+      method: 'GET',
+      headers: new Headers({
+        Authorization: 'Bearer ' + this.props.token,
+      }),
+    });
 
     if (res.status === 200) {
       let tracks: string[] = [];
@@ -346,7 +338,7 @@ class Cover extends React.Component<any, any> {
       return;
 
       // // Play the generated playlist
-      // fetch('https://api.spotify.com/v1/me/player/play', {
+      // fetch(API_URL + '/me/player/play', {
       //   method: 'PUT',
       //   headers: new Headers({
       //     'Authorization': 'Bearer '+ this.props.token
@@ -360,15 +352,12 @@ class Cover extends React.Component<any, any> {
 
   async getAllPlaylists(limit = 50) {
     let playlists: any[] = [];
-    let res = await fetch(
-      'https://api.spotify.com/v1/me/playlists?limit=' + limit,
-      {
-        method: 'GET',
-        headers: new Headers({
-          Authorization: 'Bearer ' + this.props.token,
-        }),
-      }
-    );
+    let res = await fetch(API_URL + '/me/playlists?limit=' + limit, {
+      method: 'GET',
+      headers: new Headers({
+        Authorization: 'Bearer ' + this.props.token,
+      }),
+    });
 
     if (res.status === 200) {
       let playlist_object = await res.json();

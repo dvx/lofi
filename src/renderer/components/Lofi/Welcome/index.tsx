@@ -13,7 +13,27 @@ class Welcome extends React.Component<any, any> {
     mainWindow.close();
   }
 
+  promptForAuth(authUrl: string): void {
+    const mainWindow = remote.getCurrentWindow();
+    const authWindow = new remote.BrowserWindow({
+      parent: mainWindow,
+      modal: true,
+      minimizable: false,
+      maximizable: false,
+      closable: true,
+    });
+
+    authWindow.setMenu(null);
+    authWindow.loadURL(authUrl);
+
+    authWindow.on('ready-to-show', () => {
+      authWindow.show();
+    });
+  }
+
   render() {
+    const authUrl = this.props.lofi.state.auth_url;
+
     return (
       <div className="welcome full">
         <Menu parent={this} />
@@ -25,15 +45,16 @@ class Welcome extends React.Component<any, any> {
             <div className="brand-tagline">a tiny player</div>
           </div>
         </div>
-        <div className="centered controls">
-          <a
-            className="login-btn not-draggable"
-            target="auth"
-            href="http://auth.lofi.rocks/login">
-            <i className="fab fa-spotify not-draggable"></i>&nbsp;&nbsp;
-            <span className="not-draggable">Log in</span>
-          </a>
-        </div>
+        {authUrl ? (
+          <div className="centered controls">
+            <a
+              className="login-btn not-draggable"
+              onClick={(e) => this.promptForAuth(authUrl)}>
+              <i className="fab fa-spotify not-draggable"></i>&nbsp;&nbsp;
+              <span className="not-draggable">Log in</span>
+            </a>
+          </div>
+        ) : null}
       </div>
     );
   }

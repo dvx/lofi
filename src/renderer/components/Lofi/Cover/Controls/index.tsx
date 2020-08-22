@@ -1,5 +1,6 @@
 import * as React from 'react';
 import './style.scss';
+import { API_URL } from '../../../../../constants';
 
 class Controls extends React.Component<any, any> {
   constructor(props: any) {
@@ -8,14 +9,14 @@ class Controls extends React.Component<any, any> {
 
   async pausePlay() {
     if (this.props.parent.getPlayState()) {
-      fetch('https://api.spotify.com/v1/me/player/pause', {
+      fetch(API_URL + '/me/player/pause', {
         method: 'PUT',
         headers: new Headers({
           Authorization: 'Bearer ' + this.props.token,
         }),
       });
     } else {
-      fetch('https://api.spotify.com/v1/me/player/play', {
+      fetch(API_URL + '/me/player/play', {
         method: 'PUT',
         headers: new Headers({
           Authorization: 'Bearer ' + this.props.token,
@@ -27,7 +28,7 @@ class Controls extends React.Component<any, any> {
   }
 
   async forward() {
-    fetch('https://api.spotify.com/v1/me/player/next', {
+    fetch(API_URL + '/me/player/next', {
       method: 'POST',
       headers: new Headers({
         Authorization: 'Bearer ' + this.props.token,
@@ -40,7 +41,7 @@ class Controls extends React.Component<any, any> {
   }
 
   async backward() {
-    fetch('https://api.spotify.com/v1/me/player/previous', {
+    fetch(API_URL + '/me/player/previous', {
       method: 'POST',
       headers: new Headers({
         Authorization: 'Bearer ' + this.props.token,

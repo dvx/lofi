@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as settings from 'electron-settings';
 import { ipcRenderer, remote } from 'electron';
-import { startAuthServer, stopAuthServer } from '../../../main/server';
+import { startAuth as startAuthProcess } from '../../../main/auth';
 import {
   CONTAINER,
   MAX_SIDE_LENGTH,
@@ -12,7 +12,6 @@ import Settings from './Settings';
 import About from './About';
 import Welcome from './Welcome';
 import WindowPortal from '../util/WindowPortal';
-import { ChangeEvent } from 'electron-settings';
 
 import './style.scss';
 
@@ -26,8 +25,8 @@ class Lofi extends React.Component<any, any> {
     super(props);
 
     this.state = {
-      access_token: settings.getSync('spotify.access_token'),
-      refresh_token: settings.getSync('spotify.refresh_token'),
+      // access_token: settings.getSync('spotify.access_token'),
+      // refresh_token: settings.getSync('spotify.refresh_token'),
       showSettings: false,
       showAbout: false,
       lofiSettings: settings.getSync('lofi'),
@@ -50,6 +49,7 @@ class Lofi extends React.Component<any, any> {
         return SIDE.RIGHT;
       })(),
       auth: false,
+      auth_url: '',
     };
 
     // Allow to open settings via IPC channel (e.g. triggered by a taskbar click)
@@ -67,71 +67,74 @@ class Lofi extends React.Component<any, any> {
     this.setState({ lofiSettings: settings.getSync('lofi') });
   }
 
-  async verifyAccessToken(observer?: SettingsObserver) {
-    console.log('Verifying access token...');
-    if (observer) {
-      observer.dispose();
-    }
-    let res = await fetch('https://api.spotify.com/v1/me', {
-      method: 'GET',
-      headers: new Headers({
-        Authorization: 'Bearer ' + this.state.access_token,
-      }),
-    });
-    if (res.status === 200) {
-      this.setState({
-        auth: true,
-      });
-    } else {
-      this.refreshAccessToken();
-    }
-  }
+  // async verifyAccessToken(observer?: SettingsObserver) {
+  //   console.log('Verifying access token...');
+  //   if (observer) {
+  //     observer.dispose();
+  //   }
+  //   let res = await fetch(API_URL + '/me', {
+  //     method: 'GET',
+  //     headers: new Headers({
+  //       Authorization: 'Bearer ' + this.state.access_token,
+  //     }),
+  //   });
+  //   if (res.status === 200) {
+  //     this.setState({
+  //       auth: true,
+  //     });
+  //   } else {
+  //     this.refreshAccessToken();
+  //   }
+  // }
 
-  async refreshAccessToken() {
-    console.log('Access token was bad... renewing');
-    let res = await fetch(
-      'http://auth.lofi.rocks/refresh_token?refresh_token=' +
-        this.state.refresh_token
-    );
-    if (res.status === 200) {
-      const access_token = (await res.json()).access_token;
-      settings.set('spotify.access_token', access_token);
-      this.setState({
-        access_token,
-        auth: true,
-      });
-    } else {
-      // Something is very, very wrong -- nuke auth settings
-      settings.delete('spotify.access_token');
-      settings.delete('spotify.refresh_token');
-      this.setState({
-        refresh_token: null,
-        access_token: null,
-        auth: false,
-      });
-      this.handleAuth();
-    }
-  }
+  // async refreshAccessToken() {
+  //   console.log('Access token was bad... renewing');
+  //   let res = await fetch(
+  //     'http://auth.lofi.rocks/refresh_token?refresh_token=' +
+  //       this.state.refresh_token
+  //   );
+  //   if (res.status === 200) {
+  //     const access_token = (await res.json()).access_token;
+  //     settings.set('spotify.access_token', access_token);
+  //     this.setState({
+  //       access_token,
+  //       auth: true,
+  //     });
+  //   } else {
+  //     // Something is very, very wrong -- nuke auth settings
+  //     settings.delete('spotify.access_token');
+  //     settings.delete('spotify.refresh_token');
+  //     this.setState({
+  //       refresh_token: null,
+  //       access_token: null,
+  //       auth: false,
+  //     });
+  //     this.handleAuth();
+  //   }
+  // }
 
   async handleAuth() {
     console.log('Starting authentication process...');
-    startAuthServer();
-    // No token data! Make sure we wait for authentication
-    if (!this.state.refresh_token) {
-      let observer: SettingsObserver = settings.observe(
-        'spotify',
-        (evt: ChangeEvent) => {
-          this.setState({
-            refresh_token: evt.newValue.refresh_token,
-            access_token: evt.newValue.access_token,
-          });
-          this.verifyAccessToken(observer);
-          stopAuthServer();
-        }
-      );
-    } else {
-      this.verifyAccessToken(null);
-    }
+    const authUrl = await startAuthProcess();
+
+    this.setState({ auth_url: authUrl });
+
+    // // No token data! Make sure we wait for authentication
+    // if (!this.state.refresh_token) {
+    //   let observer: SettingsObserver = settings.observe(
+    //     'spotify',
+    //     (evt: ChangeEvent) => {
+    //       this.setState({
+    //         refresh_token: evt.newValue.refresh_token,
+    //         access_token: evt.newValue.access_token,
+    //       });
+    //       this.verifyAccessToken(observer);
+    //       stopAuthServer();
+    //     }
+    //   );
+    // } else {
+    //   this.verifyAccessToken(null);
+    // }
   }
 
   componentDidMount() {
