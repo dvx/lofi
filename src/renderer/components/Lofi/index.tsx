@@ -52,7 +52,6 @@ class Lofi extends React.Component<any, any> {
         }
         return SIDE.RIGHT;
       })(),
-      auth: false,
       auth_url: '',
     };
 
@@ -74,7 +73,6 @@ class Lofi extends React.Component<any, any> {
   async handleAuth() {
     if (this.state.refresh_token) {
       refreshAccessToken(this.state.refresh_token);
-      this.setState({ auth: true });
     } else {
       const authUrl = await getAuthUrl();
       this.setState({ auth_url: authUrl });
@@ -272,7 +270,7 @@ class Lofi extends React.Component<any, any> {
             <About lofi={this} className="about-wnd" />
           </WindowPortal>
         ) : null}
-        {this.state.auth ? (
+        {this.state.access_token ? (
           <Cover
             visualizationId={this.state.lofiSettings.visualization}
             settings={this.state.lofiSettings.window}
