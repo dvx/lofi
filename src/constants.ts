@@ -12,15 +12,7 @@ export const MIN_SIDE_LENGTH = 150;
 export const MAX_SIDE_LENGTH = 300;
 
 export const API_URL = 'https://api.spotify.com/v1';
-
 export const AUTH_URL = 'https://accounts.spotify.com/authorize';
-export const AUTH_CLIENT_ID = '0ec1abc52f024530a6e237d7bdc37e65';
-export const AUTH_PORT = 41419;
-export const AUTH_SCOPES = [
-  'user-read-playback-state',
-  'user-modify-playback-state',
-  'user-read-currently-playing',
-];
 
 export const LOFI_SHUFFLED_PLAYLIST_NAME = 'Shuffled by Lofi';
 
