@@ -40,11 +40,6 @@ declare module '*black-magic.node' {
   export = value;
 }
 
-// non-exposed type from 'electron-settings'
-interface SettingsObserver {
-  dispose(): void;
-}
-
 declare module 'electron-transparency-mouse-fix';
 declare module 'electron-localshortcut';
 declare module 'react-electron-titlebar';
