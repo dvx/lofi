@@ -51,8 +51,4 @@ export const DEFAULT_SETTINGS = {
       display_volume_change: false,
     },
   },
-  // spotify: {
-  //   access_token: '',
-  //   refresh_token: '',
-  // },
 };
