@@ -1,12 +1,12 @@
 import * as http from 'http';
 import * as url from 'url';
 import crypto from 'crypto';
-import settings from 'electron-settings';
 import { AUTH_URL } from '../constants';
 
 let server: http.Server;
 let codeState: string;
 let codeVerifier: string;
+let refreshTokenTimeoutId: NodeJS.Timeout;
 
 const AUTH_TOKEN_URL = 'https://accounts.spotify.com/api/token';
 const AUTH_CLIENT_ID = '0ec1abc52f024530a6e237d7bdc37e65';
@@ -16,6 +16,12 @@ const AUTH_SCOPES = [
   'user-modify-playback-state',
   'user-read-currently-playing',
 ];
+
+export interface AuthData {
+  access_token: string;
+  refresh_token: string;
+  expires_in?: number;
+}
 
 export async function getAuthUrl() {
   codeVerifier = base64URLEncode(crypto.randomBytes(32));
@@ -31,38 +37,52 @@ export async function getAuthUrl() {
   return authUrl;
 }
 
-export async function startAuthServer() {
+export async function startAuthServer(
+  successCallback: (data: AuthData) => void
+) {
   console.log('Starting auth server...');
   if (!server) {
     server = http.createServer(async (request, response) => {
-      var queryData = url.parse(request.url, true).query;
-      try {
-        if (queryData.state === codeState) {
-          if (queryData.error) {
-            throw new Error(queryData.error.toString());
-          } else if (queryData.code) {
-            const { access_token, refresh_token } = await retrieveAccessToken(
-              codeVerifier,
-              queryData.code.toString()
-            );
-            updateSettings(access_token, refresh_token);
-          }
-        } else {
-          throw new Error('Invalid state');
-        }
-      } catch (e) {
-        console.error(e);
-      } finally {
-        response.end('<script>window.close()</script>');
-        stopServer();
-      }
+      handleServerResponse(request, response, successCallback);
     });
 
     server.listen(AUTH_PORT);
   }
 }
 
-export async function refreshAccessToken(refreshToken: string) {
+async function handleServerResponse(
+  request: any,
+  response: any,
+  successCallback: (data: AuthData) => void
+) {
+  var queryData = url.parse(request.url, true).query;
+  try {
+    if (queryData.state === codeState) {
+      if (queryData.error) {
+        throw new Error(queryData.error.toString());
+      } else if (queryData.code) {
+        const data = await retrieveAccessToken(
+          codeVerifier,
+          queryData.code.toString()
+        );
+
+        setRefreshTokenInterval(data);
+        successCallback(data);
+      }
+    } else {
+      throw new Error('Invalid state');
+    }
+  } catch (e) {
+    console.error(e);
+  } finally {
+    response.end('<script>window.close()</script>');
+    stopServer();
+  }
+}
+
+export async function refreshAccessToken(
+  refreshToken: string
+): Promise<AuthData> {
   console.log('Refreshing access token...');
 
   const body =
@@ -87,8 +107,11 @@ export async function refreshAccessToken(refreshToken: string) {
     );
   }
 
-  const { access_token, refresh_token } = JSON.parse(await res.text());
-  updateSettings(access_token, refresh_token);
+  const data = JSON.parse(await res.text()) as AuthData;
+
+  setRefreshTokenInterval(data);
+
+  return data;
 }
 
 function base64URLEncode(str: Buffer) {
@@ -103,6 +126,17 @@ function sha256(str: string) {
   return crypto.createHash('sha256').update(str).digest();
 }
 
+function setRefreshTokenInterval(data: AuthData) {
+  if (refreshTokenTimeoutId) {
+    clearInterval(refreshTokenTimeoutId);
+  }
+
+  refreshTokenTimeoutId = setInterval(
+    () => refreshAccessToken(data.refresh_token),
+    (data.expires_in * 1000) / 2 // refresh at token's half-life ('expires_in' is in seconds)
+  );
+}
+
 function stopServer() {
   if (server) {
     server.close();
@@ -110,12 +144,10 @@ function stopServer() {
   }
 }
 
-function updateSettings(access_token: string, refresh_token: string) {
-  settings.setSync('access_token', access_token);
-  settings.setSync('refresh_token', refresh_token);
-}
-
-async function retrieveAccessToken(codeVerifier: string, code: string) {
+async function retrieveAccessToken(
+  codeVerifier: string,
+  code: string
+): Promise<AuthData> {
   console.log('Retrieving access token...');
 
   const body =
