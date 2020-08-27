@@ -92,16 +92,16 @@ class Lofi extends React.Component<any, any> {
   }
 
   updateTokens(data: AuthData) {
-    if (data.access_token && data.refresh_token) {
-      settings.setSync('access_token', data.access_token);
-      settings.setSync('refresh_token', data.refresh_token);
-    } else {
+    if (!data || !data.access_token || !data.refresh_token) {
       settings.deleteSync('access_token');
       settings.deleteSync('refresh_token');
+    } else {
+      settings.setSync('access_token', data.access_token);
+      settings.setSync('refresh_token', data.refresh_token);
     }
 
-    this.setState({ access_token: data.access_token });
-    this.setState({ refresh_token: data.refresh_token });
+    this.setState({ access_token: data?.access_token });
+    this.setState({ refresh_token: data?.refresh_token });
   }
 
   componentDidMount() {

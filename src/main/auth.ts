@@ -1,7 +1,6 @@
 import * as http from 'http';
 import * as url from 'url';
 import crypto from 'crypto';
-import { AUTH_URL } from '../constants';
 
 let server: http.Server;
 let codeState: string;
@@ -9,6 +8,7 @@ let codeVerifier: string;
 let refreshTokenTimeoutId: NodeJS.Timeout;
 let onTokenRetrieved: (data: AuthData) => void = null;
 
+const AUTH_URL = 'https://accounts.spotify.com/authorize';
 const AUTH_TOKEN_URL = 'https://accounts.spotify.com/api/token';
 const AUTH_CLIENT_ID = '0ec1abc52f024530a6e237d7bdc37e65';
 const AUTH_PORT = 41419;
@@ -22,6 +22,7 @@ export interface AuthData {
   access_token: string;
   refresh_token: string;
   expires_in?: number;
+  scope?: string;
 }
 
 export function setTokenRetrievedCallback(callback: (data: AuthData) => void) {
@@ -94,12 +95,33 @@ export async function refreshAccessToken(refreshToken: string) {
 
   const data = JSON.parse(await res.text()) as AuthData;
 
-  setRefreshTokenInterval(data);
-  onTokenRetrieved(data);
+  if (!scopesMatch(data.scope)) {
+    console.warn(
+      `Authorization scopes mismatch\n` +
+        `  Expected: ${AUTH_SCOPES.join(' ')}\n` +
+        `  Token has: '${data.scope}`
+    );
+    setRefreshTokenInterval(null);
+    onTokenRetrieved(null);
+  } else {
+    setRefreshTokenInterval(data);
+    onTokenRetrieved(data);
+  }
+}
+
+function scopesMatch(scope: string): boolean {
+  const tokenScopes = scope.split(' ').sort();
+  const requiredScopes = AUTH_SCOPES.sort();
+
+  const isScopesMatch =
+    tokenScopes.length === requiredScopes.length &&
+    tokenScopes.every((element, index) => element === requiredScopes[index]);
+
+  return isScopesMatch;
 }
 
 async function handleServerResponse(request: any, response: any) {
-  var queryData = url.parse(request.url, true).query;
+  const queryData = url.parse(request.url, true).query;
   try {
     if (queryData.state === codeState) {
       if (queryData.error) {
@@ -139,12 +161,16 @@ function sha256(str: string) {
 function setRefreshTokenInterval(data: AuthData) {
   if (refreshTokenTimeoutId) {
     clearInterval(refreshTokenTimeoutId);
+    refreshTokenTimeoutId = null;
   }
 
-  refreshTokenTimeoutId = setInterval(
-    () => refreshAccessToken(data.refresh_token),
-    (data.expires_in * 1000) / 2 // refresh at token's half-life ('expires_in' is in seconds)
-  );
+  if (data && data.refresh_token) {
+    const expiresIn = data.expires_in ?? 60 * 60;
+    refreshTokenTimeoutId = setInterval(
+      () => refreshAccessToken(data.refresh_token),
+      (expiresIn * 1000) / 2 // refresh at token's half-life ('expires_in' is in seconds)
+    );
+  }
 }
 
 function stopServer() {
