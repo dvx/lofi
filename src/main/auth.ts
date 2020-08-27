@@ -84,6 +84,9 @@ export async function refreshAccessToken(refreshToken: string) {
   });
 
   if (res.status !== 200) {
+    setRefreshTokenInterval(null);
+    onTokenRetrieved(null);
+
     throw new Error(
       `status ${
         res.status
