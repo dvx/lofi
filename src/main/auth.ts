@@ -96,7 +96,7 @@ export async function refreshAccessToken(refreshToken: string) {
     );
   }
 
-  const data = JSON.parse(await res.text()) as AuthData;
+  const data = await res.json();
 
   if (!scopesMatch(data.scope)) {
     console.warn(
@@ -211,7 +211,7 @@ async function retrieveAccessToken(
     );
   }
 
-  const authData = await res.text();
+  const authData = await res.json();
 
-  return JSON.parse(authData);
+  return authData;
 }
