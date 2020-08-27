@@ -7,6 +7,7 @@ let server: http.Server;
 let codeState: string;
 let codeVerifier: string;
 let refreshTokenTimeoutId: NodeJS.Timeout;
+let onTokenRetrieved: (data: AuthData) => void = null;
 
 const AUTH_TOKEN_URL = 'https://accounts.spotify.com/api/token';
 const AUTH_CLIENT_ID = '0ec1abc52f024530a6e237d7bdc37e65';
@@ -23,6 +24,16 @@ export interface AuthData {
   expires_in?: number;
 }
 
+export function setTokenRetrievedCallback(callback: (data: AuthData) => void) {
+  if (onTokenRetrieved) {
+    console.warn(
+      'Token retrieved callback already set, it should only be set once.'
+    );
+  }
+
+  onTokenRetrieved = callback;
+}
+
 export async function getAuthUrl() {
   codeVerifier = base64URLEncode(crypto.randomBytes(32));
   codeState = base64URLEncode(crypto.randomBytes(32));
@@ -37,52 +48,26 @@ export async function getAuthUrl() {
   return authUrl;
 }
 
-export async function startAuthServer(
-  successCallback: (data: AuthData) => void
-) {
+export async function startAuthServer() {
+  if (!onTokenRetrieved) {
+    throw new Error('onTokenRetrieved not set!');
+  }
+
   console.log('Starting auth server...');
   if (!server) {
     server = http.createServer(async (request, response) => {
-      handleServerResponse(request, response, successCallback);
+      handleServerResponse(request, response);
     });
 
     server.listen(AUTH_PORT);
   }
 }
 
-async function handleServerResponse(
-  request: any,
-  response: any,
-  successCallback: (data: AuthData) => void
-) {
-  var queryData = url.parse(request.url, true).query;
-  try {
-    if (queryData.state === codeState) {
-      if (queryData.error) {
-        throw new Error(queryData.error.toString());
-      } else if (queryData.code) {
-        const data = await retrieveAccessToken(
-          codeVerifier,
-          queryData.code.toString()
-        );
-
-        setRefreshTokenInterval(data);
-        successCallback(data);
-      }
-    } else {
-      throw new Error('Invalid state');
-    }
-  } catch (e) {
-    console.error(e);
-  } finally {
-    response.end('<script>window.close()</script>');
-    stopServer();
+export async function refreshAccessToken(refreshToken: string) {
+  if (!onTokenRetrieved) {
+    throw new Error('onTokenRetrieved not set!');
   }
-}
 
-export async function refreshAccessToken(
-  refreshToken: string
-): Promise<AuthData> {
   console.log('Refreshing access token...');
 
   const body =
@@ -110,8 +95,33 @@ export async function refreshAccessToken(
   const data = JSON.parse(await res.text()) as AuthData;
 
   setRefreshTokenInterval(data);
+  onTokenRetrieved(data);
+}
 
-  return data;
+async function handleServerResponse(request: any, response: any) {
+  var queryData = url.parse(request.url, true).query;
+  try {
+    if (queryData.state === codeState) {
+      if (queryData.error) {
+        throw new Error(queryData.error.toString());
+      } else if (queryData.code) {
+        const data = await retrieveAccessToken(
+          codeVerifier,
+          queryData.code.toString()
+        );
+
+        setRefreshTokenInterval(data);
+        onTokenRetrieved(data);
+      }
+    } else {
+      throw new Error('Invalid state');
+    }
+  } catch (e) {
+    console.error(e);
+  } finally {
+    response.end('<script>window.close()</script>');
+    stopServer();
+  }
 }
 
 function base64URLEncode(str: Buffer) {

@@ -6,6 +6,7 @@ import {
   startAuthServer,
   refreshAccessToken,
   AuthData,
+  setTokenRetrievedCallback,
 } from '../../../main/auth';
 import {
   CONTAINER,
@@ -73,15 +74,16 @@ class Lofi extends React.Component<any, any> {
 
   async handleAuth() {
     try {
+      setTokenRetrievedCallback(this.updateTokens.bind(this));
+
       // always get the auth url in case refreshing the token fails
       const authUrl = await getAuthUrl();
       this.setState({ auth_url: authUrl });
 
       if (this.state.refresh_token) {
-        const data = await refreshAccessToken(this.state.refresh_token);
-        this.updateTokens(data);
+        await refreshAccessToken(this.state.refresh_token);
       } else {
-        await startAuthServer((data) => this.updateTokens(data));
+        await startAuthServer();
       }
     } catch (err) {
       console.error(err);
