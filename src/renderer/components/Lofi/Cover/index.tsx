@@ -185,8 +185,7 @@ class Cover extends React.Component<any, any> {
       // 204 is the "Nothing playing" Spotify response
       // See: https://github.com/zmb3/spotify/issues/56
     } else if (res.status !== 200) {
-      await this.props.lofi.refreshAccessToken();
-      await this.listeningTo();
+      console.error(`status: ${res.status} - ${res.statusText}`);
     } else {
       const currently_playing = await res.json();
       // Fixes https://github.com/dvx/lofi/issues/31
