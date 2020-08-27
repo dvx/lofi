@@ -184,8 +184,6 @@ class Cover extends React.Component<any, any> {
     if (res.status === 204) {
       // 204 is the "Nothing playing" Spotify response
       // See: https://github.com/zmb3/spotify/issues/56
-    } else if (res.status !== 200) {
-      console.error(`status: ${res.status} - ${res.statusText}`);
     } else {
       const currently_playing = await res.json();
       // Fixes https://github.com/dvx/lofi/issues/31
