@@ -10,7 +10,7 @@ let onTokenRetrieved: (data: AuthData) => void = null;
 
 const AUTH_URL = 'https://accounts.spotify.com/authorize';
 const AUTH_TOKEN_URL = 'https://accounts.spotify.com/api/token';
-const AUTH_CLIENT_ID = '0ec1abc52f024530a6e237d7bdc37e65';
+const AUTH_CLIENT_ID = '0ec1abc52f024530a6e237d7bdc37e65'; // '69eca11b9ccd4bd3a7e01e6f9ddb5205';
 const AUTH_PORT = 41419;
 const AUTH_SCOPES = [
   'user-read-playback-state',
@@ -102,6 +102,8 @@ export async function refreshAccessToken(refreshToken: string) {
 
   setRefreshTokenInterval(data);
   onTokenRetrieved(data);
+
+  console.log('Access token refreshed.');
 }
 
 function scopesMatch(scope: string): boolean {
@@ -176,6 +178,7 @@ function stopServer() {
   if (server) {
     server.close();
     server = null;
+    console.log('Auth server stopped.');
   }
 }
 
@@ -198,14 +201,13 @@ async function retrieveAccessToken(
   });
 
   if (res.status !== 200) {
+    const errorText = await res.text();
     throw new Error(
-      `status ${
-        res.status
-      }: Failed to retrieve access token\n${res
-        .text()
-        .then((text) => console.log(text))}`
+      `status ${res.status}: Failed to retrieve access token\n${errorText}`
     );
   }
+
+  console.log('Access token retrieved.');
 
   const authData = await res.json();
 
