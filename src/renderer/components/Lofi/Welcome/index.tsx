@@ -2,6 +2,7 @@ import * as React from 'react';
 import { remote } from 'electron';
 import Menu from './../Menu';
 import './style.scss';
+import { startAuthServer } from '../../../../main/auth';
 
 class Welcome extends React.Component<any, any> {
   constructor(props: any) {
@@ -13,7 +14,7 @@ class Welcome extends React.Component<any, any> {
     mainWindow.close();
   }
 
-  promptForAuth(authUrl: string): void {
+  async promptForAuth(authUrl: string) {
     const mainWindow = remote.getCurrentWindow();
     const authWindow = new remote.BrowserWindow({
       parent: mainWindow,
@@ -22,6 +23,8 @@ class Welcome extends React.Component<any, any> {
       maximizable: false,
       closable: true,
     });
+
+    await startAuthServer();
 
     authWindow.setMenu(null);
     authWindow.loadURL(authUrl);

@@ -3,7 +3,6 @@ import * as settings from 'electron-settings';
 import { ipcRenderer, remote } from 'electron';
 import {
   getAuthUrl,
-  startAuthServer,
   refreshAccessToken,
   AuthData,
   setTokenRetrievedCallback,
@@ -82,8 +81,6 @@ class Lofi extends React.Component<any, any> {
 
       if (this.state.refresh_token) {
         await refreshAccessToken(this.state.refresh_token);
-      } else {
-        await startAuthServer();
       }
     } catch (err) {
       console.error(err);
