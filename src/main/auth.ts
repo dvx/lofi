@@ -98,12 +98,12 @@ export async function refreshAccessToken(refreshToken: string) {
         `  Token has: '${data.scope}`
     );
     data = null;
+  } else {
+    console.log('Access token refreshed.');
   }
 
   setRefreshTokenInterval(data);
   onTokenRetrieved(data);
-
-  console.log('Access token refreshed.');
 }
 
 function scopesMatch(scope: string): boolean {
