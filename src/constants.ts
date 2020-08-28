@@ -30,7 +30,7 @@ export const SETTINGS_CONTAINER = {
 };
 
 export const DEFAULT_SETTINGS = {
-  version: '1.5.1',
+  version: '1.5.2',
   debug: false,
   hardware_acceleration: true,
   lofi: {
