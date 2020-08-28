@@ -83,33 +83,25 @@ export async function refreshAccessToken(refreshToken: string) {
     body: body,
   });
 
+  let data = await res.json();
+
   if (res.status !== 200) {
-    setRefreshTokenInterval(null);
-    onTokenRetrieved(null);
-
-    throw new Error(
-      `status ${
-        res.status
-      }: Failed to retrieve access token\n${res
-        .text()
-        .then((text) => console.log(text))}`
+    const errorText = data.error_description;
+    console.error(
+      `status ${res.status}: Failed to retrieve access token\n  ${data.error}: ${errorText}`
     );
-  }
-
-  const data = await res.json();
-
-  if (!scopesMatch(data.scope)) {
+    data = null;
+  } else if (!scopesMatch(data.scope)) {
     console.warn(
       `Authorization scopes mismatch\n` +
         `  Expected: ${AUTH_SCOPES.join(' ')}\n` +
         `  Token has: '${data.scope}`
     );
-    setRefreshTokenInterval(null);
-    onTokenRetrieved(null);
-  } else {
-    setRefreshTokenInterval(data);
-    onTokenRetrieved(data);
+    data = null;
   }
+
+  setRefreshTokenInterval(data);
+  onTokenRetrieved(data);
 }
 
 function scopesMatch(scope: string): boolean {
@@ -126,20 +118,24 @@ function scopesMatch(scope: string): boolean {
 async function handleServerResponse(request: any, response: any) {
   const queryData = url.parse(request.url, true).query;
   try {
-    if (queryData.state === codeState) {
-      if (queryData.error) {
-        throw new Error(queryData.error.toString());
-      } else if (queryData.code) {
-        const data = await retrieveAccessToken(
-          codeVerifier,
-          queryData.code.toString()
-        );
+    if (queryData.state !== codeState) {
+      console.error('Invalid state');
+      return;
+    }
 
-        setRefreshTokenInterval(data);
-        onTokenRetrieved(data);
-      }
-    } else {
-      throw new Error('Invalid state');
+    if (queryData.error) {
+      console.error(queryData.error.toString());
+      return;
+    }
+
+    if (queryData.code) {
+      const data = await retrieveAccessToken(
+        codeVerifier,
+        queryData.code.toString()
+      );
+
+      setRefreshTokenInterval(data);
+      onTokenRetrieved(data);
     }
   } catch (e) {
     console.error(e);
