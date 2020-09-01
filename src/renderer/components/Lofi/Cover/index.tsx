@@ -48,9 +48,12 @@ class Cover extends React.Component<any, any> {
 
   componentDidMount() {
     const that = this;
-    // Polling Spotify every 1 second, probably a bad idea
+
     const intervalId = setInterval(() => this.listeningTo(), 1000);
     this.setState({ intervalId });
+
+    const keepAliveIntervalId = setInterval(() => this.keepAlive(), 5000);
+    this.setState({ keepAliveIntervalId });
 
     function onMouseWheel(e: WheelEvent) {
       const volume_increment = that.props.lofi.state.lofiSettings.audio
@@ -76,6 +79,11 @@ class Cover extends React.Component<any, any> {
     if (this.state.intervalId) {
       console.log('Clearing playing interval');
       clearInterval(this.state.intervalId);
+    }
+
+    if (this.state.keepAliveIntervalId) {
+      console.log('Clearing keep alive');
+      clearInterval(this.state.keepAliveIntervalId);
     }
   }
 
@@ -174,6 +182,25 @@ class Cover extends React.Component<any, any> {
     }
   }
 
+  async keepAlive() {
+    // Fixes https://github.com/dvx/lofi/issues/31
+    const currently_playing = this.state.currently_playing;
+
+    if (currently_playing.is_playing || !currently_playing.progress_ms) {
+      return;
+    }
+
+    await fetch(
+      API_URL + '/me/player/seek?position_ms=' + currently_playing.progress_ms,
+      {
+        method: 'PUT',
+        headers: new Headers({
+          Authorization: 'Bearer ' + this.props.token,
+        }),
+      }
+    );
+  }
+
   async listeningTo() {
     let res = await fetch(API_URL + '/me/player?type=episode,track', {
       method: 'GET',
@@ -181,56 +208,48 @@ class Cover extends React.Component<any, any> {
         Authorization: 'Bearer ' + this.props.token,
       }),
     });
+
     if (res.status === 204) {
       // 204 is the "Nothing playing" Spotify response
       // See: https://github.com/zmb3/spotify/issues/56
-    } else {
-      const currently_playing = await res.json();
-      // Fixes https://github.com/dvx/lofi/issues/31
-      // The solution is a bit ugly: seek to current position so Spotify doesn't kill our current active_device
-      if (!currently_playing.is_playing) {
-        await fetch(
-          API_URL +
-            '/me/player/seek?position_ms=' +
-            currently_playing.progress_ms,
-          {
-            method: 'PUT',
-            headers: new Headers({
-              Authorization: 'Bearer ' + this.props.token,
-            }),
-          }
-        );
-      }
+      return;
+    }
 
-      // NOTE: debugging purposes
-      // console.log(currently_playing);
+    if (res.status !== 200) {
+      console.error(await res.json());
+      return;
+    }
 
-      // if (currently_playing.context && currently_playing.context.type === "playlist") {
-      //   console.log("playing a playlist; we can potentially shuffle");
-      // } else {
-      //   console.log("shuffle unavailable for this track")
-      // }
+    const currently_playing = await res.json();
 
+    // NOTE: debugging purposes
+    // console.log(currently_playing);
+
+    // if (currently_playing.context && currently_playing.context.type === "playlist") {
+    //   console.log("playing a playlist; we can potentially shuffle");
+    // } else {
+    //   console.log("shuffle unavailable for this track")
+    // }
+
+    this.setState({
+      currently_playing,
+    });
+
+    // trust UI while scroll wheel level, e.g. volume, stabilizes (10 second leeway)
+    if (
+      this.state.stateChange &&
+      new Date().getTime() - this.state.stateChange.getTime() > 10000
+    ) {
       this.setState({
-        currently_playing,
+        volume: currently_playing.device.volume_percent,
       });
+    }
 
-      // trust UI while scroll wheel level, e.g. volume, stabilizes (10 second leeway)
-      if (
-        this.state.stateChange &&
-        new Date().getTime() - this.state.stateChange.getTime() > 10000
-      ) {
-        this.setState({
-          volume: currently_playing.device.volume_percent,
-        });
-      }
-
-      if (this.state.bigVisualization) {
-        this.state.visWindow.webContents.send(
-          'currently-playing',
-          currently_playing
-        );
-      }
+    if (this.state.bigVisualization) {
+      this.state.visWindow.webContents.send(
+        'currently-playing',
+        currently_playing
+      );
     }
   }
 
