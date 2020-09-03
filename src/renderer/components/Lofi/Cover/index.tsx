@@ -186,7 +186,11 @@ class Cover extends React.Component<any, any> {
     // Fixes https://github.com/dvx/lofi/issues/31
     const currently_playing = this.state.currently_playing;
 
-    if (currently_playing.is_playing || !currently_playing.progress_ms) {
+    if (
+      !currently_playing ||
+      !currently_playing.progress_ms ||
+      currently_playing.is_playing
+    ) {
       return;
     }
 
