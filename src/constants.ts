@@ -11,8 +11,6 @@ export const WIDTH = 150;
 export const MIN_SIDE_LENGTH = 150;
 export const MAX_SIDE_LENGTH = 300;
 
-export const API_URL = 'https://api.spotify.com/v1';
-
 export const LOFI_SHUFFLED_PLAYLIST_NAME = 'Shuffled by Lofi';
 
 // Native shadows are buggy, so just make the main (transparent) window big enough so it can hold the shadow as well

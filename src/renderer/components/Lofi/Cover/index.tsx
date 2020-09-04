@@ -5,7 +5,6 @@ import {
   MACOS,
   DEFAULT_SETTINGS,
   LOFI_SHUFFLED_PLAYLIST_NAME,
-  API_URL,
 } from '../../../../constants';
 import * as path from 'path';
 import * as url from 'url';
@@ -18,6 +17,7 @@ import Waiting from './Waiting';
 import RecreateChildOnPropsChange from '../../util/RecreateChildOnPropsChange';
 
 import './style.scss';
+import { SpotifyApiInstance } from '../../../../api/spotify-api';
 
 enum VISUALIZATION_TYPE {
   NONE,
@@ -125,13 +125,12 @@ class Cover extends React.Component<any, any> {
   }
 
   async setVolume(percent: number) {
-    if (percent > 100) percent = 100;
-    if (percent < 0) percent = 0;
+    percent = _.clamp(percent, 0, 100);
     this.setState({ volume: percent, stateChange: new Date() }, () =>
       this.volumeChanged()
     );
-    await fetch(
-      API_URL + '/me/player/volume?volume_percent=' + Math.round(percent),
+    await SpotifyApiInstance.fetch(
+      '/me/player/volume?volume_percent=' + Math.round(percent),
       {
         method: 'PUT',
         headers: new Headers({
@@ -184,18 +183,18 @@ class Cover extends React.Component<any, any> {
 
   async keepAlive() {
     // Fixes https://github.com/dvx/lofi/issues/31
-    const currently_playing = this.state.currently_playing;
+    const currentlyPlaying = this.state.currently_playing;
 
     if (
-      !currently_playing ||
-      !currently_playing.progress_ms ||
-      currently_playing.is_playing
+      !currentlyPlaying ||
+      !currentlyPlaying.progress_ms ||
+      currentlyPlaying.is_playing
     ) {
       return;
     }
 
-    await fetch(
-      API_URL + '/me/player/seek?position_ms=' + currently_playing.progress_ms,
+    await SpotifyApiInstance.fetch(
+      '/me/player/seek?position_ms=' + currentlyPlaying.progress_ms,
       {
         method: 'PUT',
         headers: new Headers({
@@ -206,25 +205,19 @@ class Cover extends React.Component<any, any> {
   }
 
   async listeningTo() {
-    let res = await fetch(API_URL + '/me/player?type=episode,track', {
-      method: 'GET',
-      headers: new Headers({
-        Authorization: 'Bearer ' + this.props.token,
-      }),
-    });
+    const currentlyPlaying = await SpotifyApiInstance.fetch(
+      '/me/player?type=episode,track',
+      {
+        method: 'GET',
+        headers: new Headers({
+          Authorization: 'Bearer ' + this.props.token,
+        }),
+      }
+    );
 
-    if (res.status === 204) {
-      // 204 is the "Nothing playing" Spotify response
-      // See: https://github.com/zmb3/spotify/issues/56
+    if (!currentlyPlaying) {
       return;
     }
-
-    if (res.status !== 200) {
-      console.error(await res.json());
-      return;
-    }
-
-    const currently_playing = await res.json();
 
     // NOTE: debugging purposes
     // console.log(currently_playing);
@@ -236,7 +229,7 @@ class Cover extends React.Component<any, any> {
     // }
 
     this.setState({
-      currently_playing,
+      currently_playing: currentlyPlaying,
     });
 
     // trust UI while scroll wheel level, e.g. volume, stabilizes (10 second leeway)
@@ -245,14 +238,14 @@ class Cover extends React.Component<any, any> {
       new Date().getTime() - this.state.stateChange.getTime() > 10000
     ) {
       this.setState({
-        volume: currently_playing.device.volume_percent,
+        volume: currentlyPlaying.device.volume_percent,
       });
     }
 
     if (this.state.bigVisualization) {
       this.state.visWindow.webContents.send(
         'currently-playing',
-        currently_playing
+        currentlyPlaying
       );
     }
   }
@@ -269,13 +262,19 @@ class Cover extends React.Component<any, any> {
   async getAllTracksFromPlaylist(playlist_id: string): Promise<string[]> {
     const allTracks: string[] | PromiseLike<string[]> = [];
 
-    let res = await fetch(API_URL + '/playlists/' + playlist_id + '/tracks', {
-      method: 'GET',
-      headers: new Headers({
-        Authorization: 'Bearer ' + this.props.token,
-      }),
-    });
-    let playlist = await res.json();
+    let playlist = await SpotifyApiInstance.fetch(
+      '/playlists/' + playlist_id + '/tracks',
+      {
+        method: 'GET',
+        headers: new Headers({
+          Authorization: 'Bearer ' + this.props.token,
+        }),
+      }
+    );
+
+    if (!playlist) {
+      return allTracks;
+    }
 
     playlist.items.map((item: any) => {
       if (item.track.type === 'track') {
@@ -286,14 +285,16 @@ class Cover extends React.Component<any, any> {
     // Paginate if we need to
     // TODO: Add response checking here, we can fail catastrophically
     while (playlist.next) {
-      res = await fetch(playlist.next, {
+      playlist = await SpotifyApiInstance.fetch(playlist.next, {
         method: 'GET',
         headers: new Headers({
           Authorization: 'Bearer ' + this.props.token,
         }),
       });
 
-      playlist = await res.json();
+      if (!playlist) {
+        break;
+      }
 
       playlist.items.map((item: any) => {
         if (item.track.type === 'track') {
@@ -324,75 +325,82 @@ class Cover extends React.Component<any, any> {
       .reverse()[0];
     // const tracks = (await this.getAllTracksFromPlaylist(playlist_id));
 
-    let res = await fetch(API_URL + '/playlists/' + playlist_id + '/tracks', {
-      method: 'GET',
-      headers: new Headers({
-        Authorization: 'Bearer ' + this.props.token,
-      }),
+    const playlist = await SpotifyApiInstance.fetch(
+      '/playlists/' + playlist_id + '/tracks',
+      {
+        method: 'GET',
+        headers: new Headers({
+          Authorization: 'Bearer ' + this.props.token,
+        }),
+      }
+    );
+
+    if (!playlist) {
+      return;
+    }
+
+    let tracks: string[] = [];
+    console.log(playlist);
+    playlist.items.map((item: any) => {
+      if (item.track.type === 'track') {
+        tracks.push('spotify:track:' + item.track.id);
+      }
     });
 
-    if (res.status === 200) {
-      let tracks: string[] = [];
-      const playlist = await res.json();
-      console.log(playlist);
-      playlist.items.map((item: any) => {
-        if (item.track.type === 'track') {
-          tracks.push('spotify:track:' + item.track.id);
-        }
-      });
+    // One-line array shuffle
+    // See: https://gist.github.com/guilhermepontes/17ae0cc71fa2b13ea8c20c94c5c35dc4#gistcomment-2271465
+    // Also: http://www.robweir.com/blog/2010/02/microsoft-random-browser-ballot.html
+    let shuffled = tracks
+      .map((a: any) => [Math.random(), a])
+      .sort((a, b) => a[0] - b[0])
+      .map((a) => a[1]);
+    console.log(shuffled);
 
-      // One-line array shuffle
-      // See: https://gist.github.com/guilhermepontes/17ae0cc71fa2b13ea8c20c94c5c35dc4#gistcomment-2271465
-      // Also: http://www.robweir.com/blog/2010/02/microsoft-random-browser-ballot.html
-      let shuffled = tracks
-        .map((a: any) => [Math.random(), a])
-        .sort((a, b) => a[0] - b[0])
-        .map((a) => a[1]);
-      console.log(shuffled);
-
-      const all_playlists = await this.getAllPlaylists();
-      for (let playlist of all_playlists) {
-        if (playlist.name === LOFI_SHUFFLED_PLAYLIST_NAME) {
-        }
+    const all_playlists = await this.getAllPlaylists();
+    for (let playlist of all_playlists) {
+      if (playlist.name === LOFI_SHUFFLED_PLAYLIST_NAME) {
       }
-      return;
-
-      // // Play the generated playlist
-      // fetch(API_URL + '/me/player/play', {
-      //   method: 'PUT',
-      //   headers: new Headers({
-      //     'Authorization': 'Bearer '+ this.props.token
-      //   }),
-      //   body: JSON.stringify({ uris: shuffled})
-      // })
     }
+    return;
+
+    // // Play the generated playlist
+    // fetch(API_URL + '/me/player/play', {
+    //   method: 'PUT',
+    //   headers: new Headers({
+    //     'Authorization': 'Bearer '+ this.props.token
+    //   }),
+    //   body: JSON.stringify({ uris: shuffled})
+    // })
   }
 
   async createLofiPlaylist() {}
 
   async getAllPlaylists(limit = 50) {
     let playlists: any[] = [];
-    let res = await fetch(API_URL + '/me/playlists?limit=' + limit, {
-      method: 'GET',
-      headers: new Headers({
-        Authorization: 'Bearer ' + this.props.token,
-      }),
-    });
+    let playlistObject = await SpotifyApiInstance.fetch(
+      '/me/playlists?limit=' + limit,
+      {
+        method: 'GET',
+        headers: new Headers({
+          Authorization: 'Bearer ' + this.props.token,
+        }),
+      }
+    );
 
-    if (res.status === 200) {
-      let playlist_object = await res.json();
-      playlists = playlists.concat(playlist_object.items);
-      while (playlist_object.next) {
-        res = await fetch(playlist_object.next, {
-          headers: new Headers({
-            Authorization: 'Bearer ' + this.props.token,
-          }),
-        });
+    if (!playlistObject) {
+      return playlists;
+    }
 
-        if (res.status === 200) {
-          playlist_object = await res.json();
-          playlists = playlists.concat(playlist_object.items);
-        }
+    playlists = playlists.concat(playlistObject.items);
+    while (playlistObject.next) {
+      playlistObject = await SpotifyApiInstance.fetch(playlistObject.next, {
+        headers: new Headers({
+          Authorization: 'Bearer ' + this.props.token,
+        }),
+      });
+
+      if (playlistObject) {
+        playlists = playlists.concat(playlistObject.items);
       }
     }
     return playlists;

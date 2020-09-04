@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './style.scss';
-import { API_URL } from '../../../../../constants';
+import { SpotifyApiInstance } from '../../../../../api/spotify-api';
 
 class Controls extends React.Component<any, any> {
   constructor(props: any) {
@@ -9,14 +9,14 @@ class Controls extends React.Component<any, any> {
 
   async pausePlay() {
     if (this.props.parent.getPlayState()) {
-      fetch(API_URL + '/me/player/pause', {
+      SpotifyApiInstance.fetch('/me/player/pause', {
         method: 'PUT',
         headers: new Headers({
           Authorization: 'Bearer ' + this.props.token,
         }),
       });
     } else {
-      fetch(API_URL + '/me/player/play', {
+      SpotifyApiInstance.fetch('/me/player/play', {
         method: 'PUT',
         headers: new Headers({
           Authorization: 'Bearer ' + this.props.token,
@@ -28,7 +28,7 @@ class Controls extends React.Component<any, any> {
   }
 
   async forward() {
-    fetch(API_URL + '/me/player/next', {
+    SpotifyApiInstance.fetch('/me/player/next', {
       method: 'POST',
       headers: new Headers({
         Authorization: 'Bearer ' + this.props.token,
@@ -41,7 +41,7 @@ class Controls extends React.Component<any, any> {
   }
 
   async backward() {
-    fetch(API_URL + '/me/player/previous', {
+    SpotifyApiInstance.fetch('/me/player/previous', {
       method: 'POST',
       headers: new Headers({
         Authorization: 'Bearer ' + this.props.token,
