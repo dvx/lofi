@@ -3,8 +3,24 @@ import './style.scss';
 import { SpotifyApiInstance } from '../../../../../api/spotify-api';
 
 class Controls extends React.Component<any, any> {
+  accountType: string;
   constructor(props: any) {
     super(props);
+  }
+
+  componentDidMount() {
+    this.getUserAccountType();
+  }
+
+  async getUserAccountType() {
+    const userProfile = await SpotifyApiInstance.fetch('/me', {
+      method: 'GET',
+      headers: new Headers({
+        Authorization: 'Bearer ' + this.props.token,
+      }),
+    });
+
+    this.accountType = userProfile.product;
   }
 
   async pausePlay() {
@@ -68,27 +84,29 @@ class Controls extends React.Component<any, any> {
   render() {
     return (
       <div className="controls centered">
-        <p>
-          <a
-            onClick={this.backward.bind(this)}
-            className="control-btn secondary-control not-draggable skip">
-            <i className="fa fa-step-backward not-draggable"></i>
-          </a>
-          <a
-            onClick={this.pausePlay.bind(this)}
-            className="control-btn not-draggable pause-play">
-            <i
-              className={
-                'fa not-draggable ' +
-                (this.props.parent.getPlayState() ? 'fa-pause' : 'fa-play')
-              }></i>
-          </a>
-          <a
-            onClick={this.forward.bind(this)}
-            className="control-btn secondary-control not-draggable skip">
-            <i className="fa fa-step-forward not-draggable"></i>
-          </a>
-        </p>
+        {this.accountType === 'premium' ? (
+          <p>
+            <a
+              onClick={this.backward.bind(this)}
+              className="control-btn secondary-control not-draggable skip">
+              <i className="fa fa-step-backward not-draggable"></i>
+            </a>
+            <a
+              onClick={this.pausePlay.bind(this)}
+              className="control-btn not-draggable pause-play">
+              <i
+                className={
+                  'fa not-draggable ' +
+                  (this.props.parent.getPlayState() ? 'fa-pause' : 'fa-play')
+                }></i>
+            </a>
+            <a
+              onClick={this.forward.bind(this)}
+              className="control-btn secondary-control not-draggable skip">
+              <i className="fa fa-step-forward not-draggable"></i>
+            </a>
+          </p>
+        ) : null}
         <div
           className="progress"
           style={{ width: this.props.parent.getTrackProgress() + '%' }}
