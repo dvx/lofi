@@ -128,6 +128,10 @@ async function handleServerResponse(request: any, response: any) {
 
     if (queryData.error) {
       console.error(queryData.error.toString());
+      response.end(
+        `Lofi authorization error '${queryData.error}', you may close this window and retry.`
+      );
+
       return;
     }
 
@@ -139,11 +143,14 @@ async function handleServerResponse(request: any, response: any) {
 
       setRefreshTokenInterval(data);
       onTokenRetrieved(data);
+
+      response.end(
+        'Lofi authorization successful, you may now close this window.'
+      );
     }
   } catch (e) {
     console.error(e);
   } finally {
-    response.end('<script>window.close()</script>');
     stopServer();
   }
 }
