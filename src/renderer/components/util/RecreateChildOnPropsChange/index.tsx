@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-class RecreateChildOnPropsChange extends React.Component <any, any> {
-  _forceRecreateCounter = 0
+class RecreateChildOnPropsChange extends React.Component<any, any> {
+  _forceRecreateCounter = 0;
   constructor(props: any) {
     super(props);
   }
@@ -20,7 +20,10 @@ class RecreateChildOnPropsChange extends React.Component <any, any> {
     }
 
     for (let key of keys) {
-      if (key !== 'children' && (!nextProps.hasOwnProperty(key) || props[key] !== nextProps[key])) {
+      if (
+        key !== 'children' &&
+        (!nextProps.hasOwnProperty(key) || props[key] !== nextProps[key])
+      ) {
         return true;
       }
     }

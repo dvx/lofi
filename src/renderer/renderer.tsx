@@ -4,6 +4,6 @@ import * as ReactDOM from 'react-dom';
 // Import the styles here to process them with webpack
 import './style.scss';
 
-import Lofi from './components/Lofi'
+import Lofi from './components/Lofi';
 
-ReactDOM.render( <Lofi />, document.getElementById('app') );
+ReactDOM.render(<Lofi />, document.getElementById('app'));

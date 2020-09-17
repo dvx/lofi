@@ -1,14 +1,8 @@
 function visualize(canvas, getMusicData) {
-
   var peaks = [];
   var gl = canvas.getContext('experimental-webgl');
 
-  var vertices = [
-    -1,   1,  0.0,
-    -1,  -1,  0.0,
-     1,  -1,  0.0,
-     1,   1,  0.0
-  ];
+  var vertices = [-1, 1, 0.0, -1, -1, 0.0, 1, -1, 0.0, 1, 1, 0.0];
 
   var indices = [3, 2, 1, 3, 1, 0];
 
@@ -19,7 +13,11 @@ function visualize(canvas, getMusicData) {
 
   var index_buffer = gl.createBuffer();
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index_buffer);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+  gl.bufferData(
+    gl.ELEMENT_ARRAY_BUFFER,
+    new Uint16Array(indices),
+    gl.STATIC_DRAW
+  );
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
   var vertex_shader_prog = `
@@ -58,15 +56,14 @@ function visualize(canvas, getMusicData) {
 
   gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index_buffer);
-  var coord = gl.getAttribLocation(shaderProgram, "coordinates");
+  var coord = gl.getAttribLocation(shaderProgram, 'coordinates');
   gl.vertexAttribPointer(coord, 3, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(coord);
-  var timeUniform = gl.getUniformLocation(shaderProgram, "time");
-  var volumeUniform = gl.getUniformLocation(shaderProgram, "volume");
-  var resolutionUniform = gl.getUniformLocation(shaderProgram, "resolution");
-    
-  var animate = function (time) {
+  var timeUniform = gl.getUniformLocation(shaderProgram, 'time');
+  var volumeUniform = gl.getUniformLocation(shaderProgram, 'volume');
+  var resolutionUniform = gl.getUniformLocation(shaderProgram, 'resolution');
 
+  var animate = function (time) {
     if (peaks.length >= 10) {
       peaks.shift(1);
     }
@@ -74,7 +71,7 @@ function visualize(canvas, getMusicData) {
 
     // average over the last 5 peaks (~100ms)
     // should probably be done in the shader
-    var avg = peaks.reduce((prev, curr) => prev + curr) / peaks.length
+    var avg = peaks.reduce((prev, curr) => prev + curr) / peaks.length;
 
     gl.uniform2fv(resolutionUniform, [canvas.width, canvas.height]);
     gl.uniform1f(timeUniform, time);
@@ -85,11 +82,11 @@ function visualize(canvas, getMusicData) {
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
     window.requestAnimationFrame(animate);
-  }
+  };
   animate(0);
 }
 
 export default {
-  name: "Blue Wave",
-  visualize
-}
+  name: 'Blue Wave',
+  visualize,
+};

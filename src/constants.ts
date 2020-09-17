@@ -11,7 +11,7 @@ export const WIDTH = 150;
 export const MIN_SIDE_LENGTH = 150;
 export const MAX_SIDE_LENGTH = 300;
 
-export const AUTH_BACKEND_PORT = 41419;
+export const API_URL = 'https://api.spotify.com/v1';
 
 export const LOFI_SHUFFLED_PLAYLIST_NAME = 'Shuffled by Lofi';
 
@@ -30,7 +30,7 @@ export const SETTINGS_CONTAINER = {
 };
 
 export const DEFAULT_SETTINGS = {
-  version: '1.5.1',
+  version: '1.5.2',
   debug: false,
   hardware_acceleration: true,
   lofi: {
@@ -49,9 +49,5 @@ export const DEFAULT_SETTINGS = {
       volume_increment: 10,
       display_volume_change: false,
     },
-  },
-  spotify: {
-    access_token: '',
-    refresh_token: '',
   },
 };

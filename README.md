@@ -15,7 +15,7 @@
   </tr>
 </table>
 
-Lofi is a mini Spotify player with visualizations. It is *not* a replacement for the Spotify Desktop app, nor does it play music independently of the Spotify app; instead, Lofi works alongside it to provide a more intuitive and pleasant access to common features, including pausing/playing, and previous/next track. Lofi also displays cover art and track info stylishly and it facilitates WebGL-powered audio visualizations for both Windows and MacOS. In other words, it's a "tiny Spotify player" or a "mini mode" for the Spotify desktop app.
+Lofi is a mini Spotify player with visualizations. It is _not_ a replacement for the Spotify Desktop app, nor does it play music independently of the Spotify app; instead, Lofi works alongside it to provide a more intuitive and pleasant access to common features, including pausing/playing, and previous/next track. Lofi also displays cover art and track info stylishly and it facilitates WebGL-powered audio visualizations for both Windows and MacOS. In other words, it's a "tiny Spotify player" or a "mini mode" for the Spotify desktop app.
 
 It is possible to make Lofi work with other audio sources (including YouTube and SoundCloud), and that might make it on the roadmap at some point.
 
@@ -33,9 +33,9 @@ It is possible to make Lofi work with other audio sources (including YouTube and
 
 To build, you'll need `node-gyp`, a compatible Python version (2.x), and your operating system's SDK (Microsoft Build Tools or Xcode). Linux native compilation is currently not supported. First, you'll need to run:
 
-````
+```
 $ yarn install
-````
+```
 
 If you have more than one Python installation on your system, you can prevent the build from failing by editing the `package.json` file in the root directory.
 Edit the build argument from
@@ -71,16 +71,18 @@ Use `yarn run production` (instead of `development`) to start the front-end in n
 ## `node-sass` compatibility
 
 You might need to change the `node-sass` version inside `package.json` to be compliant with your `nodejs` version or the `node-gyp` build might fail.
-  
-NodeJS  | Minimum node-sass version | Node Module
---------|--------------------------|------------
-Node 12 | 4.12+                    | 72
-Node 11 | 4.10+                    | 67
-Node 10 | 4.9+                     | 64
-Node 8  | 4.5.3+                   | 57
+
+| NodeJS  | Minimum node-sass version | Node Module |
+| ------- | ------------------------- | ----------- |
+| Node 12 | 4.12+                     | 72          |
+| Node 11 | 4.10+                     | 67          |
+| Node 10 | 4.9+                      | 64          |
+| Node 8  | 4.5.3+                    | 57          |
 
 # Bugs, issues, and contributing
-See something you don't like? Have a feature request? Is your computer on fire? Feel free to open an issue or make a pull request. The more the merrier.
+
+See something you don't like? Have a feature request? Is your computer on fire? Feel free to open an issue, make a pull request or join our [Discord](https://discord.gg/YuH9UJk) server. The more the merrier.
 
 # License
+
 MIT.
