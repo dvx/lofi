@@ -19,6 +19,7 @@ import Welcome from './Welcome';
 import WindowPortal from '../util/WindowPortal';
 
 import './style.scss';
+import { SpotifyApiInstance } from '../../../api/spotify-api';
 
 enum SIDE {
   LEFT,
@@ -97,6 +98,7 @@ class Lofi extends React.Component<any, any> {
       settings.setSync('refresh_token', data.refresh_token);
     }
 
+    SpotifyApiInstance.refreshToken = data?.refresh_token;
     this.setState({ access_token: data?.access_token });
     this.setState({ refresh_token: data?.refresh_token });
   }
