@@ -1,8 +1,12 @@
+import { refreshAccessToken } from '../main/auth';
+
 const API_URL = 'https://api.spotify.com/v1';
 
 class SpotifyApi {
   private isThrottled: boolean;
   private throttleTime: number;
+
+  public refreshToken: string;
 
   async fetch(input: RequestInfo, init?: RequestInit) {
     if (this.isThrottled) {
@@ -24,6 +28,11 @@ class SpotifyApi {
       }
       case 204: {
         return null;
+      }
+      case 401: {
+        if (this.refreshToken) {
+          await refreshAccessToken(this.refreshToken);
+        }
       }
       case 429: {
         const retryAfter = parseInt(res.headers.get('retry-after')) + 1;
