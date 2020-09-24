@@ -15,9 +15,6 @@ class Controls extends React.Component<any, any> {
   async getUserAccountType() {
     const userProfile = await SpotifyApiInstance.fetch('/me', {
       method: 'GET',
-      headers: new Headers({
-        Authorization: 'Bearer ' + this.props.token,
-      }),
     });
 
     this.accountType = userProfile.product;
@@ -27,16 +24,10 @@ class Controls extends React.Component<any, any> {
     if (this.props.parent.getPlayState()) {
       SpotifyApiInstance.fetch('/me/player/pause', {
         method: 'PUT',
-        headers: new Headers({
-          Authorization: 'Bearer ' + this.props.token,
-        }),
       });
     } else {
       SpotifyApiInstance.fetch('/me/player/play', {
         method: 'PUT',
-        headers: new Headers({
-          Authorization: 'Bearer ' + this.props.token,
-        }),
       });
     }
     // Assume original state is correct and make UI a bit snappier
@@ -46,9 +37,6 @@ class Controls extends React.Component<any, any> {
   async forward() {
     SpotifyApiInstance.fetch('/me/player/next', {
       method: 'POST',
-      headers: new Headers({
-        Authorization: 'Bearer ' + this.props.token,
-      }),
     }).then(() => {
       // Spotify API doesn't update fast enough sometimes, so give it some leeway
       setTimeout(this.props.parent.listeningTo.bind(this), 2000);
@@ -59,9 +47,6 @@ class Controls extends React.Component<any, any> {
   async backward() {
     SpotifyApiInstance.fetch('/me/player/previous', {
       method: 'POST',
-      headers: new Headers({
-        Authorization: 'Bearer ' + this.props.token,
-      }),
     }).then(() => {
       // Spotify API doesn't update fast enough sometimes, so give it some leeway
       setTimeout(this.props.parent.listeningTo.bind(this), 2000);

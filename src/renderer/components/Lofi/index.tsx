@@ -98,7 +98,8 @@ class Lofi extends React.Component<any, any> {
       settings.setSync('refresh_token', data.refresh_token);
     }
 
-    SpotifyApiInstance.refreshToken = data?.refresh_token;
+    SpotifyApiInstance.updateTokens(data);
+
     this.setState({ access_token: data?.access_token });
     this.setState({ refresh_token: data?.refresh_token });
   }

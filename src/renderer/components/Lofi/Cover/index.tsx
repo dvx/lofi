@@ -133,9 +133,6 @@ class Cover extends React.Component<any, any> {
       '/me/player/volume?volume_percent=' + Math.round(percent),
       {
         method: 'PUT',
-        headers: new Headers({
-          Authorization: 'Bearer ' + this.props.token,
-        }),
       }
     );
   }
@@ -197,9 +194,6 @@ class Cover extends React.Component<any, any> {
       '/me/player/seek?position_ms=' + currentlyPlaying.progress_ms,
       {
         method: 'PUT',
-        headers: new Headers({
-          Authorization: 'Bearer ' + this.props.token,
-        }),
       }
     );
   }
@@ -209,9 +203,6 @@ class Cover extends React.Component<any, any> {
       '/me/player?type=episode,track',
       {
         method: 'GET',
-        headers: new Headers({
-          Authorization: 'Bearer ' + this.props.token,
-        }),
       }
     );
 
@@ -266,9 +257,6 @@ class Cover extends React.Component<any, any> {
       '/playlists/' + playlist_id + '/tracks',
       {
         method: 'GET',
-        headers: new Headers({
-          Authorization: 'Bearer ' + this.props.token,
-        }),
       }
     );
 
@@ -287,9 +275,6 @@ class Cover extends React.Component<any, any> {
     while (playlist.next) {
       playlist = await SpotifyApiInstance.fetch(playlist.next, {
         method: 'GET',
-        headers: new Headers({
-          Authorization: 'Bearer ' + this.props.token,
-        }),
       });
 
       if (!playlist) {
@@ -329,9 +314,6 @@ class Cover extends React.Component<any, any> {
       '/playlists/' + playlist_id + '/tracks',
       {
         method: 'GET',
-        headers: new Headers({
-          Authorization: 'Bearer ' + this.props.token,
-        }),
       }
     );
 
@@ -381,9 +363,6 @@ class Cover extends React.Component<any, any> {
       '/me/playlists?limit=' + limit,
       {
         method: 'GET',
-        headers: new Headers({
-          Authorization: 'Bearer ' + this.props.token,
-        }),
       }
     );
 

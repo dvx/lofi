@@ -1,12 +1,17 @@
-import { refreshAccessToken } from '../main/auth';
+import { AuthData, refreshAccessToken } from '../main/auth';
 
 const API_URL = 'https://api.spotify.com/v1';
 
 class SpotifyApi {
   private isThrottled: boolean;
   private throttleTime: number;
+  private accessToken: string;
+  private refreshToken: string;
 
-  public refreshToken: string;
+  updateTokens(data: AuthData) {
+    this.accessToken = data?.access_token;
+    this.refreshToken = data?.refresh_token;
+  }
 
   async fetch(input: RequestInfo, init?: RequestInit) {
     if (this.isThrottled) {
@@ -15,13 +20,20 @@ class SpotifyApi {
         console.warn(
           `Spotify API call ignored, waiting ${timeLeft}ms... (${input})`
         );
-        return;
+        return null;
       } else {
         this.isThrottled = false;
       }
     }
 
-    const res = await fetch(API_URL + input, init);
+    const initWithBearer = {
+      ...init,
+      headers: new Headers({
+        Authorization: 'Bearer ' + this.accessToken,
+      }),
+    };
+
+    const res = await fetch(API_URL + input, initWithBearer);
     switch (res.status) {
       case 200: {
         return await res.json();
@@ -45,6 +57,9 @@ class SpotifyApi {
     }
 
     const { error } = await res.json();
+
+    // Normally the api would throw an error but given the limited scope of this api,
+    // we'll just output the error to the console and return null.
     console.error(`${error.status}: ${error.message}`);
 
     return null;
