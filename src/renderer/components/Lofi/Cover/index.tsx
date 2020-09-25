@@ -372,11 +372,7 @@ class Cover extends React.Component<any, any> {
 
     playlists = playlists.concat(playlistObject.items);
     while (playlistObject.next) {
-      playlistObject = await SpotifyApiInstance.fetch(playlistObject.next, {
-        headers: new Headers({
-          Authorization: 'Bearer ' + this.props.token,
-        }),
-      });
+      playlistObject = await SpotifyApiInstance.fetch(playlistObject.next);
 
       if (playlistObject) {
         playlists = playlists.concat(playlistObject.items);
@@ -561,7 +557,7 @@ class Cover extends React.Component<any, any> {
           />
         </RecreateChildOnPropsChange>
         {this.state.currently_playing ? (
-          <Controls parent={this} token={this.props.token} />
+          <Controls parent={this} />
         ) : (
           <Waiting />
         )}
