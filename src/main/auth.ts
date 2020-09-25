@@ -58,7 +58,7 @@ export async function startAuthServer() {
   console.log('Starting auth server...');
   if (!server) {
     server = http.createServer(async (request, response) => {
-      handleServerResponse(request, response);
+      await handleServerResponse(request, response);
     });
 
     server.listen(AUTH_PORT);
@@ -123,6 +123,9 @@ async function handleServerResponse(request: any, response: any) {
   try {
     if (queryData.state !== codeState) {
       console.error('Invalid state');
+      response.end(
+        'Lofi authorization error: invalid state, , you may close this window and retry.'
+      );
       return;
     }
 
