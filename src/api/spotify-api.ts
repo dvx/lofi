@@ -14,6 +14,11 @@ class SpotifyApi {
   }
 
   async fetch(input: RequestInfo, init?: RequestInit) {
+    if (!this.accessToken) {
+      console.warn(`Access token not set, ignoring fetch '${input}'`);
+      return;
+    }
+
     if (this.isThrottled) {
       const timeLeft = this.throttleTime - new Date().getTime();
       if (timeLeft > 0) {
