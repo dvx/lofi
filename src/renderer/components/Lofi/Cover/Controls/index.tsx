@@ -1,26 +1,33 @@
 import * as React from 'react';
 import './style.scss';
-import { API_URL } from '../../../../../constants';
+import { SpotifyApiInstance } from '../../../../../api/spotify-api';
 
 class Controls extends React.Component<any, any> {
+  accountType: string;
   constructor(props: any) {
     super(props);
   }
 
+  componentDidMount() {
+    this.getUserAccountType();
+  }
+
+  async getUserAccountType() {
+    const userProfile = await SpotifyApiInstance.fetch('/me', {
+      method: 'GET',
+    });
+
+    this.accountType = userProfile.product;
+  }
+
   async pausePlay() {
     if (this.props.parent.getPlayState()) {
-      fetch(API_URL + '/me/player/pause', {
+      SpotifyApiInstance.fetch('/me/player/pause', {
         method: 'PUT',
-        headers: new Headers({
-          Authorization: 'Bearer ' + this.props.token,
-        }),
       });
     } else {
-      fetch(API_URL + '/me/player/play', {
+      SpotifyApiInstance.fetch('/me/player/play', {
         method: 'PUT',
-        headers: new Headers({
-          Authorization: 'Bearer ' + this.props.token,
-        }),
       });
     }
     // Assume original state is correct and make UI a bit snappier
@@ -28,11 +35,8 @@ class Controls extends React.Component<any, any> {
   }
 
   async forward() {
-    fetch(API_URL + '/me/player/next', {
+    SpotifyApiInstance.fetch('/me/player/next', {
       method: 'POST',
-      headers: new Headers({
-        Authorization: 'Bearer ' + this.props.token,
-      }),
     }).then(() => {
       // Spotify API doesn't update fast enough sometimes, so give it some leeway
       setTimeout(this.props.parent.listeningTo.bind(this), 2000);
@@ -41,11 +45,8 @@ class Controls extends React.Component<any, any> {
   }
 
   async backward() {
-    fetch(API_URL + '/me/player/previous', {
+    SpotifyApiInstance.fetch('/me/player/previous', {
       method: 'POST',
-      headers: new Headers({
-        Authorization: 'Bearer ' + this.props.token,
-      }),
     }).then(() => {
       // Spotify API doesn't update fast enough sometimes, so give it some leeway
       setTimeout(this.props.parent.listeningTo.bind(this), 2000);
@@ -68,27 +69,29 @@ class Controls extends React.Component<any, any> {
   render() {
     return (
       <div className="controls centered">
-        <p>
-          <a
-            onClick={this.backward.bind(this)}
-            className="control-btn secondary-control not-draggable skip">
-            <i className="fa fa-step-backward not-draggable"></i>
-          </a>
-          <a
-            onClick={this.pausePlay.bind(this)}
-            className="control-btn not-draggable pause-play">
-            <i
-              className={
-                'fa not-draggable ' +
-                (this.props.parent.getPlayState() ? 'fa-pause' : 'fa-play')
-              }></i>
-          </a>
-          <a
-            onClick={this.forward.bind(this)}
-            className="control-btn secondary-control not-draggable skip">
-            <i className="fa fa-step-forward not-draggable"></i>
-          </a>
-        </p>
+        {this.accountType === 'premium' ? (
+          <p>
+            <a
+              onClick={this.backward.bind(this)}
+              className="control-btn secondary-control not-draggable skip">
+              <i className="fa fa-step-backward not-draggable"></i>
+            </a>
+            <a
+              onClick={this.pausePlay.bind(this)}
+              className="control-btn not-draggable pause-play">
+              <i
+                className={
+                  'fa not-draggable ' +
+                  (this.props.parent.getPlayState() ? 'fa-pause' : 'fa-play')
+                }></i>
+            </a>
+            <a
+              onClick={this.forward.bind(this)}
+              className="control-btn secondary-control not-draggable skip">
+              <i className="fa fa-step-forward not-draggable"></i>
+            </a>
+          </p>
+        ) : null}
         <div
           className="progress"
           style={{ width: this.props.parent.getTrackProgress() + '%' }}
