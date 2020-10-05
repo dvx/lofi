@@ -28,13 +28,14 @@ export const SETTINGS_CONTAINER = {
 };
 
 export const DEFAULT_SETTINGS = {
-  version: '1.5.3',
+  version: '1.5.4',
   debug: false,
   hardware_acceleration: true,
   lofi: {
     visualization: 0,
     window: {
       always_on_top: true,
+      show_in_taskbar: true,
       x: 0,
       y: 0,
       remember: true,

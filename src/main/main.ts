@@ -68,8 +68,9 @@ function createWindow() {
     minimizable: true,
     transparent: true,
     hasShadow: false,
-    skipTaskbar: windowConfig.always_on_top ? true : false,
-    focusable: windowConfig.always_on_top ? false : true,
+    skipTaskbar: !windowConfig.show_in_taskbar,
+    // TODO: test if always on top still works on Linux
+    focusable: true,
     webPreferences: {
       allowRunningInsecureContent: false,
       nodeIntegration: true,
@@ -265,6 +266,7 @@ app.on('ready', () => {
     y: Number(settings.getSync('lofi.window.y')),
     remember: Boolean(settings.getSync('lofi.window.remember')),
     always_on_top: Boolean(settings.getSync('lofi.window.always_on_top')),
+    show_in_taskbar: Boolean(settings.getSync('lofi.window.show_in_taskbar')),
     side: Number(settings.getSync('lofi.window.side')),
   });
 
