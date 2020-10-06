@@ -3,7 +3,7 @@ import TitleBar from 'frameless-titlebar';
 import * as j from '../../../../../package.json';
 import './style.scss';
 
-class Settings extends React.Component<any, any> {
+class About extends React.Component<any, any> {
   render() {
     return (
       <div className="about-wnd">
@@ -61,4 +61,4 @@ class Settings extends React.Component<any, any> {
   }
 }
 
-export default Settings;
+export default About;
