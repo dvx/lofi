@@ -1,16 +1,16 @@
 import React from 'react';
 import * as settings from 'electron-settings';
-import { remote } from 'electron';
 import TitleBar from 'frameless-titlebar';
 import './style.scss';
 
 import { visualizations } from '../../../../visualizations/visualizations.js';
 import { MACOS, DEFAULT_SETTINGS } from '../../../../constants';
 import { get, set } from 'lodash';
+import { remote } from 'electron';
 
 interface Setting {
   name: string;
-  restart?: boolean;
+  callback?: (value: any) => void;
 }
 
 class Settings extends React.Component<any, any> {
@@ -22,18 +22,8 @@ class Settings extends React.Component<any, any> {
       ...settings.getSync(),
     };
 
-    this.settingsToWatch = [
-      { name: 'lofi.window.always_on_top', restart: true },
-      { name: 'lofi.window.show_in_taskbar', restart: true },
-      { name: 'lofi.window.remember' },
-      { name: 'lofi.window.hide' },
-      { name: 'lofi.window.metadata' },
-      { name: 'lofi.visualization' },
-      { name: 'hardware_acceleration', restart: true },
-      { name: 'debug', restart: true },
-      { name: 'lofi.audio.volume_increment' },
-    ];
     this.oldSettings = {};
+    this.settingsToWatch = this.initSettingsToWatch();
     this.settingsToWatch.map((setting) => {
       const currentSetting =
         get(this.state, setting.name) ?? get(DEFAULT_SETTINGS, setting.name);
@@ -41,19 +31,63 @@ class Settings extends React.Component<any, any> {
     });
   }
 
-  nukeSettings() {
-    if (confirm('Are you sure you want to reset all Lofi settings?')) {
-      settings.resetToDefaultsSync();
-      remote.app.relaunch();
-      remote.app.exit(0);
-    }
+  initSettingsToWatch() {
+    const mainWindow = remote.getCurrentWindow();
+    const settingsToWatch: Setting[] = [
+      {
+        name: 'lofi.window.always_on_top',
+        callback: (value) => mainWindow.setAlwaysOnTop(value),
+      },
+      {
+        name: 'lofi.window.show_in_taskbar',
+        callback: (value) => {
+          mainWindow.setSkipTaskbar(!value);
+          // Workaround to make setSkipTaskbar behave
+          // cf. https://github.com/electron/electron/issues/18378
+          mainWindow.on('focus', () => {
+            mainWindow.setSkipTaskbar(!value);
+          });
+        },
+      },
+      { name: 'lofi.window.remember' },
+      { name: 'lofi.window.hide' },
+      { name: 'lofi.window.metadata' },
+      { name: 'lofi.visualization' },
+      { name: 'hardware_acceleration' },
+      {
+        name: 'debug',
+        callback: (value) =>
+          value
+            ? mainWindow.webContents.openDevTools({ mode: 'detach' })
+            : mainWindow.webContents.closeDevTools(),
+      },
+      { name: 'lofi.audio.volume_increment' },
+    ];
+
+    return settingsToWatch;
   }
 
-  commitSettings() {
-    if (!this.isFormValid()) {
+  nukeSettings() {
+    if (!confirm('Are you sure you want to reset all Lofi settings?')) {
       return;
     }
 
+    this.settingsToWatch.map((setting) => {
+      this.setNewSettingsState(
+        setting.name,
+        get(DEFAULT_SETTINGS, setting.name)
+      );
+      settings.setSync(setting.name, get(DEFAULT_SETTINGS, setting.name));
+      if (setting.callback) {
+        setting.callback(get(DEFAULT_SETTINGS, setting.name));
+      }
+    });
+
+    this.props.lofi.hideSettingsWindow();
+    this.props.lofi.reloadSettings();
+  }
+
+  commitSettings() {
     // Commit window settings
     settings.setSync(
       'lofi.window.always_on_top',
@@ -80,17 +114,19 @@ class Settings extends React.Component<any, any> {
       this.state.lofi.audio.volume_increment
     );
 
+    const changedSettings = this.getChangedSettings();
+    changedSettings.map((setting) => {
+      if (setting.callback) {
+        setting.callback(get(this.state, setting.name));
+      }
+    });
+
     // Hide settings window and reload settings in main process
     this.props.lofi.hideSettingsWindow();
     this.props.lofi.reloadSettings();
-
-    if (this.isRestartRequired()) {
-      remote.app.relaunch();
-      remote.app.exit(0);
-    }
   }
 
-  setNewSettings(fullName: string, newValue: any) {
+  setNewSettingsState(fullName: string, newValue: any) {
     const settings: { [x: string]: any } = this.state;
     set(settings, fullName, newValue);
     this.setState(settings);
@@ -117,15 +153,6 @@ class Settings extends React.Component<any, any> {
       this.state.lofi.audio.volume_increment > 0 &&
       this.state.lofi.audio.volume_increment <= 100
     );
-  }
-
-  isRestartRequired() {
-    const changedSettings = this.getChangedSettings();
-
-    const requiresRestart =
-      changedSettings.filter((setting) => setting.restart).length > 0;
-
-    return requiresRestart;
   }
 
   render() {
@@ -158,7 +185,7 @@ class Settings extends React.Component<any, any> {
                     name="always_on_top"
                     id="always_on_top"
                     onChange={() =>
-                      this.setNewSettings(
+                      this.setNewSettingsState(
                         'lofi.window.always_on_top',
                         !this.state.lofi.window.always_on_top
                       )
@@ -173,7 +200,7 @@ class Settings extends React.Component<any, any> {
                     name=""
                     id="show_in_taskbar"
                     onChange={() =>
-                      this.setNewSettings(
+                      this.setNewSettingsState(
                         'lofi.window.show_in_taskbar',
                         !this.state.lofi.window.show_in_taskbar
                       )
@@ -190,7 +217,7 @@ class Settings extends React.Component<any, any> {
                     name="pos"
                     id="pos"
                     onChange={() =>
-                      this.setNewSettings(
+                      this.setNewSettingsState(
                         'lofi.window.remember',
                         !this.state.lofi.window.remember
                       )
@@ -205,7 +232,7 @@ class Settings extends React.Component<any, any> {
                     name="hide"
                     id="hide"
                     onChange={() =>
-                      this.setNewSettings(
+                      this.setNewSettingsState(
                         'lofi.window.hide',
                         !this.state.lofi.window.hide
                       )
@@ -222,7 +249,7 @@ class Settings extends React.Component<any, any> {
                     name="metadata"
                     id="metadata"
                     onChange={() =>
-                      this.setNewSettings(
+                      this.setNewSettingsState(
                         'lofi.window.metadata',
                         !this.state.lofi.window.metadata
                       )
@@ -245,7 +272,7 @@ class Settings extends React.Component<any, any> {
                     value={this.state.lofi.visualization}
                     className="picker"
                     onChange={(e) =>
-                      this.setNewSettings(
+                      this.setNewSettingsState(
                         'lofi.visualization',
                         Number(e.target.value)
                       )
@@ -273,7 +300,7 @@ class Settings extends React.Component<any, any> {
                     name="volume_increment"
                     id="volume_increment"
                     onChange={(e) =>
-                      this.setNewSettings(
+                      this.setNewSettingsState(
                         'lofi.audio.volume_increment',
                         e.target.value
                       )
@@ -297,7 +324,7 @@ class Settings extends React.Component<any, any> {
                     name="hardware_acceleration"
                     id="hardware_acceleration"
                     onChange={() =>
-                      this.setNewSettings(
+                      this.setNewSettingsState(
                         'hardware_acceleration',
                         !this.state.hardware_acceleration
                       )
@@ -305,7 +332,7 @@ class Settings extends React.Component<any, any> {
                     checked={this.state.hardware_acceleration}
                   />
                   <label htmlFor="hardware_acceleration">
-                    Use hardware acceleration
+                    Use hardware acceleration (requires restart)
                   </label>
                 </div>
                 <div>
@@ -314,7 +341,7 @@ class Settings extends React.Component<any, any> {
                     name="debug"
                     id="debug"
                     onChange={(e) =>
-                      this.setNewSettings('debug', !this.state.debug)
+                      this.setNewSettingsState('debug', !this.state.debug)
                     }
                     checked={this.state.debug}
                   />
@@ -325,8 +352,11 @@ class Settings extends React.Component<any, any> {
           </form>
           <div className="button-container">
             <div className="button-holder">
-              <a href="#" onClick={this.nukeSettings} className="red-button">
-                Reset to factory defaults
+              <a
+                href="#"
+                onClick={this.nukeSettings.bind(this)}
+                className="red-button">
+                Reset to defaults
               </a>
             </div>
             <div className="button-holder">
@@ -336,7 +366,7 @@ class Settings extends React.Component<any, any> {
                 className={`${
                   this.isFormValid() ? 'green-button' : 'button-disabled'
                 }`}>
-                {this.isRestartRequired() ? 'Save and restart' : 'Save'}
+                Save
               </a>
             </div>
           </div>

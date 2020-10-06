@@ -69,13 +69,19 @@ function createWindow() {
     transparent: true,
     hasShadow: false,
     skipTaskbar: !windowConfig.show_in_taskbar,
-    // TODO: test if always on top still works on Linux
-    focusable: true,
+    focusable: !windowConfig.always_on_top,
     webPreferences: {
       allowRunningInsecureContent: false,
       nodeIntegration: true,
       nativeWindowOpen: true,
     },
+    backgroundColor: '#00000000',
+  });
+
+  // Workaround to make setSkipTaskbar behave
+  // cf. https://github.com/electron/electron/issues/18378
+  mainWindow.on('focus', () => {
+    mainWindow.setSkipTaskbar(!windowConfig.show_in_taskbar);
   });
 
   mainWindow.setAlwaysOnTop(windowConfig.always_on_top, 'floating', 1);
