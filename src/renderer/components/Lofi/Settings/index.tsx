@@ -7,6 +7,7 @@ import { visualizations } from '../../../../visualizations/visualizations.js';
 import { MACOS, DEFAULT_SETTINGS } from '../../../../constants';
 import { get, set } from 'lodash';
 import { remote } from 'electron';
+import { Platform } from 'frameless-titlebar/dist/title-bar/typings';
 
 interface Setting {
   name: string;
@@ -166,6 +167,7 @@ class Settings extends React.Component<any, any> {
           disableMaximize
           disableMinimize
           currentWindow={window} // electron window instance
+          platform={(process.platform as Platform) ?? 'win32'}
           onMaximize={() => {}}
           onMinimize={() => {}}
           onDoubleClick={() => {}}

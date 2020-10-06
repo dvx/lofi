@@ -2,6 +2,7 @@ import React from 'react';
 import TitleBar from 'frameless-titlebar';
 import * as j from '../../../../../package.json';
 import './style.scss';
+import { Platform } from 'frameless-titlebar/dist/title-bar/typings';
 
 class About extends React.Component<any, any> {
   render() {
@@ -11,6 +12,7 @@ class About extends React.Component<any, any> {
           disableMaximize
           disableMinimize
           currentWindow={window} // electron window instance
+          platform={(process.platform as Platform) ?? 'win32'}
           onMaximize={() => {}}
           onMinimize={() => {}}
           onDoubleClick={() => {}}
