@@ -88,6 +88,10 @@ class Settings extends React.Component<any, any> {
   }
 
   commitSettings() {
+    if (!this.isFormValid()) {
+      return;
+    }
+
     // Commit window settings
     settings.setSync(
       'lofi.window.always_on_top',
