@@ -168,9 +168,6 @@ class Settings extends React.Component<any, any> {
           disableMinimize
           currentWindow={window} // electron window instance
           platform={(process.platform as Platform) ?? 'win32'}
-          onMaximize={() => {}}
-          onMinimize={() => {}}
-          onDoubleClick={() => {}}
           theme={{
             bar: {
               background: '#0000',
