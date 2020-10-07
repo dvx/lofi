@@ -41,7 +41,8 @@ class SpotifyApi {
     const res = await fetch(API_URL + input, initWithBearer);
     switch (res.status) {
       case 200: {
-        return await res.json();
+        const responseLength = parseInt(res.headers.get('content-length'));
+        return responseLength > 0 ? await res.json() : null;
       }
       case 204: {
         return null;

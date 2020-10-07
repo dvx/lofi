@@ -17,6 +17,8 @@ const AUTH_SCOPES = [
   'user-modify-playback-state',
   'user-read-currently-playing',
   'user-read-private',
+  'user-library-read',
+  'user-library-modify',
 ];
 
 export interface AuthData {

@@ -54,6 +54,17 @@ class Controls extends React.Component<any, any> {
     this.props.parent.setPlaying(true);
   }
 
+  async like() {
+    const liked = this.props.parent.isTrackLiked();
+    const id = this.props.parent.getTrackId();
+    const verb = liked ? 'DELETE' : 'PUT';
+    await SpotifyApiInstance.fetch('/me/tracks?ids=' + id, {
+      method: verb,
+    });
+
+    this.props.parent.toggleTrackLike();
+  }
+
   renderVolumeLabel() {
     if (!this.props.parent.state.display_volume_change) {
       return;
@@ -69,28 +80,45 @@ class Controls extends React.Component<any, any> {
   render() {
     return (
       <div className="controls centered">
-        {this.accountType === 'premium' ? (
-          <p>
-            <a
-              onClick={this.backward.bind(this)}
-              className="control-btn secondary-control not-draggable skip">
-              <i className="fa fa-step-backward not-draggable"></i>
-            </a>
-            <a
-              onClick={this.pausePlay.bind(this)}
-              className="control-btn not-draggable pause-play">
-              <i
-                className={
-                  'fa not-draggable ' +
-                  (this.props.parent.getPlayState() ? 'fa-pause' : 'fa-play')
-                }></i>
-            </a>
-            <a
-              onClick={this.forward.bind(this)}
-              className="control-btn secondary-control not-draggable skip">
-              <i className="fa fa-step-forward not-draggable"></i>
-            </a>
-          </p>
+        {this.accountType ? (
+          <div className="controls-cluster">
+            {this.accountType === 'premium' ? (
+              <p className="row">
+                <a
+                  onClick={this.backward.bind(this)}
+                  className="control-btn secondary-control not-draggable skip">
+                  <i className="fa fa-step-backward not-draggable"></i>
+                </a>
+                <a
+                  onClick={this.pausePlay.bind(this)}
+                  className="control-btn not-draggable pause-play">
+                  <i
+                    className={
+                      'fa not-draggable ' +
+                      (this.props.parent.getPlayState()
+                        ? 'fa-pause'
+                        : 'fa-play')
+                    }></i>
+                </a>
+                <a
+                  onClick={this.forward.bind(this)}
+                  className="control-btn secondary-control not-draggable skip">
+                  <i className="fa fa-step-forward not-draggable"></i>
+                </a>
+              </p>
+            ) : null}
+            <p className="row">
+              <a
+                onClick={this.like.bind(this)}
+                className="control-btn secondary-control not-draggable">
+                <i
+                  className={
+                    (this.props.parent.isTrackLiked() ? 'fa' : 'far') +
+                    ' fa-heart not-draggable'
+                  }></i>
+              </a>
+            </p>
+          </div>
         ) : null}
         <div
           className="progress"

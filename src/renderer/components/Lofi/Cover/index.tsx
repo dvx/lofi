@@ -223,6 +223,14 @@ class Cover extends React.Component<any, any> {
       currently_playing: currentlyPlaying,
     });
 
+    const liked = await SpotifyApiInstance.fetch(
+      '/me/tracks/contains?ids=' + currentlyPlaying.item.id,
+      {
+        method: 'GET',
+      }
+    );
+    this.setState({ liked: liked[0] });
+
     // trust UI while scroll wheel level, e.g. volume, stabilizes (10 second leeway)
     if (
       this.state.stateChange &&
@@ -502,6 +510,10 @@ class Cover extends React.Component<any, any> {
     return 'Nothing Playing';
   }
 
+  getTrackId() {
+    return this.state.currently_playing?.item?.id;
+  }
+
   getArtist() {
     if (this.state.currently_playing) {
       if (this.state.currently_playing.currently_playing_type == 'track') {
@@ -524,6 +536,15 @@ class Cover extends React.Component<any, any> {
     if (this.state.currently_playing) {
       return this.state.currently_playing.is_playing;
     }
+  }
+
+  isTrackLiked() {
+    return this.state.liked;
+  }
+
+  toggleTrackLike() {
+    const liked = this.state.liked;
+    this.setState({ liked: !liked });
   }
 
   render() {
