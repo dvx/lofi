@@ -69,7 +69,6 @@ function createWindow() {
     transparent: true,
     hasShadow: false,
     skipTaskbar: !windowConfig.show_in_taskbar,
-    focusable: !windowConfig.always_on_top,
     webPreferences: {
       allowRunningInsecureContent: false,
       nodeIntegration: true,
