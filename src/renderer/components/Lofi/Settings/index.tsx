@@ -50,7 +50,6 @@ class Settings extends React.Component<any, any> {
           });
         },
       },
-      { name: 'lofi.window.remember' },
       { name: 'lofi.window.hide' },
       { name: 'lofi.window.metadata' },
       { name: 'lofi.visualization' },
@@ -102,7 +101,6 @@ class Settings extends React.Component<any, any> {
       'lofi.window.show_in_taskbar',
       this.state.lofi.window.show_in_taskbar
     );
-    settings.setSync('lofi.window.remember', this.state.lofi.window.remember);
     settings.setSync('lofi.window.hide', this.state.lofi.window.hide);
     settings.setSync('lofi.window.metadata', this.state.lofi.window.metadata);
 
@@ -213,21 +211,6 @@ class Settings extends React.Component<any, any> {
                   <label htmlFor="show_in_taskbar">
                     Display in the task bar
                   </label>
-                </div>
-                <div>
-                  <input
-                    type="checkbox"
-                    name="pos"
-                    id="pos"
-                    onChange={() =>
-                      this.setNewSettingsState(
-                        'lofi.window.remember',
-                        !this.state.lofi.window.remember
-                      )
-                    }
-                    checked={this.state.lofi.window.remember}
-                  />
-                  <label htmlFor="pos">Remember window position</label>
                 </div>
                 <div>
                   <input

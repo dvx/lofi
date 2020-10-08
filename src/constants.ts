@@ -38,7 +38,6 @@ export const DEFAULT_SETTINGS = {
       show_in_taskbar: true,
       x: 0,
       y: 0,
-      remember: true,
       hide: false,
       metadata: false,
       scale: 1,

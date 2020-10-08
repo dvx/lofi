@@ -52,8 +52,8 @@ if (!isSingleInstance) {
 function createWindow() {
   // Create the browser window
   mainWindow = new BrowserWindow({
-    x: windowConfig.remember ? windowConfig.x : null,
-    y: windowConfig.remember ? windowConfig.y : null,
+    x: windowConfig.x,
+    y: windowConfig.y,
     height: CONTAINER.VERTICAL,
     width: CONTAINER.HORIZONTAL,
     frame: false,
@@ -273,7 +273,6 @@ app.on('ready', () => {
   Object.assign(windowConfig, {
     x: Number(settings.getSync('lofi.window.x')),
     y: Number(settings.getSync('lofi.window.y')),
-    remember: Boolean(settings.getSync('lofi.window.remember')),
     always_on_top: Boolean(settings.getSync('lofi.window.always_on_top')),
     show_in_taskbar: Boolean(settings.getSync('lofi.window.show_in_taskbar')),
     side: Number(settings.getSync('lofi.window.side')),
