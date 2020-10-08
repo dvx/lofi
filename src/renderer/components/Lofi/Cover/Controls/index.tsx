@@ -107,17 +107,19 @@ class Controls extends React.Component<any, any> {
                 </a>
               </p>
             ) : null}
-            <p className="row">
-              <a
-                onClick={this.like.bind(this)}
-                className="control-btn secondary-control not-draggable">
-                <i
-                  className={
-                    (this.props.parent.isTrackLiked() ? 'fa' : 'far') +
-                    ' fa-heart not-draggable'
-                  }></i>
-              </a>
-            </p>
+            {this.props.parent.isTrackLiked() !== null ? (
+              <p className="row">
+                <a
+                  onClick={this.like.bind(this)}
+                  className="control-btn secondary-control not-draggable">
+                  <i
+                    className={
+                      (this.props.parent.isTrackLiked() ? 'fa' : 'far') +
+                      ' fa-heart not-draggable'
+                    }></i>
+                </a>
+              </p>
+            ) : null}
           </div>
         ) : null}
         <div

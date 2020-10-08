@@ -223,13 +223,17 @@ class Cover extends React.Component<any, any> {
       currently_playing: currentlyPlaying,
     });
 
-    const liked = await SpotifyApiInstance.fetch(
-      '/me/tracks/contains?ids=' + currentlyPlaying.item.id,
-      {
-        method: 'GET',
-      }
-    );
-    this.setState({ liked: liked[0] });
+    let liked = null;
+    if (currentlyPlaying.currently_playing_type === 'track') {
+      const likedResponse = await SpotifyApiInstance.fetch(
+        '/me/tracks/contains?ids=' + currentlyPlaying.item.id,
+        {
+          method: 'GET',
+        }
+      );
+      liked = likedResponse[0];
+    }
+    this.setState({ liked: liked });
 
     // trust UI while scroll wheel level, e.g. volume, stabilizes (10 second leeway)
     if (
