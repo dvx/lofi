@@ -3,7 +3,7 @@ import './style.scss';
 import { SpotifyApiInstance } from '../../../../../api/spotify-api';
 
 class Controls extends React.Component<any, any> {
-  accountType: string;
+  private accountType: string;
   constructor(props: any) {
     super(props);
   }

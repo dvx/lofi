@@ -26,7 +26,7 @@ enum VISUALIZATION_TYPE {
 }
 
 class Cover extends React.Component<any, any> {
-  volumeChangedTimeoutId: NodeJS.Timeout;
+  private volumeChangedTimeoutId: NodeJS.Timeout;
 
   constructor(props: any) {
     super(props);
