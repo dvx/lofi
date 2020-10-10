@@ -1,13 +1,21 @@
 import * as React from 'react';
+import { SpotifyApiInstance } from '../../../../api/spotify-api';
 import { MACOS } from '../../../../constants';
 import './style.scss';
 
 class Menu extends React.Component<any, any> {
+  private spotifyStatusInterval: NodeJS.Timeout;
   constructor(props: any) {
     super(props);
+    this.state = { spotifyStatus: '' };
+    this.spotifyStatusInterval = setInterval(
+      () => this.setState({ spotifyStatus: SpotifyApiInstance.status }),
+      1000
+    );
   }
 
   closeApp() {
+    clearInterval(this.spotifyStatusInterval);
     this.props.parent.closeApp();
   }
 
@@ -28,15 +36,14 @@ class Menu extends React.Component<any, any> {
   render() {
     return (
       <>
-        <ul className="menu top-menu">
+        <ul className="menu top">
           <li>
             <a
-              style={{ float: 'left' }}
               onClick={this.showSettingsWindow.bind(this)}
               className="settings not-draggable">
               <i className="fa fa-cog not-draggable"></i>
             </a>
-            <a style={{ float: 'left' }} className="logo-typo">
+            <a className="logo-typo">
               <span style={{ fontWeight: 'bold' }}>lo</span>fi
             </a>
           </li>
@@ -49,7 +56,7 @@ class Menu extends React.Component<any, any> {
           </li>
         </ul>
         {this.props.parent.constructor.name !== 'Welcome' ? (
-          <ul className="menu bottom-menu">
+          <ul className="menu bottom">
             <li>
               <a
                 onClick={this.cycleVis.bind(this)}
@@ -58,6 +65,14 @@ class Menu extends React.Component<any, any> {
               </a>
             </li>
             {/* <li className='pull-right'><a data-tooltip="Shuffle playlist" className='shuffle not-draggable'><i onClick={this.toggleShuffle.bind(this)} className="fa fa-random not-draggable"></i></a></li> */}
+            {this.state.spotifyStatus ? (
+              <li className="pull-right">
+                <a className="warning not-draggable tooltip">
+                  <i className="fa fa-exclamation-triangle not-draggable"></i>
+                  <span>{this.state.spotifyStatus}</span>
+                </a>
+              </li>
+            ) : null}
             <li className="pull-right">
               <a
                 target="_blank"

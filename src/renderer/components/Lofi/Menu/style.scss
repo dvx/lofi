@@ -1,44 +1,35 @@
-.bottom-menu {
+.menu {
+  display: flex;
   z-index: 3;
   list-style-type: none;
   margin: 0;
   padding: 4px;
   overflow: hidden;
   font-size: 12px;
-  opacity: 0;
+  opacity: 1;
   transition: opacity 0.25s ease-in-out;
   -moz-transition: opacity 0.25s ease-in-out;
   -webkit-transition: opacity 0.25s ease-in-out;
   position: absolute;
-  bottom: 0;
   left: 0;
   width: calc(100% - 8px);
-}
-
-.top-menu {
-  z-index: 3;
-  list-style-type: none;
-  margin: 0;
-  padding: 4px;
-  overflow: hidden;
-  font-size: 12px;
-  opacity: 0;
-  transition: opacity 0.25s ease-in-out;
-  -moz-transition: opacity 0.25s ease-in-out;
-  -webkit-transition: opacity 0.25s ease-in-out;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: calc(100% - 8px);
+  .bottom {
+    bottom: 0;
+  }
+  .top {
+    top: 0;
+  }
 }
 
 .menu li {
-  display: block;
-  float: left;
+  width: 100%;
+  &.pull-right {
+    align-items: flex-end;
+    width: 20px;
+  }
 }
 
 .menu li a {
-  display: block;
   color: white;
   text-align: center;
   padding: 5px;
@@ -52,6 +43,10 @@
 
 .menu li a.danger:active {
   color: #a53e3e;
+}
+
+.menu li a.warning:hover {
+  color: #fff56a;
 }
 
 .menu li a.settings:hover {
@@ -97,39 +92,25 @@
   text-shadow: 0px 0px 16px #0000003d;
 }
 
-/* Add this attribute to the element that needs a tooltip */
-[data-tooltip] {
-  position: relative;
-  z-index: 2;
-}
-
-/* Hide the tooltip content by default */
-[data-tooltip]:before,
-[data-tooltip]:after {
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Position tooltip above the element */
-[data-tooltip]:before {
+.tooltip {
   position: fixed;
-  padding: 8px;
-  width: 72px;
-  margin-left: -36px;
-  bottom: 44%;
+  margin: -5px;
+}
+
+.tooltip span {
+  display: none;
+}
+
+.tooltip:hover span {
+  display: block;
+  position: fixed;
+  overflow: hidden;
   background-color: rgba(0, 0, 0, 0.38);
   color: #fff;
-  content: attr(data-tooltip);
   text-align: center;
   font-size: 10px;
   line-height: 1;
-}
-
-/* Show tooltip content on hover */
-[data-tooltip]:hover:before {
-  visibility: visible;
-  opacity: 1;
+  padding: 5px;
 }
 
 .menu li a.help:hover {
