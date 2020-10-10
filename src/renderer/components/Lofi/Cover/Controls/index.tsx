@@ -21,6 +21,10 @@ class Controls extends React.Component<any, any> {
   }
 
   async pausePlay() {
+    if (this.props.parent.state.spotifyError) {
+      return;
+    }
+
     if (this.props.parent.getPlayState()) {
       SpotifyApiInstance.fetch('/me/player/pause', {
         method: 'PUT',
@@ -35,6 +39,10 @@ class Controls extends React.Component<any, any> {
   }
 
   async forward() {
+    if (this.props.parent.state.spotifyError) {
+      return;
+    }
+
     SpotifyApiInstance.fetch('/me/player/next', {
       method: 'POST',
     }).then(() => {
@@ -45,6 +53,10 @@ class Controls extends React.Component<any, any> {
   }
 
   async backward() {
+    if (this.props.parent.state.spotifyError) {
+      return;
+    }
+
     SpotifyApiInstance.fetch('/me/player/previous', {
       method: 'POST',
     }).then(() => {
@@ -55,6 +67,10 @@ class Controls extends React.Component<any, any> {
   }
 
   async like() {
+    if (this.props.parent.state.spotifyError) {
+      return;
+    }
+
     const liked = this.props.parent.isTrackLiked();
     const id = this.props.parent.getTrackId();
     const verb = liked ? 'DELETE' : 'PUT';
@@ -86,12 +102,18 @@ class Controls extends React.Component<any, any> {
               <p className="row">
                 <a
                   onClick={this.backward.bind(this)}
-                  className="control-btn secondary-control not-draggable skip">
+                  className={
+                    'control-btn secondary-control not-draggable skip' +
+                    (this.props.parent.state.spotifyError ? ' disabled' : null)
+                  }>
                   <i className="fa fa-step-backward not-draggable"></i>
                 </a>
                 <a
                   onClick={this.pausePlay.bind(this)}
-                  className="control-btn not-draggable pause-play">
+                  className={
+                    'control-btn not-draggable pause-play' +
+                    (this.props.parent.state.spotifyError ? ' disabled' : null)
+                  }>
                   <i
                     className={
                       'fa not-draggable ' +
@@ -102,7 +124,10 @@ class Controls extends React.Component<any, any> {
                 </a>
                 <a
                   onClick={this.forward.bind(this)}
-                  className="control-btn secondary-control not-draggable skip">
+                  className={
+                    'control-btn secondary-control not-draggable skip' +
+                    (this.props.parent.state.spotifyError ? ' disabled' : null)
+                  }>
                   <i className="fa fa-step-forward not-draggable"></i>
                 </a>
               </p>
@@ -111,7 +136,10 @@ class Controls extends React.Component<any, any> {
               <p className="row">
                 <a
                   onClick={this.like.bind(this)}
-                  className="control-btn secondary-control not-draggable">
+                  className={
+                    'control-btn secondary-control not-draggable' +
+                    (this.props.parent.state.spotifyError ? ' disabled' : null)
+                  }>
                   <i
                     className={
                       (this.props.parent.isTrackLiked() ? 'fa' : 'far') +

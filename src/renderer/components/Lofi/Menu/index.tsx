@@ -1,21 +1,13 @@
 import * as React from 'react';
-import { SpotifyApiInstance } from '../../../../api/spotify-api';
 import { MACOS } from '../../../../constants';
 import './style.scss';
 
 class Menu extends React.Component<any, any> {
-  private spotifyStatusInterval: NodeJS.Timeout;
   constructor(props: any) {
     super(props);
-    this.state = { spotifyStatus: '' };
-    this.spotifyStatusInterval = setInterval(
-      () => this.setState({ spotifyStatus: SpotifyApiInstance.status }),
-      1000
-    );
   }
 
   closeApp() {
-    clearInterval(this.spotifyStatusInterval);
     this.props.parent.closeApp();
   }
 
@@ -65,11 +57,11 @@ class Menu extends React.Component<any, any> {
               </a>
             </li>
             {/* <li className='pull-right'><a data-tooltip="Shuffle playlist" className='shuffle not-draggable'><i onClick={this.toggleShuffle.bind(this)} className="fa fa-random not-draggable"></i></a></li> */}
-            {this.state.spotifyStatus ? (
+            {this.props.parent.state.spotifyError ? (
               <li className="pull-right">
                 <a className="warning not-draggable tooltip">
                   <i className="fa fa-exclamation-triangle not-draggable"></i>
-                  <span>{this.state.spotifyStatus}</span>
+                  <span>{this.props.parent.state.spotifyError}</span>
                 </a>
               </li>
             ) : null}

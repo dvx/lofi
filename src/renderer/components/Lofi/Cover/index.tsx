@@ -61,6 +61,12 @@ class Cover extends React.Component<any, any> {
     );
     this.setState({ refreshLikedIntervalId: refreshTrackLikedIntervalId });
 
+    const spotifyErrorIntervalId = setInterval(
+      () => this.setState({ spotifyError: SpotifyApiInstance.error }),
+      500
+    );
+    this.setState({ spotifyErrorIntervalId: spotifyErrorIntervalId });
+
     function onMouseWheel(e: WheelEvent) {
       const volume_increment = that.props.lofi.state.lofiSettings.audio
         ? that.props.lofi.state.lofiSettings.audio.volume_increment
@@ -95,6 +101,11 @@ class Cover extends React.Component<any, any> {
     if (this.state.refreshTrackLikedIntervalId) {
       console.log('Clearing refresh track liked interval');
       clearInterval(this.state.refreshTrackLikedIntervalId);
+    }
+
+    if (this.state.spotifyErrorIntervalId) {
+      console.log('Clearing spotify status interval');
+      clearInterval(this.state.spotifyErrorIntervalId);
     }
   }
 
@@ -136,6 +147,10 @@ class Cover extends React.Component<any, any> {
   }
 
   async setVolume(percent: number) {
+    if (this.state.spotifyError) {
+      return;
+    }
+
     percent = _.clamp(percent, 0, 100);
     this.setState({ volume: percent, stateChange: new Date() }, () =>
       this.volumeChanged()

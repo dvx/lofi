@@ -7,10 +7,10 @@ class SpotifyApi {
   private throttleTime: number;
   private accessToken: string;
   private refreshToken: string;
-  private statusMessage: string;
+  private errorMessage: string;
 
-  get status(): string {
-    return this.statusMessage;
+  get error(): string {
+    return this.errorMessage;
   }
 
   updateTokens(data: AuthData) {
@@ -27,10 +27,10 @@ class SpotifyApi {
     if (this.isThrottled) {
       const timeLeft = this.throttleTime - new Date().getTime();
       if (timeLeft > 0) {
-        this.statusMessage = `API calls throttled, wait ${Math.round(
+        this.errorMessage = `API calls throttled, wait ${Math.round(
           timeLeft / 1000
         )}s...`;
-        console.warn(`${this.statusMessage} (${input})`);
+        console.warn(`${this.errorMessage} (${input})`);
         return null;
       } else {
         this.isThrottled = false;
@@ -47,13 +47,13 @@ class SpotifyApi {
     const res = await fetch(API_URL + input, initWithBearer);
     switch (res.status) {
       case 200: {
-        this.statusMessage = null;
+        this.errorMessage = null;
 
         const responseLength = parseInt(res.headers.get('content-length'));
         return responseLength > 0 ? await res.json() : null;
       }
       case 204: {
-        this.statusMessage = null;
+        this.errorMessage = null;
 
         return null;
       }
@@ -76,8 +76,8 @@ class SpotifyApi {
 
     // Normally the api would throw an error but given the limited scope of this api,
     // we'll just output the error to the console and return null.
-    this.statusMessage = `${error.status}: ${error.message}`;
-    console.error(this.statusMessage);
+    this.errorMessage = `${error.status}: ${error.message}`;
+    console.error(this.errorMessage);
 
     return null;
   }
