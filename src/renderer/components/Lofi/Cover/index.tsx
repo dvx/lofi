@@ -55,6 +55,12 @@ class Cover extends React.Component<any, any> {
     const keepAliveIntervalId = setInterval(() => this.keepAlive(), 5000);
     this.setState({ keepAliveIntervalId });
 
+    const refreshTrackLikedIntervalId = setInterval(
+      () => this.refreshTrackLiked(),
+      5000
+    );
+    this.setState({ refreshLikedIntervalId: refreshTrackLikedIntervalId });
+
     function onMouseWheel(e: WheelEvent) {
       const volume_increment = that.props.lofi.state.lofiSettings.audio
         ? that.props.lofi.state.lofiSettings.audio.volume_increment
@@ -82,8 +88,13 @@ class Cover extends React.Component<any, any> {
     }
 
     if (this.state.keepAliveIntervalId) {
-      console.log('Clearing keep alive');
+      console.log('Clearing keep alive interval');
       clearInterval(this.state.keepAliveIntervalId);
+    }
+
+    if (this.state.refreshTrackLikedIntervalId) {
+      console.log('Clearing refresh track liked interval');
+      clearInterval(this.state.refreshTrackLikedIntervalId);
     }
   }
 
@@ -223,18 +234,6 @@ class Cover extends React.Component<any, any> {
       currently_playing: currentlyPlaying,
     });
 
-    let liked = null;
-    if (currentlyPlaying.currently_playing_type === 'track') {
-      const likedResponse = await SpotifyApiInstance.fetch(
-        '/me/tracks/contains?ids=' + currentlyPlaying.item.id,
-        {
-          method: 'GET',
-        }
-      );
-      liked = likedResponse[0];
-    }
-    this.setState({ liked: liked });
-
     // trust UI while scroll wheel level, e.g. volume, stabilizes (10 second leeway)
     if (
       this.state.stateChange &&
@@ -251,6 +250,25 @@ class Cover extends React.Component<any, any> {
         currentlyPlaying
       );
     }
+  }
+
+  async refreshTrackLiked() {
+    const currentlyPlaying = this.state.currently_playing;
+    if (!currentlyPlaying?.item?.id) {
+      return;
+    }
+
+    let trackLiked = null;
+    if (currentlyPlaying.currently_playing_type === 'track') {
+      const likedResponse = await SpotifyApiInstance.fetch(
+        '/me/tracks/contains?ids=' + currentlyPlaying.item.id,
+        {
+          method: 'GET',
+        }
+      );
+      trackLiked = likedResponse[0];
+    }
+    this.setState({ liked: trackLiked });
   }
 
   closeApp() {
@@ -544,11 +562,6 @@ class Cover extends React.Component<any, any> {
 
   isTrackLiked() {
     return this.state.liked;
-  }
-
-  toggleTrackLike() {
-    const liked = this.state.liked;
-    this.setState({ liked: !liked });
   }
 
   render() {

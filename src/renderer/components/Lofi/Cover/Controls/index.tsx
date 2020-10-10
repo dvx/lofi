@@ -62,7 +62,7 @@ class Controls extends React.Component<any, any> {
       method: verb,
     });
 
-    this.props.parent.toggleTrackLike();
+    this.props.parent.refreshTrackLiked();
   }
 
   renderVolumeLabel() {
