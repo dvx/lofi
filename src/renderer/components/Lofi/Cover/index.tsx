@@ -266,7 +266,7 @@ class Cover extends React.Component<any, any> {
           method: 'GET',
         }
       );
-      trackLiked = likedResponse[0];
+      trackLiked = likedResponse?.length > 0 ? likedResponse[0] : null;
     }
     this.setState({ liked: trackLiked });
   }
