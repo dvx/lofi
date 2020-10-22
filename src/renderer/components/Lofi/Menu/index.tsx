@@ -57,7 +57,7 @@ class Menu extends React.Component<any, any> {
               </a>
             </li>
             {/* <li className='pull-right'><a data-tooltip="Shuffle playlist" className='shuffle not-draggable'><i onClick={this.toggleShuffle.bind(this)} className="fa fa-random not-draggable"></i></a></li> */}
-            {this.props.parent.state.spotifyError ? (
+            {this.props.parent.state?.spotifyError ? (
               <li className="pull-right">
                 <a className="warning not-draggable tooltip">
                   <i className="fa fa-exclamation-triangle not-draggable"></i>
