@@ -102,18 +102,12 @@ class Controls extends React.Component<any, any> {
               <p className="row">
                 <a
                   onClick={this.backward.bind(this)}
-                  className={
-                    'control-btn secondary-control not-draggable skip' +
-                    (this.props.parent.state.spotifyError ? ' disabled' : null)
-                  }>
+                  className="control-btn secondary-control not-draggable skip">
                   <i className="fa fa-step-backward not-draggable"></i>
                 </a>
                 <a
                   onClick={this.pausePlay.bind(this)}
-                  className={
-                    'control-btn not-draggable pause-play' +
-                    (this.props.parent.state.spotifyError ? ' disabled' : null)
-                  }>
+                  className="control-btn not-draggable pause-play">
                   <i
                     className={
                       'fa not-draggable ' +
@@ -124,10 +118,7 @@ class Controls extends React.Component<any, any> {
                 </a>
                 <a
                   onClick={this.forward.bind(this)}
-                  className={
-                    'control-btn secondary-control not-draggable skip' +
-                    (this.props.parent.state.spotifyError ? ' disabled' : null)
-                  }>
+                  className="control-btn secondary-control not-draggable skip">
                   <i className="fa fa-step-forward not-draggable"></i>
                 </a>
               </p>
@@ -136,10 +127,7 @@ class Controls extends React.Component<any, any> {
               <p className="row">
                 <a
                   onClick={this.like.bind(this)}
-                  className={
-                    'control-btn secondary-control not-draggable' +
-                    (this.props.parent.state.spotifyError ? ' disabled' : null)
-                  }>
+                  className="control-btn secondary-control not-draggable">
                   <i
                     className={
                       (this.props.parent.isTrackLiked() ? 'fa' : 'far') +

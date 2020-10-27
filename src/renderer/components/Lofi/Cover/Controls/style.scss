@@ -44,29 +44,17 @@
   text-decoration: none;
   transition: transform 0.2s;
   display: inline-block;
-  &.disabled {
-    color: #424242;
-  }
 }
 
 .control-btn:hover {
   background: #000000ed;
   transform: scale(1.25);
   color: #00ff7ebf;
-  &.disabled {
-    background: #00000040;
-    transform: none;
-    color: #424242;
-  }
 }
 
 .control-btn:active {
   background: #000000;
   border-color: rgb(59, 59, 59);
-  &.disabled {
-    background: #00000040;
-    border-color: #4c4c4c54;
-  }
 }
 
 .secondary-control {
