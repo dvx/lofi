@@ -78,6 +78,7 @@ function createWindow() {
   });
 
   mainWindow.setAlwaysOnTop(windowConfig.always_on_top, 'floating', 1);
+  mainWindow.setFocusable(windowConfig.show_in_taskbar);
   mainWindow.setVisibleOnAllWorkspaces(true);
 
   // And load the index.html of the app

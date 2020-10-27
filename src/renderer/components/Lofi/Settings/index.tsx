@@ -43,6 +43,8 @@ class Settings extends React.Component<any, any> {
         name: 'lofi.window.show_in_taskbar',
         callback: (value) => {
           mainWindow.setSkipTaskbar(!value);
+          mainWindow.setFocusable(value);
+
           // Workaround to make setSkipTaskbar behave
           // cf. https://github.com/electron/electron/issues/18378
           mainWindow.on('focus', () => {
