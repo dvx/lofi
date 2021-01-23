@@ -26,7 +26,7 @@ enum VISUALIZATION_TYPE {
 }
 
 class Cover extends React.Component<any, any> {
-  volumeChangedTimeoutId: NodeJS.Timeout;
+  private volumeChangedTimeoutId: NodeJS.Timeout;
 
   constructor(props: any) {
     super(props);
@@ -55,6 +55,18 @@ class Cover extends React.Component<any, any> {
     const keepAliveIntervalId = setInterval(() => this.keepAlive(), 5000);
     this.setState({ keepAliveIntervalId });
 
+    const refreshTrackLikedIntervalId = setInterval(
+      () => this.refreshTrackLiked(),
+      2000
+    );
+    this.setState({ refreshLikedIntervalId: refreshTrackLikedIntervalId });
+
+    const spotifyErrorIntervalId = setInterval(
+      () => this.setState({ spotifyError: SpotifyApiInstance.error }),
+      500
+    );
+    this.setState({ spotifyErrorIntervalId: spotifyErrorIntervalId });
+
     function onMouseWheel(e: WheelEvent) {
       const volume_increment = that.props.lofi.state.lofiSettings.audio
         ? that.props.lofi.state.lofiSettings.audio.volume_increment
@@ -82,8 +94,18 @@ class Cover extends React.Component<any, any> {
     }
 
     if (this.state.keepAliveIntervalId) {
-      console.log('Clearing keep alive');
+      console.log('Clearing keep alive interval');
       clearInterval(this.state.keepAliveIntervalId);
+    }
+
+    if (this.state.refreshTrackLikedIntervalId) {
+      console.log('Clearing refresh track liked interval');
+      clearInterval(this.state.refreshTrackLikedIntervalId);
+    }
+
+    if (this.state.spotifyErrorIntervalId) {
+      console.log('Clearing spotify status interval');
+      clearInterval(this.state.spotifyErrorIntervalId);
     }
   }
 
@@ -125,6 +147,10 @@ class Cover extends React.Component<any, any> {
   }
 
   async setVolume(percent: number) {
+    if (this.state.spotifyError) {
+      return;
+    }
+
     percent = _.clamp(percent, 0, 100);
     this.setState({ volume: percent, stateChange: new Date() }, () =>
       this.volumeChanged()
@@ -239,6 +265,29 @@ class Cover extends React.Component<any, any> {
         currentlyPlaying
       );
     }
+  }
+
+  async refreshTrackLiked() {
+    const currentlyPlaying = this.state.currently_playing;
+    if (!currentlyPlaying?.item?.id) {
+      return;
+    }
+
+    let trackLiked = null;
+    if (currentlyPlaying.currently_playing_type === 'track') {
+      const likedResponse = await SpotifyApiInstance.fetch(
+        '/me/tracks/contains?ids=' + currentlyPlaying.item.id,
+        {
+          method: 'GET',
+        }
+      );
+      if (likedResponse === null || likedResponse.length === 0) {
+        return;
+      }
+
+      trackLiked = likedResponse[0];
+    }
+    this.setState({ liked: trackLiked });
   }
 
   closeApp() {
@@ -502,6 +551,10 @@ class Cover extends React.Component<any, any> {
     return 'Nothing Playing';
   }
 
+  getTrackId() {
+    return this.state.currently_playing?.item?.id;
+  }
+
   getArtist() {
     if (this.state.currently_playing) {
       if (this.state.currently_playing.currently_playing_type == 'track') {
@@ -524,6 +577,10 @@ class Cover extends React.Component<any, any> {
     if (this.state.currently_playing) {
       return this.state.currently_playing.is_playing;
     }
+  }
+
+  isTrackLiked() {
+    return this.state.liked;
   }
 
   render() {

@@ -52,14 +52,8 @@ if (!isSingleInstance) {
 function createWindow() {
   // Create the browser window
   mainWindow = new BrowserWindow({
-    x: windowConfig.remember
-      ? windowConfig.x
-      : 0 -
-        CONTAINER.HORIZONTAL / 2 +
-        screen.getPrimaryDisplay().size.width / 2,
-    y: windowConfig.remember
-      ? windowConfig.y
-      : 0 - CONTAINER.VERTICAL / 2 + screen.getPrimaryDisplay().size.height / 2,
+    x: windowConfig.x,
+    y: windowConfig.y,
     height: CONTAINER.VERTICAL,
     width: CONTAINER.HORIZONTAL,
     frame: false,
@@ -68,16 +62,23 @@ function createWindow() {
     minimizable: true,
     transparent: true,
     hasShadow: false,
-    skipTaskbar: windowConfig.always_on_top ? true : false,
-    focusable: windowConfig.always_on_top ? false : true,
+    skipTaskbar: !windowConfig.show_in_taskbar,
     webPreferences: {
       allowRunningInsecureContent: false,
       nodeIntegration: true,
       nativeWindowOpen: true,
     },
+    backgroundColor: '#00000000',
+  });
+
+  // Workaround to make setSkipTaskbar behave
+  // cf. https://github.com/electron/electron/issues/18378
+  mainWindow.on('focus', () => {
+    mainWindow.setSkipTaskbar(!windowConfig.show_in_taskbar);
   });
 
   mainWindow.setAlwaysOnTop(windowConfig.always_on_top, 'floating', 1);
+  mainWindow.setFocusable(windowConfig.show_in_taskbar);
   mainWindow.setVisibleOnAllWorkspaces(true);
 
   // And load the index.html of the app
@@ -131,8 +132,8 @@ function createWindow() {
       // Use setBounds instead of setPosition
       // See: https://github.com/electron/electron/issues/9477#issuecomment-406833003
       mainWindow.setBounds({
-        height: CONTAINER.VERTICAL,
-        width: CONTAINER.HORIZONTAL,
+        height: mainWindow.getSize()[0],
+        width: mainWindow.getSize()[1],
         x: x - mouseX,
         y: y - mouseY,
       });
@@ -170,68 +171,78 @@ function createWindow() {
     options: any
   ) {
     event.preventDefault();
-    if (frameName === 'help' || frameName === 'auth') {
-      // Open help URL in default OS browser
-      shell.openExternal(url);
-    } else if (frameName === 'settings') {
-      // Open settings window as modal
-      Object.assign(options, {
-        x:
-          screen.getDisplayMatching(mainWindow.getBounds()).bounds.x -
-          SETTINGS_CONTAINER.HORIZONTAL / 2 +
-          screen.getDisplayMatching(mainWindow.getBounds()).bounds.width / 2,
-        y:
-          screen.getDisplayMatching(mainWindow.getBounds()).bounds.y -
-          SETTINGS_CONTAINER.VERTICAL / 2 +
-          screen.getDisplayMatching(mainWindow.getBounds()).bounds.height / 2,
-        height: SETTINGS_CONTAINER.VERTICAL,
-        width: SETTINGS_CONTAINER.HORIZONTAL,
-        modal: false,
-        parent: mainWindow,
-        frame: false,
-        resizable: false,
-        maximizable: false,
-        focusable: true,
-        title: 'Lofi Settings',
-      });
-      event.newGuest = new BrowserWindow(options);
-      event.newGuest.setMenu(null);
-      event.newGuest.setResizable(true);
-      if (Boolean(settings.getSync('debug')) === true) {
-        event.newGuest.webContents.openDevTools({ mode: 'detach' });
+
+    switch (frameName) {
+      case 'settings': {
+        createSettingsWindow(event, options);
+        break;
       }
-    } else if (frameName === 'about') {
-      // Open settings window as modal
-      Object.assign(options, {
-        x:
-          screen.getDisplayMatching(mainWindow.getBounds()).bounds.x -
-          400 / 2 +
-          screen.getDisplayMatching(mainWindow.getBounds()).bounds.width / 2,
-        y:
-          screen.getDisplayMatching(mainWindow.getBounds()).bounds.y -
-          400 / 2 +
-          screen.getDisplayMatching(mainWindow.getBounds()).bounds.height / 2,
-        height: 400,
-        width: 400,
-        modal: false,
-        parent: mainWindow,
-        frame: false,
-        resizable: false,
-        maximizable: false,
-        focusable: true,
-        title: 'About Lofi',
-      });
-      event.newGuest = new BrowserWindow(options);
-      event.newGuest.setMenu(null);
-      event.newGuest.setResizable(true);
-      if (Boolean(settings.getSync('debug')) === true) {
-        event.newGuest.webContents.openDevTools({ mode: 'detach' });
+      case 'about': {
+        createAboutWindow(event, options);
+        break;
       }
-    } else {
-      event.preventDefault();
-      shell.openExternal(url);
+      default: {
+        shell.openExternal(url);
+      }
     }
   });
+}
+
+function createSettingsWindow(event: Electron.NewWindowEvent, options: any) {
+  // Open settings window as modal
+  Object.assign(options, {
+    x:
+      screen.getDisplayMatching(mainWindow.getBounds()).bounds.x -
+      SETTINGS_CONTAINER.HORIZONTAL / 2 +
+      screen.getDisplayMatching(mainWindow.getBounds()).bounds.width / 2,
+    y:
+      screen.getDisplayMatching(mainWindow.getBounds()).bounds.y -
+      SETTINGS_CONTAINER.VERTICAL / 2 +
+      screen.getDisplayMatching(mainWindow.getBounds()).bounds.height / 2,
+    height: SETTINGS_CONTAINER.VERTICAL,
+    width: SETTINGS_CONTAINER.HORIZONTAL,
+    modal: false,
+    parent: mainWindow,
+    frame: false,
+    resizable: true,
+    maximizable: false,
+    focusable: true,
+    title: 'Lofi Settings',
+  });
+  event.newGuest = new BrowserWindow(options);
+  event.newGuest.setMenu(null);
+  event.newGuest.setResizable(true);
+  if (Boolean(settings.getSync('debug')) === true) {
+    event.newGuest.webContents.openDevTools({ mode: 'detach' });
+  }
+}
+
+function createAboutWindow(event: Electron.NewWindowEvent, options: any) {
+  Object.assign(options, {
+    x:
+      screen.getDisplayMatching(mainWindow.getBounds()).bounds.x -
+      400 / 2 +
+      screen.getDisplayMatching(mainWindow.getBounds()).bounds.width / 2,
+    y:
+      screen.getDisplayMatching(mainWindow.getBounds()).bounds.y -
+      400 / 2 +
+      screen.getDisplayMatching(mainWindow.getBounds()).bounds.height / 2,
+    height: 400,
+    width: 400,
+    modal: false,
+    parent: mainWindow,
+    frame: false,
+    resizable: false,
+    maximizable: false,
+    focusable: true,
+    title: 'About Lofi',
+  });
+  event.newGuest = new BrowserWindow(options);
+  event.newGuest.setMenu(null);
+  event.newGuest.setResizable(true);
+  if (Boolean(settings.getSync('debug')) === true) {
+    event.newGuest.webContents.openDevTools({ mode: 'detach' });
+  }
 }
 
 // Needs to be global, see: https://www.electronjs.org/docs/faq#my-apps-windowtray-disappeared-after-a-few-minutes
@@ -263,8 +274,8 @@ app.on('ready', () => {
   Object.assign(windowConfig, {
     x: Number(settings.getSync('lofi.window.x')),
     y: Number(settings.getSync('lofi.window.y')),
-    remember: Boolean(settings.getSync('lofi.window.remember')),
     always_on_top: Boolean(settings.getSync('lofi.window.always_on_top')),
+    show_in_taskbar: Boolean(settings.getSync('lofi.window.show_in_taskbar')),
     side: Number(settings.getSync('lofi.window.side')),
   });
 

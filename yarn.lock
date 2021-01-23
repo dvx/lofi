@@ -2286,9 +2286,9 @@ fragment-cache@^0.2.1:
     map-cache "^0.2.2"
 
 frameless-titlebar@^2.1.3:
-  version "2.1.3"
-  resolved "https://registry.yarnpkg.com/frameless-titlebar/-/frameless-titlebar-2.1.3.tgz#ad984807de5bd3a98ac08859ec30cb4668dd8976"
-  integrity sha512-RKHu+PEY+XwKPveMVeacxt7QARYfVJPcGKk/QsLuwRb+16wCGOPIHhW27ZxiOREqoKac2uL7BgYPH1uQZFOpeA==
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/frameless-titlebar/-/frameless-titlebar-2.1.4.tgz#d769cbd1a0293e0bf65bcb68f5bf597e61f8974e"
+  integrity sha512-Wz7ZPOLpZNIQg5YxxI2lP6JVrGAolxKN/X85lTOFNpSEe5iJWAKMpYUviuFtc24/Ei8/rBRGkItgdhIFwer7lQ==
   dependencies:
     classnames "^2.2.6"
     deepmerge "^4.2.2"

@@ -28,15 +28,14 @@ class Menu extends React.Component<any, any> {
   render() {
     return (
       <>
-        <ul className="menu top-menu">
+        <ul className="menu top">
           <li>
             <a
-              style={{ float: 'left' }}
               onClick={this.showSettingsWindow.bind(this)}
               className="settings not-draggable">
               <i className="fa fa-cog not-draggable"></i>
             </a>
-            <a style={{ float: 'left' }} className="logo-typo">
+            <a className="logo-typo">
               <span style={{ fontWeight: 'bold' }}>lo</span>fi
             </a>
           </li>
@@ -49,7 +48,7 @@ class Menu extends React.Component<any, any> {
           </li>
         </ul>
         {this.props.parent.constructor.name !== 'Welcome' ? (
-          <ul className="menu bottom-menu">
+          <ul className="menu bottom">
             <li>
               <a
                 onClick={this.cycleVis.bind(this)}
@@ -58,6 +57,14 @@ class Menu extends React.Component<any, any> {
               </a>
             </li>
             {/* <li className='pull-right'><a data-tooltip="Shuffle playlist" className='shuffle not-draggable'><i onClick={this.toggleShuffle.bind(this)} className="fa fa-random not-draggable"></i></a></li> */}
+            {this.props.parent.state?.spotifyError ? (
+              <li className="pull-right">
+                <a className="warning not-draggable tooltip">
+                  <i className="fa fa-exclamation-triangle not-draggable"></i>
+                  <span>{this.props.parent.state.spotifyError}</span>
+                </a>
+              </li>
+            ) : null}
             <li className="pull-right">
               <a
                 target="_blank"
