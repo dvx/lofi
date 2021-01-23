@@ -19,6 +19,7 @@ const AUTH_SCOPES = [
   'user-read-private',
   'user-library-read',
   'user-library-modify',
+  'user-read-email',
 ];
 
 export interface AuthData {

@@ -57,7 +57,7 @@ class Cover extends React.Component<any, any> {
 
     const refreshTrackLikedIntervalId = setInterval(
       () => this.refreshTrackLiked(),
-      5000
+      2000
     );
     this.setState({ refreshLikedIntervalId: refreshTrackLikedIntervalId });
 
