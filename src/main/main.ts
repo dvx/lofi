@@ -67,6 +67,7 @@ function createWindow() {
       allowRunningInsecureContent: false,
       nodeIntegration: true,
       nativeWindowOpen: true,
+      enableRemoteModule: true,
     },
     backgroundColor: '#00000000',
   });
@@ -188,7 +189,7 @@ function createWindow() {
   });
 }
 
-function createSettingsWindow(event: Electron.NewWindowEvent, options: any) {
+function createSettingsWindow(event: Electron.NewWindowWebContentsEvent, options: any) {
   // Open settings window as modal
   Object.assign(options, {
     x:
@@ -217,7 +218,7 @@ function createSettingsWindow(event: Electron.NewWindowEvent, options: any) {
   }
 }
 
-function createAboutWindow(event: Electron.NewWindowEvent, options: any) {
+function createAboutWindow(event: Electron.NewWindowWebContentsEvent, options: any) {
   Object.assign(options, {
     x:
       screen.getDisplayMatching(mainWindow.getBounds()).bounds.x -
