@@ -2,8 +2,9 @@ import React from 'react';
 import TitleBar from 'frameless-titlebar';
 import * as j from '../../../../../package.json';
 import './style.scss';
+import { Platform } from 'frameless-titlebar/dist/title-bar/typings';
 
-class Settings extends React.Component<any, any> {
+class About extends React.Component<any, any> {
   render() {
     return (
       <div className="about-wnd">
@@ -11,9 +12,7 @@ class Settings extends React.Component<any, any> {
           disableMaximize
           disableMinimize
           currentWindow={window} // electron window instance
-          onMaximize={() => {}}
-          onMinimize={() => {}}
-          onDoubleClick={() => {}}
+          platform={(process.platform as Platform) ?? 'win32'}
           theme={{
             bar: {
               background: '#0000',
@@ -61,4 +60,4 @@ class Settings extends React.Component<any, any> {
   }
 }
 
-export default Settings;
+export default About;

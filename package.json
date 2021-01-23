@@ -1,6 +1,6 @@
 {
   "name": "lofi",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "Mini Spotify player with visualizations.",
   "homepage": "http://lofi.rocks",
   "main": "./pack/main.bundle.js",

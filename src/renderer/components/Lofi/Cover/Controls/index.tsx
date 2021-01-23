@@ -3,7 +3,7 @@ import './style.scss';
 import { SpotifyApiInstance } from '../../../../../api/spotify-api';
 
 class Controls extends React.Component<any, any> {
-  accountType: string;
+  private accountType: string;
   constructor(props: any) {
     super(props);
   }
@@ -21,6 +21,10 @@ class Controls extends React.Component<any, any> {
   }
 
   async pausePlay() {
+    if (this.props.parent.state.spotifyError) {
+      return;
+    }
+
     if (this.props.parent.getPlayState()) {
       SpotifyApiInstance.fetch('/me/player/pause', {
         method: 'PUT',
@@ -35,6 +39,10 @@ class Controls extends React.Component<any, any> {
   }
 
   async forward() {
+    if (this.props.parent.state.spotifyError) {
+      return;
+    }
+
     SpotifyApiInstance.fetch('/me/player/next', {
       method: 'POST',
     }).then(() => {
@@ -45,6 +53,10 @@ class Controls extends React.Component<any, any> {
   }
 
   async backward() {
+    if (this.props.parent.state.spotifyError) {
+      return;
+    }
+
     SpotifyApiInstance.fetch('/me/player/previous', {
       method: 'POST',
     }).then(() => {
@@ -52,6 +64,21 @@ class Controls extends React.Component<any, any> {
       setTimeout(this.props.parent.listeningTo.bind(this), 2000);
     });
     this.props.parent.setPlaying(true);
+  }
+
+  async like() {
+    if (this.props.parent.state.spotifyError) {
+      return;
+    }
+
+    const liked = this.props.parent.isTrackLiked();
+    const id = this.props.parent.getTrackId();
+    const verb = liked ? 'DELETE' : 'PUT';
+    await SpotifyApiInstance.fetch('/me/tracks?ids=' + id, {
+      method: verb,
+    });
+
+    this.props.parent.refreshTrackLiked();
   }
 
   renderVolumeLabel() {
@@ -69,28 +96,47 @@ class Controls extends React.Component<any, any> {
   render() {
     return (
       <div className="controls centered">
-        {this.accountType === 'premium' ? (
-          <p>
-            <a
-              onClick={this.backward.bind(this)}
-              className="control-btn secondary-control not-draggable skip">
-              <i className="fa fa-step-backward not-draggable"></i>
-            </a>
-            <a
-              onClick={this.pausePlay.bind(this)}
-              className="control-btn not-draggable pause-play">
-              <i
-                className={
-                  'fa not-draggable ' +
-                  (this.props.parent.getPlayState() ? 'fa-pause' : 'fa-play')
-                }></i>
-            </a>
-            <a
-              onClick={this.forward.bind(this)}
-              className="control-btn secondary-control not-draggable skip">
-              <i className="fa fa-step-forward not-draggable"></i>
-            </a>
-          </p>
+        {this.accountType ? (
+          <div className="controls-cluster">
+            {this.accountType === 'premium' ? (
+              <p className="row">
+                <a
+                  onClick={this.backward.bind(this)}
+                  className="control-btn secondary-control not-draggable skip">
+                  <i className="fa fa-step-backward not-draggable"></i>
+                </a>
+                <a
+                  onClick={this.pausePlay.bind(this)}
+                  className="control-btn not-draggable pause-play">
+                  <i
+                    className={
+                      'fa not-draggable ' +
+                      (this.props.parent.getPlayState()
+                        ? 'fa-pause'
+                        : 'fa-play')
+                    }></i>
+                </a>
+                <a
+                  onClick={this.forward.bind(this)}
+                  className="control-btn secondary-control not-draggable skip">
+                  <i className="fa fa-step-forward not-draggable"></i>
+                </a>
+              </p>
+            ) : null}
+            {this.props.parent.isTrackLiked() !== null ? (
+              <p className="row">
+                <a
+                  onClick={this.like.bind(this)}
+                  className="control-btn secondary-control not-draggable">
+                  <i
+                    className={
+                      (this.props.parent.isTrackLiked() ? 'fa' : 'far') +
+                      ' fa-heart not-draggable'
+                    }></i>
+                </a>
+              </p>
+            ) : null}
+          </div>
         ) : null}
         <div
           className="progress"
