@@ -441,7 +441,10 @@ class Cover extends React.Component<any, any> {
       case VISUALIZATION_TYPE.SMALL:
         const BrowserWindow = remote.BrowserWindow;
         const visWindow = new BrowserWindow({
-          webPreferences: { nodeIntegration: true },
+          webPreferences: {
+            nodeIntegration: true, 
+            enableRemoteModule: true
+          },
         });
         visWindow.on('close', () => {
           this.cycleVisualizationType();
