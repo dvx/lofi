@@ -279,7 +279,6 @@ class Lofi extends React.Component<any, any> {
         <div className="bottom right grab-resize"></div>
         {this.state.showSettings ? (
           <WindowPortal
-            fullscreen
             onUnload={this.hideSettingsWindow.bind(this)}
             name="settings">
             <Settings lofi={this} className="settings-wnd" />
@@ -287,7 +286,6 @@ class Lofi extends React.Component<any, any> {
         ) : null}
         {this.state.showAbout ? (
           <WindowPortal
-            fullscreen
             onUnload={this.hideAboutWindow.bind(this)}
             name="about">
             <About lofi={this} className="about-wnd" />

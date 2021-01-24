@@ -7,6 +7,7 @@ import { visualizations } from '../../../../visualizations/visualizations.js';
 import { MACOS, DEFAULT_SETTINGS } from '../../../../constants';
 import { get, set } from 'lodash';
 import { remote } from 'electron';
+
 import { Platform } from 'frameless-titlebar/dist/title-bar/typings';
 
 interface Setting {

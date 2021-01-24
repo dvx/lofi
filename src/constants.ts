@@ -18,8 +18,8 @@ export const LOFI_SHUFFLED_PLAYLIST_NAME = 'Shuffled by Lofi';
 // See: https://github.com/electron/electron/issues/13164
 // NOTE: This only works because we're using some black magic to return our own ConstrainFrameRect
 export const CONTAINER = {
-  VERTICAL: MACOS_MOJAVE ? 4000 : 800,
-  HORIZONTAL: 800,
+  VERTICAL: 4000,
+  HORIZONTAL: 4000,
 };
 
 export const SETTINGS_CONTAINER = {
@@ -28,7 +28,7 @@ export const SETTINGS_CONTAINER = {
 };
 
 export const DEFAULT_SETTINGS = {
-  version: '1.6.0',
+  version: '1.7.0',
   debug: false,
   hardware_acceleration: true,
   lofi: {
