@@ -3,7 +3,7 @@ import * as os from 'os';
 export const WINDOWS = os.platform() === 'win32';
 export const LINUX = os.platform() === 'linux';
 export const MACOS = os.platform() === 'darwin';
-export const MACOS_MOJAVE = MACOS && parseInt(os.release().split('.')[0]) >= 18;
+export const MACOS_MOJAVE_AND_NEWER = MACOS && parseInt(os.release().split('.')[0]) >= 18;
 
 export const HEIGHT = 150;
 export const WIDTH = 150;
@@ -18,8 +18,8 @@ export const LOFI_SHUFFLED_PLAYLIST_NAME = 'Shuffled by Lofi';
 // See: https://github.com/electron/electron/issues/13164
 // NOTE: This only works because we're using some black magic to return our own ConstrainFrameRect
 export const CONTAINER = {
-  VERTICAL: 4000,
-  HORIZONTAL: 4000,
+  VERTICAL: MACOS_MOJAVE_AND_NEWER ? 4000 : 800,
+  HORIZONTAL: MACOS_MOJAVE_AND_NEWER ? 4000 : 800,
 };
 
 export const SETTINGS_CONTAINER = {
@@ -28,7 +28,7 @@ export const SETTINGS_CONTAINER = {
 };
 
 export const DEFAULT_SETTINGS = {
-  version: '1.7.0',
+  version: '1.6.0',
   debug: false,
   hardware_acceleration: true,
   lofi: {
