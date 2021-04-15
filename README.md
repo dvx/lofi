@@ -2,7 +2,7 @@
   <img height="64" src="https://raw.githubusercontent.com/dvx/lofi/master/icon.png">
 </p>
 
-<h2 align="center"><strong>Lofi: a tiny Spotify player</strong></h2>
+<h1 align="center"><strong>Lofi: a tiny Spotify player</strong></h1>
 
 <p align="center">
   <a target="_blank" href="https://www.lofi.rocks">Website</a> • <a target="_blank" href="https://www.lofi.rocks/help">FAQ</a> 
