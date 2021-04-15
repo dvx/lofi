@@ -1,6 +1,5 @@
 import { AuthData, refreshAccessToken } from '../main/auth';
-
-const API_URL = 'https://api.spotify.com/v1';
+import { SPOTIFY_API_URL as API_URL } from '../constants'
 
 class SpotifyApi {
   private isThrottled: boolean;

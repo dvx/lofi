@@ -1,5 +1,7 @@
 import * as os from 'os';
 
+export const SPOTIFY_API_URL = 'https://api.spotify.com/v1';
+
 export const WINDOWS = os.platform() === 'win32';
 export const LINUX = os.platform() === 'linux';
 export const MACOS = os.platform() === 'darwin';
