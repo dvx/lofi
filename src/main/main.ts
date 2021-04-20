@@ -130,11 +130,15 @@ function createWindow() {
     'windowMoving',
     (e: Event, { mouseX, mouseY }: { mouseX: number; mouseY: number }) => {
       const { x, y } = screen.getCursorScreenPoint();
+
       let bounds: Partial<Electron.Rectangle> = {
         x: x - mouseX,
         y: y - mouseY,
       };
 
+      // Bounds increase even when set to the same value, this is a quirk of the setBounds function
+      // We must keep the bounds constant to keep the window where it should be
+      // See: https://github.com/dvx/lofi/issues/118
       if (!initialBounds) {
         initialBounds = mainWindow.getBounds();
       } else {
