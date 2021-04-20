@@ -94,8 +94,8 @@ class Controls extends React.Component<any, any> {
     return <label className={className}>{this.props.parent.getVolume()}</label>;
   }
 
-  getBarWidth() {
-    return (settings.getSync("lofi.window.bar_width") ?? 1) + 'px';
+  getBarThickness() {
+    return (settings.getSync("lofi.window.bar_thickness") ?? 1) + 'px';
   }
 
   render() {
@@ -103,7 +103,7 @@ class Controls extends React.Component<any, any> {
     if (settings.getSync("lofi.window.show_progress")) {
       progressTop = <div
         className="progress show"
-        style={{ width: this.props.parent.getTrackProgress() + '%', height: this.getBarWidth() }}
+        style={{ width: this.props.parent.getTrackProgress() + '%', height: this.getBarThickness() }}
       />;
     } else {
       progressTop = "";
@@ -154,11 +154,11 @@ class Controls extends React.Component<any, any> {
           }
           <div
             className="progress"
-            style={{ width: this.props.parent.getTrackProgress() + '%', height: this.getBarWidth() }}
+            style={{ width: this.props.parent.getTrackProgress() + '%', height: this.getBarThickness() }}
           />
           < div
             className="volume"
-            style={{ height: this.props.parent.getVolume() + '%', width: this.getBarWidth(), bottom: this.getBarWidth() }}>
+            style={{ height: this.props.parent.getVolume() + '%', width: this.getBarThickness(), bottom: this.getBarThickness() }}>
             {this.renderVolumeLabel()}
           </div >
         </div >
