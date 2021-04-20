@@ -55,6 +55,7 @@ class Settings extends React.Component<any, any> {
       },
       { name: 'lofi.window.hide' },
       { name: 'lofi.window.metadata' },
+      { name: 'lofi.window.show_progress' },
       { name: 'lofi.visualization' },
       { name: 'hardware_acceleration' },
       {
@@ -106,6 +107,7 @@ class Settings extends React.Component<any, any> {
     );
     settings.setSync('lofi.window.hide', this.state.lofi.window.hide);
     settings.setSync('lofi.window.metadata', this.state.lofi.window.metadata);
+    settings.setSync('lofi.window.show_progress', this.state.lofi.window.show_progress);
 
     // Commit visualization settings
     settings.setSync('lofi.visualization', this.state.lofi.visualization);
@@ -247,6 +249,23 @@ class Settings extends React.Component<any, any> {
                   />
                   <label htmlFor="metadata">
                     Always show song and artist metadata
+                  </label>
+                </div>
+                <div>
+                  <input
+                    type="checkbox"
+                    name="show_progress"
+                    id="show_progress"
+                    onChange={() =>
+                      this.setNewSettingsState(
+                        'lofi.window.show_progress',
+                        !this.state.lofi.window.show_progress
+                      )
+                    }
+                    checked={this.state.lofi.window.show_progress}
+                  />
+                  <label htmlFor="show_progress">
+                    Always show song progress
                   </label>
                 </div>
               </div>
