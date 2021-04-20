@@ -43,6 +43,11 @@
   opacity: 1;
 }
 
+#visible-ui:hover .controls-container .progress.show {
+  transition: 0.1s;
+  opacity: 0;
+}
+
 #visible-ui:hover .welcome-controls {
   transition: 0.1s;
   opacity: 1;

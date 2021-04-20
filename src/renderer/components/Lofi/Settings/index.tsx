@@ -55,6 +55,8 @@ class Settings extends React.Component<any, any> {
       },
       { name: 'lofi.window.hide' },
       { name: 'lofi.window.metadata' },
+      { name: 'lofi.window.show_progress' },
+      { name: 'lofi.window.bar_thickness' },
       { name: 'lofi.visualization' },
       { name: 'hardware_acceleration' },
       {
@@ -106,6 +108,8 @@ class Settings extends React.Component<any, any> {
     );
     settings.setSync('lofi.window.hide', this.state.lofi.window.hide);
     settings.setSync('lofi.window.metadata', this.state.lofi.window.metadata);
+    settings.setSync('lofi.window.show_progress', this.state.lofi.window.show_progress);
+    settings.setSync('lofi.window.bar_thickness', this.state.lofi.window.bar_thickness);
 
     // Commit visualization settings
     settings.setSync('lofi.visualization', this.state.lofi.visualization);
@@ -157,7 +161,10 @@ class Settings extends React.Component<any, any> {
     return (
       this.state.lofi.audio.volume_increment &&
       this.state.lofi.audio.volume_increment > 0 &&
-      this.state.lofi.audio.volume_increment <= 100
+      this.state.lofi.audio.volume_increment <= 100 &&
+      this.state.lofi.window.bar_thickness &&
+      this.state.lofi.window.bar_thickness > 0 &&
+      this.state.lofi.window.bar_thickness <= 20
     );
   }
 
@@ -249,6 +256,43 @@ class Settings extends React.Component<any, any> {
                     Always show song and artist metadata
                   </label>
                 </div>
+                <div>
+                  <input
+                    type="checkbox"
+                    name="show_progress"
+                    id="show_progress"
+                    onChange={() =>
+                      this.setNewSettingsState(
+                        'lofi.window.show_progress',
+                        !this.state.lofi.window.show_progress
+                      )
+                    }
+                    checked={this.state.lofi.window.show_progress}
+                  />
+                  <label htmlFor="show_progress">
+                    Always show song progress
+                  </label>
+                </div>
+              </div>
+              <div>
+                <input
+                  type="number"
+                  min="1"
+                  max="20"
+                  defaultValue="1"
+                  name="bar_thickness"
+                  id="bar_thickness"
+                  onChange={(e) =>
+                    this.setNewSettingsState(
+                      'lofi.window.bar_thickness',
+                      e.target.value
+                    )
+                  }
+                  value={this.state.lofi.window.bar_thickness}
+                />
+                <label htmlFor="bar_thickness">
+                  Thickness of the volume and song progress bar in pixels
+                </label>
               </div>
             </fieldset>
             <fieldset>
@@ -352,9 +396,8 @@ class Settings extends React.Component<any, any> {
               <a
                 href="#"
                 onClick={this.commitSettings.bind(this)}
-                className={`${
-                  this.isFormValid() ? 'green-button' : 'button-disabled'
-                }`}>
+                className={`${this.isFormValid() ? 'green-button' : 'button-disabled'
+                  }`}>
                 Save
               </a>
             </div>

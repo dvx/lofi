@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as settings from 'electron-settings';
 import './style.scss';
 import { SpotifyApiInstance } from '../../../../../api/spotify-api';
 
@@ -93,56 +94,74 @@ class Controls extends React.Component<any, any> {
     return <label className={className}>{this.props.parent.getVolume()}</label>;
   }
 
+  getBarThickness() {
+    return (settings.getSync("lofi.window.bar_thickness") ?? 1) + 'px';
+  }
+
   render() {
+    let progressTop;
+    if (settings.getSync("lofi.window.show_progress")) {
+      progressTop = <div
+        className="progress show"
+        style={{ width: this.props.parent.getTrackProgress() + '%', height: this.getBarThickness() }}
+      />;
+    } else {
+      progressTop = "";
+    }
     return (
-      <div className="controls centered">
-        {this.accountType ? (
-          <div className="controls-cluster">
-            {this.accountType === 'premium' ? (
-              <p className="row">
-                <a
-                  onClick={this.backward.bind(this)}
-                  className="control-btn secondary-control not-draggable skip">
-                  <i className="fa fa-step-backward not-draggable"></i>
-                </a>
-                <a
-                  onClick={this.pausePlay.bind(this)}
-                  className="control-btn not-draggable pause-play">
-                  <i
-                    className={
-                      'fa not-draggable ' +
-                      (this.props.parent.getPlayState()
-                        ? 'fa-pause'
-                        : 'fa-play')
-                    }></i>
-                </a>
-                <a
-                  onClick={this.forward.bind(this)}
-                  className="control-btn secondary-control not-draggable skip">
-                  <i className="fa fa-step-forward not-draggable"></i>
-                </a>
-                <a
-                  onClick={this.like.bind(this)}
-                  className="love-control-btn tertiary-control not-draggable">
-                  <i
-                    className={
-                      (this.props.parent.isTrackLiked() ? 'fa' : 'far') +
-                      ' fa-heart not-draggable'
-                    }></i>
-                </a>
-              </p>
-            ) : null}
-          </div>
-        ) : null}
-        <div
-          className="progress"
-          style={{ width: this.props.parent.getTrackProgress() + '%' }}
-        />
-        <div
-          className="volume"
-          style={{ height: this.props.parent.getVolume() + '%' }}>
-          {this.renderVolumeLabel()}
-        </div>
+      <div className="controls-container">
+        {progressTop}
+        < div className="controls centered" >
+          {
+            this.accountType ? (
+              <div className="controls-cluster">
+                {this.accountType === 'premium' ? (
+                  <p className="row">
+                    <a
+                      onClick={this.backward.bind(this)}
+                      className="control-btn secondary-control not-draggable skip">
+                      <i className="fa fa-step-backward not-draggable"></i>
+                    </a>
+                    <a
+                      onClick={this.pausePlay.bind(this)}
+                      className="control-btn not-draggable pause-play">
+                      <i
+                        className={
+                          'fa not-draggable ' +
+                          (this.props.parent.getPlayState()
+                            ? 'fa-pause'
+                            : 'fa-play')
+                        }></i>
+                    </a>
+                    <a
+                      onClick={this.forward.bind(this)}
+                      className="control-btn secondary-control not-draggable skip">
+                      <i className="fa fa-step-forward not-draggable"></i>
+                    </a>
+                    <a
+                      onClick={this.like.bind(this)}
+                      className="love-control-btn tertiary-control not-draggable">
+                      <i
+                        className={
+                          (this.props.parent.isTrackLiked() ? 'fa' : 'far') +
+                          ' fa-heart not-draggable'
+                        }></i>
+                    </a>
+                  </p>
+                ) : null}
+              </div>
+            ) : null
+          }
+          <div
+            className="progress"
+            style={{ width: this.props.parent.getTrackProgress() + '%', height: this.getBarThickness() }}
+          />
+          < div
+            className="volume"
+            style={{ height: this.props.parent.getVolume() + '%', width: this.getBarThickness(), bottom: this.getBarThickness() }}>
+            {this.renderVolumeLabel()}
+          </div >
+        </div >
       </div>
     );
   }
