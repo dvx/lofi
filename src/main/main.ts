@@ -42,6 +42,7 @@ if (!HARDWARE_ACCELERATION) {
 
 let mainWindow: Electron.BrowserWindow | null = null;
 let mousePoller: NodeJS.Timeout;
+let initialBounds: Electron.Rectangle;
 
 // Only allow a single instance
 let isSingleInstance: boolean = app.requestSingleInstanceLock();
@@ -129,15 +130,21 @@ function createWindow() {
     'windowMoving',
     (e: Event, { mouseX, mouseY }: { mouseX: number; mouseY: number }) => {
       const { x, y } = screen.getCursorScreenPoint();
+      let bounds: Partial<Electron.Rectangle> = {
+        x: x - mouseX,
+        y: y - mouseY,
+      };
+
+      if (!initialBounds) {
+        initialBounds = mainWindow.getBounds();
+      } else {
+        bounds.width = initialBounds.width;
+        bounds.height = initialBounds.height;
+      }
 
       // Use setBounds instead of setPosition
       // See: https://github.com/electron/electron/issues/9477#issuecomment-406833003
-      mainWindow.setBounds({
-        height: mainWindow.getSize()[0],
-        width: mainWindow.getSize()[1],
-        x: x - mouseX,
-        y: y - mouseY,
-      });
+      mainWindow.setBounds(bounds);
 
       // Ugly black transparency fix when dragging transparent window past screen edges
       // From what I understand, setting opacity forces a re-draw
