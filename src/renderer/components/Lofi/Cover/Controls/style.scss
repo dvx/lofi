@@ -14,6 +14,7 @@
   display: flex;
   flex-direction: column;
   margin: auto;
+
   .row {
     padding: 0;
   }
@@ -95,14 +96,19 @@
 
 .progress {
   height: 1px;
-  background: #ccffe15c;
+  background: #ccffe18c;
   position: absolute;
   bottom: 0;
+
+  &.show {
+    z-index: 999;
+    background: #ccffe18c;
+  }
 }
 
 .volume {
   height: 100%;
-  background: #ccffe15c;
+  background: #ccffe18c;
   bottom: 1px;
   width: 1px;
   position: absolute;
