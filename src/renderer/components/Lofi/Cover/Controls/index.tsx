@@ -87,9 +87,7 @@ class Controls extends React.Component<any, any> {
       return;
     }
 
-    const className = this.props.parent.state.volume_changed
-      ? 'volume-number-show'
-      : 'volume-number';
+    const className = this.props.parent.state.volume_changed ? 'volume-number-show' : 'volume-number';
 
     return <label className={className}>{this.props.parent.getVolume()}</label>;
   }
@@ -120,39 +118,23 @@ class Controls extends React.Component<any, any> {
             <div className="controls-cluster">
               {this.accountType === 'premium' ? (
                 <p className="row">
-                  <a
-                    onClick={this.backward.bind(this)}
-                    className="control-btn secondary-control not-draggable skip">
+                  <a onClick={this.backward.bind(this)} className="control-btn secondary-control not-draggable skip">
                     <i className="fa fa-step-backward not-draggable"></i>
                   </a>
-                  <a
-                    onClick={this.pausePlay.bind(this)}
-                    className="control-btn not-draggable pause-play">
+                  <a onClick={this.pausePlay.bind(this)} className="control-btn not-draggable pause-play">
                     <i
-                      className={
-                        'fa not-draggable ' +
-                        (this.props.parent.getPlayState()
-                          ? 'fa-pause'
-                          : 'fa-play')
-                      }></i>
+                      className={'fa not-draggable ' + (this.props.parent.getPlayState() ? 'fa-pause' : 'fa-play')}
+                    ></i>
                   </a>
-                  <a
-                    onClick={this.forward.bind(this)}
-                    className="control-btn secondary-control not-draggable skip">
+                  <a onClick={this.forward.bind(this)} className="control-btn secondary-control not-draggable skip">
                     <i className="fa fa-step-forward not-draggable"></i>
                   </a>
                 </p>
               ) : null}
               {this.props.parent.isTrackLiked() !== null ? (
                 <p className="row">
-                  <a
-                    onClick={this.like.bind(this)}
-                    className="love-control-btn tertiary-control not-draggable">
-                    <i
-                      className={
-                        (this.props.parent.isTrackLiked() ? 'fa' : 'far') +
-                        ' fa-heart not-draggable'
-                      }></i>
+                  <a onClick={this.like.bind(this)} className="love-control-btn tertiary-control not-draggable">
+                    <i className={(this.props.parent.isTrackLiked() ? 'fa' : 'far') + ' fa-heart not-draggable'}></i>
                   </a>
                 </p>
               ) : null}
@@ -171,7 +153,8 @@ class Controls extends React.Component<any, any> {
               height: this.props.parent.getVolume() + '%',
               width: this.getBarThickness(),
               bottom: this.getBarThickness(),
-            }}>
+            }}
+          >
             {this.renderVolumeLabel()}
           </div>
         </div>

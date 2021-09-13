@@ -1,6 +1,5 @@
 {
   "files.associations": {
     "*.mm": "cpp"
-  },
-  "prettier.printWidth": 80
+  }
 }

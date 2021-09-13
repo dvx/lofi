@@ -1,17 +1,8 @@
 import * as React from 'react';
 import * as settings from 'electron-settings';
 import { ipcRenderer, remote } from 'electron';
-import {
-  getAuthUrl,
-  refreshAccessToken,
-  AuthData,
-  setTokenRetrievedCallback,
-} from '../../../main/auth';
-import {
-  CONTAINER,
-  MAX_SIDE_LENGTH,
-  MIN_SIDE_LENGTH,
-} from '../../../constants';
+import { getAuthUrl, refreshAccessToken, AuthData, setTokenRetrievedCallback } from '../../../main/auth';
+import { CONTAINER, MAX_SIDE_LENGTH, MIN_SIDE_LENGTH } from '../../../constants';
 import Cover from './Cover';
 import Settings from './Settings';
 import About from './About';
@@ -39,16 +30,9 @@ class Lofi extends React.Component<any, any> {
       side_length: settings.getSync('lofi.window.side'),
       window_side: (() => {
         if (
-          (remote.getCurrentWindow().getBounds().x +
-            remote.getCurrentWindow().getBounds().width) /
-            2 -
-            remote.screen.getDisplayMatching(
-              remote.getCurrentWindow().getBounds()
-            ).bounds.x <
-          remote.screen.getDisplayMatching(
-            remote.getCurrentWindow().getBounds()
-          ).bounds.width /
-            2
+          (remote.getCurrentWindow().getBounds().x + remote.getCurrentWindow().getBounds().width) / 2 -
+            remote.screen.getDisplayMatching(remote.getCurrentWindow().getBounds()).bounds.x <
+          remote.screen.getDisplayMatching(remote.getCurrentWindow().getBounds()).bounds.width / 2
         ) {
           return SIDE.LEFT;
         }
@@ -124,10 +108,7 @@ class Lofi extends React.Component<any, any> {
     }
 
     function onMouseDown(e: any) {
-      if (
-        leftMousePressed(e) &&
-        !e.target['classList'].contains('not-draggable')
-      ) {
+      if (leftMousePressed(e) && !e.target['classList'].contains('not-draggable')) {
         // Cancel old animation frame, fixes mouse getting "stuck" in the drag state
         cancelAnimationFrame(animationId);
         mouseX = e.clientX;
@@ -135,11 +116,7 @@ class Lofi extends React.Component<any, any> {
         document.addEventListener('mouseup', onMouseUp);
         if (e.target['classList'].contains('grab-resize')) {
           requestAnimationFrame(
-            resizeWindow.bind(
-              that,
-              e.target['classList'].contains('top'),
-              e.target['classList'].contains('right')
-            )
+            resizeWindow.bind(that, e.target['classList'].contains('top'), e.target['classList'].contains('right'))
           );
           document.body.classList.remove('click-through');
         } else {
@@ -216,12 +193,8 @@ class Lofi extends React.Component<any, any> {
       ipcRenderer.send('windowMoving', { mouseX, mouseY });
       if (
         remote.screen.getCursorScreenPoint().x -
-          remote.screen.getDisplayMatching(
-            remote.getCurrentWindow().getBounds()
-          ).bounds.x <
-        remote.screen.getDisplayMatching(remote.getCurrentWindow().getBounds())
-          .bounds.width /
-          2
+          remote.screen.getDisplayMatching(remote.getCurrentWindow().getBounds()).bounds.x <
+        remote.screen.getDisplayMatching(remote.getCurrentWindow().getBounds()).bounds.width / 2
       ) {
         that.setState({ window_side: SIDE.LEFT });
       } else {
@@ -235,12 +208,8 @@ class Lofi extends React.Component<any, any> {
       return button === 1;
     }
 
-    document
-      .getElementById('visible-ui')
-      .addEventListener('mousedown', onMouseDown);
-    document
-      .getElementById('app-body')
-      .addEventListener('mousemove', onMouseMove);
+    document.getElementById('visible-ui').addEventListener('mousedown', onMouseDown);
+    document.getElementById('app-body').addEventListener('mousemove', onMouseMove);
   }
 
   showAboutWindow() {
@@ -279,10 +248,7 @@ class Lofi extends React.Component<any, any> {
         <div className="bottom left grab-resize"></div>
         <div className="bottom right grab-resize"></div>
         {this.state.showSettings ? (
-          <WindowPortal
-            onUnload={this.hideSettingsWindow.bind(this)}
-            name="settings"
-          >
+          <WindowPortal onUnload={this.hideSettingsWindow.bind(this)} name="settings">
             <Settings lofi={this} className="settings-wnd" />
           </WindowPortal>
         ) : null}
