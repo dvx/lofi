@@ -68,3 +68,6 @@ package
 
 # Mac specific
 .DS_Store
+
+# git merge files
+*.orig
