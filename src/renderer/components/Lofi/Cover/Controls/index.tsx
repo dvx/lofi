@@ -127,7 +127,7 @@ class Controls extends React.Component<any, any> {
               <p className="row">
                 <a
                   onClick={this.like.bind(this)}
-                  className="control-btn secondary-control not-draggable">
+                  className="control-btn tertiary-control not-draggable">
                   <i
                     className={
                       (this.props.parent.isTrackLiked() ? 'fa' : 'far') +
