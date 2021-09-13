@@ -102,23 +102,27 @@ class Controls extends React.Component<any, any> {
               <p className="row">
                 <a
                   onClick={this.backward.bind(this)}
-                  className="control-btn secondary-control not-draggable skip">
+                  className="control-btn secondary-control not-draggable skip"
+                >
                   <i className="fa fa-step-backward not-draggable"></i>
                 </a>
                 <a
                   onClick={this.pausePlay.bind(this)}
-                  className="control-btn not-draggable pause-play">
+                  className="control-btn not-draggable pause-play"
+                >
                   <i
                     className={
                       'fa not-draggable ' +
                       (this.props.parent.getPlayState()
                         ? 'fa-pause'
                         : 'fa-play')
-                    }></i>
+                    }
+                  ></i>
                 </a>
                 <a
                   onClick={this.forward.bind(this)}
-                  className="control-btn secondary-control not-draggable skip">
+                  className="control-btn secondary-control not-draggable skip"
+                >
                   <i className="fa fa-step-forward not-draggable"></i>
                 </a>
               </p>
@@ -127,12 +131,14 @@ class Controls extends React.Component<any, any> {
               <p className="row">
                 <a
                   onClick={this.like.bind(this)}
-                  className="love-control-btn tertiary-control not-draggable">
+                  className="love-control-btn tertiary-control not-draggable"
+                >
                   <i
                     className={
                       (this.props.parent.isTrackLiked() ? 'fa' : 'far') +
                       ' fa-heart not-draggable'
-                    }></i>
+                    }
+                  ></i>
                 </a>
               </p>
             ) : null}
@@ -144,7 +150,8 @@ class Controls extends React.Component<any, any> {
         />
         <div
           className="volume"
-          style={{ height: this.props.parent.getVolume() + '%' }}>
+          style={{ height: this.props.parent.getVolume() + '%' }}
+        >
           {this.renderVolumeLabel()}
         </div>
       </div>

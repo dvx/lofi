@@ -5,7 +5,8 @@ export const SPOTIFY_API_URL = 'https://api.spotify.com/v1';
 export const WINDOWS = os.platform() === 'win32';
 export const LINUX = os.platform() === 'linux';
 export const MACOS = os.platform() === 'darwin';
-export const MACOS_MOJAVE_AND_NEWER = MACOS && parseInt(os.release().split('.')[0]) >= 18;
+export const MACOS_MOJAVE_AND_NEWER =
+  MACOS && parseInt(os.release().split('.')[0]) >= 18;
 
 export const HEIGHT = 150;
 export const WIDTH = 150;

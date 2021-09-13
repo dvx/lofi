@@ -30,7 +30,8 @@ class Welcome extends React.Component<any, any> {
               className="login-btn not-draggable"
               target="auth"
               href={authUrl}
-              onClick={(e) => startAuthServer()}>
+              onClick={(e) => startAuthServer()}
+            >
               <i className="fab fa-spotify not-draggable"></i>&nbsp;&nbsp;
               <span className="not-draggable">Log in</span>
             </a>

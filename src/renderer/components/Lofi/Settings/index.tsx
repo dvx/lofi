@@ -265,7 +265,8 @@ class Settings extends React.Component<any, any> {
                         'lofi.visualization',
                         Number(e.target.value)
                       )
-                    }>
+                    }
+                  >
                     {visualizations.map((vis, idx) => (
                       <option key={idx} value={idx}>
                         {vis.name}
@@ -344,7 +345,8 @@ class Settings extends React.Component<any, any> {
               <a
                 href="#"
                 onClick={this.nukeSettings.bind(this)}
-                className="red-button">
+                className="red-button"
+              >
                 Reset to defaults
               </a>
             </div>
@@ -354,7 +356,8 @@ class Settings extends React.Component<any, any> {
                 onClick={this.commitSettings.bind(this)}
                 className={`${
                   this.isFormValid() ? 'green-button' : 'button-disabled'
-                }`}>
+                }`}
+              >
                 Save
               </a>
             </div>

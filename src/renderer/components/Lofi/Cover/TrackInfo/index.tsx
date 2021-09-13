@@ -19,7 +19,8 @@ class TrackInfo extends React.Component<any, any> {
         }}
         className={`not-draggable track-info ${
           this.props.side ? 'track-info-left' : 'track-info-right'
-        } ${this.props.persistent ? 'always-show' : ''}`}>
+        } ${this.props.persistent ? 'always-show' : ''}`}
+      >
         <div className="track not-draggable">{this.props.track}</div>
         <div className="artist not-draggable">{this.props.artist}</div>
       </div>

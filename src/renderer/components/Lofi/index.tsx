@@ -272,7 +272,8 @@ class Lofi extends React.Component<any, any> {
           height: this.state.side_length,
           width: this.state.side_length,
           left: `calc(50% - ${this.state.side_length / 2}px)`,
-        }}>
+        }}
+      >
         <div className="top left grab-resize"></div>
         <div className="top right grab-resize"></div>
         <div className="bottom left grab-resize"></div>
@@ -280,14 +281,13 @@ class Lofi extends React.Component<any, any> {
         {this.state.showSettings ? (
           <WindowPortal
             onUnload={this.hideSettingsWindow.bind(this)}
-            name="settings">
+            name="settings"
+          >
             <Settings lofi={this} className="settings-wnd" />
           </WindowPortal>
         ) : null}
         {this.state.showAbout ? (
-          <WindowPortal
-            onUnload={this.hideAboutWindow.bind(this)}
-            name="about">
+          <WindowPortal onUnload={this.hideAboutWindow.bind(this)} name="about">
             <About lofi={this} className="about-wnd" />
           </WindowPortal>
         ) : null}

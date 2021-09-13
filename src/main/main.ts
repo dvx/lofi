@@ -164,32 +164,38 @@ function createWindow() {
     windowConfig.side = length;
   });
 
-  mainWindow.webContents.on('new-window', function (
-    event: Electron.NewWindowEvent,
-    url: string,
-    frameName: string,
-    disposition: string,
-    options: any
-  ) {
-    event.preventDefault();
+  mainWindow.webContents.on(
+    'new-window',
+    function (
+      event: Electron.NewWindowEvent,
+      url: string,
+      frameName: string,
+      disposition: string,
+      options: any
+    ) {
+      event.preventDefault();
 
-    switch (frameName) {
-      case 'settings': {
-        createSettingsWindow(event, options);
-        break;
-      }
-      case 'about': {
-        createAboutWindow(event, options);
-        break;
-      }
-      default: {
-        shell.openExternal(url);
+      switch (frameName) {
+        case 'settings': {
+          createSettingsWindow(event, options);
+          break;
+        }
+        case 'about': {
+          createAboutWindow(event, options);
+          break;
+        }
+        default: {
+          shell.openExternal(url);
+        }
       }
     }
-  });
+  );
 }
 
-function createSettingsWindow(event: Electron.NewWindowWebContentsEvent, options: any) {
+function createSettingsWindow(
+  event: Electron.NewWindowWebContentsEvent,
+  options: any
+) {
   // Open settings window as modal
   Object.assign(options, {
     x:
@@ -218,7 +224,10 @@ function createSettingsWindow(event: Electron.NewWindowWebContentsEvent, options
   }
 }
 
-function createAboutWindow(event: Electron.NewWindowWebContentsEvent, options: any) {
+function createAboutWindow(
+  event: Electron.NewWindowWebContentsEvent,
+  options: any
+) {
   Object.assign(options, {
     x:
       screen.getDisplayMatching(mainWindow.getBounds()).bounds.x -
