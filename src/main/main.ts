@@ -42,6 +42,7 @@ if (!HARDWARE_ACCELERATION) {
 
 let mainWindow: Electron.BrowserWindow | null = null;
 let mousePoller: NodeJS.Timeout;
+let initialBounds: Electron.Rectangle;
 
 // Only allow a single instance
 let isSingleInstance: boolean = app.requestSingleInstanceLock();
@@ -130,14 +131,24 @@ function createWindow() {
     (e: Event, { mouseX, mouseY }: { mouseX: number; mouseY: number }) => {
       const { x, y } = screen.getCursorScreenPoint();
 
-      // Use setBounds instead of setPosition
-      // See: https://github.com/electron/electron/issues/9477#issuecomment-406833003
-      mainWindow.setBounds({
-        height: mainWindow.getSize()[0],
-        width: mainWindow.getSize()[1],
+      let bounds: Partial<Electron.Rectangle> = {
         x: x - mouseX,
         y: y - mouseY,
-      });
+      };
+
+      // Bounds increase even when set to the same value, this is a quirk of the setBounds function
+      // We must keep the bounds constant to keep the window where it should be
+      // See: https://github.com/dvx/lofi/issues/118
+      if (!initialBounds) {
+        initialBounds = mainWindow.getBounds();
+      } else {
+        bounds.width = initialBounds.width;
+        bounds.height = initialBounds.height;
+      }
+
+      // Use setBounds instead of setPosition
+      // See: https://github.com/electron/electron/issues/9477#issuecomment-406833003
+      mainWindow.setBounds(bounds);
 
       // Ugly black transparency fix when dragging transparent window past screen edges
       // From what I understand, setting opacity forces a re-draw
@@ -164,32 +175,38 @@ function createWindow() {
     windowConfig.side = length;
   });
 
-  mainWindow.webContents.on('new-window', function (
-    event: Electron.NewWindowEvent,
-    url: string,
-    frameName: string,
-    disposition: string,
-    options: any
-  ) {
-    event.preventDefault();
+  mainWindow.webContents.on(
+    'new-window',
+    function (
+      event: Electron.NewWindowEvent,
+      url: string,
+      frameName: string,
+      disposition: string,
+      options: any
+    ) {
+      event.preventDefault();
 
-    switch (frameName) {
-      case 'settings': {
-        createSettingsWindow(event, options);
-        break;
-      }
-      case 'about': {
-        createAboutWindow(event, options);
-        break;
-      }
-      default: {
-        shell.openExternal(url);
+      switch (frameName) {
+        case 'settings': {
+          createSettingsWindow(event, options);
+          break;
+        }
+        case 'about': {
+          createAboutWindow(event, options);
+          break;
+        }
+        default: {
+          shell.openExternal(url);
+        }
       }
     }
-  });
+  );
 }
 
-function createSettingsWindow(event: Electron.NewWindowWebContentsEvent, options: any) {
+function createSettingsWindow(
+  event: Electron.NewWindowWebContentsEvent,
+  options: any
+) {
   // Open settings window as modal
   Object.assign(options, {
     x:
@@ -218,7 +235,10 @@ function createSettingsWindow(event: Electron.NewWindowWebContentsEvent, options
   }
 }
 
-function createAboutWindow(event: Electron.NewWindowWebContentsEvent, options: any) {
+function createAboutWindow(
+  event: Electron.NewWindowWebContentsEvent,
+  options: any
+) {
   Object.assign(options, {
     x:
       screen.getDisplayMatching(mainWindow.getBounds()).bounds.x -
