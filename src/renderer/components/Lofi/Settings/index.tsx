@@ -4,7 +4,11 @@ import TitleBar from 'frameless-titlebar';
 import './style.scss';
 
 import { visualizations } from '../../../../visualizations/visualizations.js';
-import { MACOS, DEFAULT_SETTINGS } from '../../../../constants';
+import {
+  MACOS,
+  DEFAULT_SETTINGS,
+  MAX_BAR_THICKNESS,
+} from '../../../../constants';
 import { get, set } from 'lodash';
 import { remote } from 'electron';
 
@@ -108,8 +112,14 @@ class Settings extends React.Component<any, any> {
     );
     settings.setSync('lofi.window.hide', this.state.lofi.window.hide);
     settings.setSync('lofi.window.metadata', this.state.lofi.window.metadata);
-    settings.setSync('lofi.window.show_progress', this.state.lofi.window.show_progress);
-    settings.setSync('lofi.window.bar_thickness', this.state.lofi.window.bar_thickness);
+    settings.setSync(
+      'lofi.window.show_progress',
+      this.state.lofi.window.show_progress
+    );
+    settings.setSync(
+      'lofi.window.bar_thickness',
+      this.state.lofi.window.bar_thickness
+    );
 
     // Commit visualization settings
     settings.setSync('lofi.visualization', this.state.lofi.visualization);
@@ -164,7 +174,7 @@ class Settings extends React.Component<any, any> {
       this.state.lofi.audio.volume_increment <= 100 &&
       this.state.lofi.window.bar_thickness &&
       this.state.lofi.window.bar_thickness > 0 &&
-      this.state.lofi.window.bar_thickness <= 20
+      this.state.lofi.window.bar_thickness <= MAX_BAR_THICKNESS
     );
   }
 
@@ -278,8 +288,7 @@ class Settings extends React.Component<any, any> {
                 <input
                   type="number"
                   min="1"
-                  max="20"
-                  defaultValue="1"
+                  max={MAX_BAR_THICKNESS}
                   name="bar_thickness"
                   id="bar_thickness"
                   onChange={(e) =>
@@ -291,7 +300,7 @@ class Settings extends React.Component<any, any> {
                   value={this.state.lofi.window.bar_thickness}
                 />
                 <label htmlFor="bar_thickness">
-                  Thickness of the volume and song progress bar in pixels
+                  Progress and volume bars thickness
                 </label>
               </div>
             </fieldset>
@@ -396,8 +405,9 @@ class Settings extends React.Component<any, any> {
               <a
                 href="#"
                 onClick={this.commitSettings.bind(this)}
-                className={`${this.isFormValid() ? 'green-button' : 'button-disabled'
-                  }`}>
+                className={`${
+                  this.isFormValid() ? 'green-button' : 'button-disabled'
+                }`}>
                 Save
               </a>
             </div>
