@@ -1,8 +1,8 @@
 import React from 'react';
 import TitleBar from 'frameless-titlebar';
-import * as j from '../../../../../package.json';
 import './style.scss';
 import { Platform } from 'frameless-titlebar/dist/title-bar/typings';
+import { version } from '../../../../../version.generated';
 
 class About extends React.Component<any, any> {
   render() {
@@ -23,13 +23,13 @@ class About extends React.Component<any, any> {
         />
         <div className="about-wrapper">
           <div style={{ textAlign: 'center' }}>
-            <h1>Lofi v{j.version}</h1>
+            <h1>Lofi v{version}</h1>
             <div>🎵🔉 A mini Spotify player with WebGL visualizations.</div>
           </div>
           <br />
           <br />
           <code>
-            Copyright (c) 2019-2020 David Titarenco
+            Copyright (c) 2019-{new Date().getFullYear()} David Titarenco
             <br />
             <br />
             Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
