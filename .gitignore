@@ -71,3 +71,6 @@ package
 
 # git merge files
 *.orig
+
+# generated version file
+version.generated.ts

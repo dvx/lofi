@@ -1,4 +1,5 @@
 import * as os from 'os';
+import { version } from '../version.generated';
 
 export const SPOTIFY_API_URL = 'https://api.spotify.com/v1';
 
@@ -31,7 +32,7 @@ export const SETTINGS_CONTAINER = {
 };
 
 export const DEFAULT_SETTINGS = {
-  version: '1.6.0',
+  version: version,
   debug: false,
   hardware_acceleration: true,
   lofi: {
