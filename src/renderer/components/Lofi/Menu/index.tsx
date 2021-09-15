@@ -30,9 +30,7 @@ class Menu extends React.Component<any, any> {
       <>
         <ul className="menu top">
           <li>
-            <a
-              onClick={this.showSettingsWindow.bind(this)}
-              className="settings not-draggable">
+            <a onClick={this.showSettingsWindow.bind(this)} className="settings not-draggable">
               <i className="fa fa-cog not-draggable"></i>
             </a>
             <a className="logo-typo">
@@ -40,9 +38,7 @@ class Menu extends React.Component<any, any> {
             </a>
           </li>
           <li className="pull-right">
-            <a
-              onClick={this.closeApp.bind(this)}
-              className="danger not-draggable">
+            <a onClick={this.closeApp.bind(this)} className="danger not-draggable">
               <i className="fa fa-times-circle not-draggable"></i>
             </a>
           </li>
@@ -50,9 +46,7 @@ class Menu extends React.Component<any, any> {
         {this.props.parent.constructor.name !== 'Welcome' ? (
           <ul className="menu bottom">
             <li>
-              <a
-                onClick={this.cycleVis.bind(this)}
-                className={`vis not-draggable ${MACOS ? `disabled` : ``}`}>
+              <a onClick={this.cycleVis.bind(this)} className={`vis not-draggable ${MACOS ? `disabled` : ``}`}>
                 <i className={'fa not-draggable ' + this.props.visIcon}></i>
               </a>
             </li>
@@ -66,10 +60,7 @@ class Menu extends React.Component<any, any> {
               </li>
             ) : null}
             <li className="pull-right">
-              <a
-                target="_blank"
-                href="http://lofi.rocks/help"
-                className="help not-draggable">
+              <a target="_blank" href="http://lofi.rocks/help" className="help not-draggable">
                 <i className="fa fa-question-circle not-draggable"></i>
               </a>
             </li>

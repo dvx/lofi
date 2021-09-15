@@ -68,18 +68,11 @@ class NewWindow extends React.PureComponent<any, any> {
     const { url, title, name, features, onBlock, onOpen, center } = this.props;
 
     // Prepare position of the new window to be centered against the 'parent' window or 'screen'.
-    if (
-      typeof center === 'string' &&
-      (features.width === undefined || features.height === undefined)
-    ) {
-      console.warn(
-        'width and height window features must be present when a center prop is provided'
-      );
+    if (typeof center === 'string' && (features.width === undefined || features.height === undefined)) {
+      console.warn('width and height window features must be present when a center prop is provided');
     } else if (center === 'parent') {
-      features.left =
-        window.top.outerWidth / 2 + window.top.screenX - features.width / 2;
-      features.top =
-        window.top.outerHeight / 2 + window.top.screenY - features.height / 2;
+      features.left = window.top.outerWidth / 2 + window.top.screenX - features.width / 2;
+      features.top = window.top.outerHeight / 2 + window.top.screenY - features.height / 2;
     } else if (center === 'screen') {
       const screenLeft =
         window.screenLeft !== undefined
@@ -186,10 +179,7 @@ class NewWindow extends React.PureComponent<any, any> {
  * @private
  */
 
-function copyStyles(
-  source: Document,
-  target: { head: { appendChild: (arg0: any) => void } }
-) {
+function copyStyles(source: Document, target: { head: { appendChild: (arg0: any) => void } }) {
   Array.from(source.styleSheets).forEach((styleSheet: CSSStyleSheet) => {
     // For <style> elements
     let rules;
@@ -201,10 +191,7 @@ function copyStyles(
 
     // For @font-face rule, it must be loaded via <link href=''> because the
     // rule contains relative path from the css file.
-    const isFontFaceRule =
-      rules &&
-      Object.values(rules).some((r) => r instanceof CSSFontFaceRule) &&
-      styleSheet.href;
+    const isFontFaceRule = rules && Object.values(rules).some((r) => r instanceof CSSFontFaceRule) && styleSheet.href;
 
     if (rules && !isFontFaceRule) {
       const newStyleEl = source.createElement('style');
@@ -220,9 +207,7 @@ function copyStyles(
             .split('url(')
             .map((line) => {
               if (line[1] === '/') {
-                return `${line.slice(0, 1)}${
-                  window.location.origin
-                }${line.slice(1)}`;
+                return `${line.slice(0, 1)}${window.location.origin}${line.slice(1)}`;
               }
               return line;
             })

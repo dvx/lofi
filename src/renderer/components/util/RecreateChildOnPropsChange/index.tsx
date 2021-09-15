@@ -20,10 +20,7 @@ class RecreateChildOnPropsChange extends React.Component<any, any> {
     }
 
     for (let key of keys) {
-      if (
-        key !== 'children' &&
-        (!nextProps.hasOwnProperty(key) || props[key] !== nextProps[key])
-      ) {
+      if (key !== 'children' && (!nextProps.hasOwnProperty(key) || props[key] !== nextProps[key])) {
         return true;
       }
     }

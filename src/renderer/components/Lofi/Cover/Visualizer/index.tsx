@@ -12,19 +12,13 @@ class Visualizer extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    visualizations[this.props.visId].visualize(
-      this.canvasRef.current,
-      this.getMusicData.bind(this)
-    );
+    visualizations[this.props.visId].visualize(this.canvasRef.current, this.getMusicData.bind(this));
   }
 
   componentWillUnmount() {
     // NOTE: "Properly" doing refs with Typescript/React is so ugly...
     let gl = this.canvasRef.current.getContext('experimental-webgl');
-    gl.canvas
-      .getContext('webgl')
-      .getExtension('WEBGL_lose_context')
-      .loseContext();
+    gl.canvas.getContext('webgl').getExtension('WEBGL_lose_context').loseContext();
   }
 
   getMusicData() {

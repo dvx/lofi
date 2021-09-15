@@ -1,5 +1,5 @@
 import { AuthData, refreshAccessToken } from '../main/auth';
-import { SPOTIFY_API_URL as API_URL } from '../constants'
+import { SPOTIFY_API_URL as API_URL } from '../constants';
 
 class SpotifyApi {
   private isThrottled: boolean;
@@ -26,9 +26,7 @@ class SpotifyApi {
     if (this.isThrottled) {
       const timeLeft = this.throttleTime - new Date().getTime();
       if (timeLeft > 0) {
-        this.errorMessage = `API calls throttled, wait ${Math.round(
-          timeLeft / 1000
-        )}s...`;
+        this.errorMessage = `API calls throttled, wait ${Math.round(timeLeft / 1000)}s...`;
         console.warn(`${this.errorMessage} (${input})`);
         return null;
       } else {

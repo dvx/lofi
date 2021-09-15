@@ -1,11 +1,7 @@
 import * as React from 'react';
 import { remote } from 'electron';
 import settings from 'electron-settings';
-import {
-  MACOS,
-  DEFAULT_SETTINGS,
-  LOFI_SHUFFLED_PLAYLIST_NAME,
-} from '../../../../constants';
+import { MACOS, DEFAULT_SETTINGS, LOFI_SHUFFLED_PLAYLIST_NAME, LINUX } from '../../../../constants';
 import * as path from 'path';
 import * as url from 'url';
 import _ from 'lodash';
@@ -55,16 +51,10 @@ class Cover extends React.Component<any, any> {
     const keepAliveIntervalId = setInterval(() => this.keepAlive(), 5000);
     this.setState({ keepAliveIntervalId });
 
-    const refreshTrackLikedIntervalId = setInterval(
-      () => this.refreshTrackLiked(),
-      2000
-    );
+    const refreshTrackLikedIntervalId = setInterval(() => this.refreshTrackLiked(), 2000);
     this.setState({ refreshLikedIntervalId: refreshTrackLikedIntervalId });
 
-    const spotifyErrorIntervalId = setInterval(
-      () => this.setState({ spotifyError: SpotifyApiInstance.error }),
-      500
-    );
+    const spotifyErrorIntervalId = setInterval(() => this.setState({ spotifyError: SpotifyApiInstance.error }), 500);
     this.setState({ spotifyErrorIntervalId: spotifyErrorIntervalId });
 
     function onMouseWheel(e: WheelEvent) {
@@ -73,18 +63,12 @@ class Cover extends React.Component<any, any> {
         : DEFAULT_SETTINGS.lofi.audio.volume_increment;
 
       const volume_percent = volume_increment / 100;
-      const new_volume = _.clamp(
-        that.state.volume - e.deltaY * volume_percent,
-        0,
-        100
-      );
+      const new_volume = _.clamp(that.state.volume - e.deltaY * volume_percent, 0, 100);
 
       that.setVolume(new_volume);
     }
 
-    document
-      .getElementById('visible-ui')
-      .addEventListener('mousewheel', onMouseWheel);
+    document.getElementById('visible-ui').addEventListener('mousewheel', onMouseWheel);
   }
 
   componentWillUnmount() {
@@ -152,15 +136,10 @@ class Cover extends React.Component<any, any> {
     }
 
     percent = _.clamp(percent, 0, 100);
-    this.setState({ volume: percent, stateChange: new Date() }, () =>
-      this.volumeChanged()
-    );
-    await SpotifyApiInstance.fetch(
-      '/me/player/volume?volume_percent=' + Math.round(percent),
-      {
-        method: 'PUT',
-      }
-    );
+    this.setState({ volume: percent, stateChange: new Date() }, () => this.volumeChanged());
+    await SpotifyApiInstance.fetch('/me/player/volume?volume_percent=' + Math.round(percent), {
+      method: 'PUT',
+    });
   }
 
   getTrackProgress() {
@@ -170,11 +149,7 @@ class Cover extends React.Component<any, any> {
       if (this.state.currently_playing.item.duration_ms == 0) {
         return 100;
       } else {
-        return (
-          (this.state.currently_playing.progress_ms /
-            this.state.currently_playing.item.duration_ms) *
-          100
-        );
+        return (this.state.currently_playing.progress_ms / this.state.currently_playing.item.duration_ms) * 100;
       }
     }
     return 0;
@@ -189,18 +164,12 @@ class Cover extends React.Component<any, any> {
     } else {
       if (this.props.settings.hide && remote.getCurrentWindow().isVisible()) {
         remote.getCurrentWindow().hide();
-      } else if (
-        !this.props.settings.hide &&
-        !remote.getCurrentWindow().isVisible()
-      ) {
+      } else if (!this.props.settings.hide && !remote.getCurrentWindow().isVisible()) {
         remote.getCurrentWindow().show();
       }
     }
     if (this.state.visWindow) {
-      this.state.visWindow.webContents.send(
-        'set-visualization',
-        this.props.visualizationId
-      );
+      this.state.visWindow.webContents.send('set-visualization', this.props.visualizationId);
     }
   }
 
@@ -208,29 +177,19 @@ class Cover extends React.Component<any, any> {
     // Fixes https://github.com/dvx/lofi/issues/31
     const currentlyPlaying = this.state.currently_playing;
 
-    if (
-      !currentlyPlaying ||
-      !currentlyPlaying.progress_ms ||
-      currentlyPlaying.is_playing
-    ) {
+    if (!currentlyPlaying || !currentlyPlaying.progress_ms || currentlyPlaying.is_playing) {
       return;
     }
 
-    await SpotifyApiInstance.fetch(
-      '/me/player/seek?position_ms=' + currentlyPlaying.progress_ms,
-      {
-        method: 'PUT',
-      }
-    );
+    await SpotifyApiInstance.fetch('/me/player/seek?position_ms=' + currentlyPlaying.progress_ms, {
+      method: 'PUT',
+    });
   }
 
   async listeningTo() {
-    const currentlyPlaying = await SpotifyApiInstance.fetch(
-      '/me/player?type=episode,track',
-      {
-        method: 'GET',
-      }
-    );
+    const currentlyPlaying = await SpotifyApiInstance.fetch('/me/player?type=episode,track', {
+      method: 'GET',
+    });
 
     if (!currentlyPlaying) {
       return;
@@ -250,20 +209,14 @@ class Cover extends React.Component<any, any> {
     });
 
     // trust UI while scroll wheel level, e.g. volume, stabilizes (10 second leeway)
-    if (
-      this.state.stateChange &&
-      new Date().getTime() - this.state.stateChange.getTime() > 10000
-    ) {
+    if (this.state.stateChange && new Date().getTime() - this.state.stateChange.getTime() > 10000) {
       this.setState({
         volume: currentlyPlaying.device.volume_percent,
       });
     }
 
     if (this.state.bigVisualization) {
-      this.state.visWindow.webContents.send(
-        'currently-playing',
-        currentlyPlaying
-      );
+      this.state.visWindow.webContents.send('currently-playing', currentlyPlaying);
     }
   }
 
@@ -275,12 +228,9 @@ class Cover extends React.Component<any, any> {
 
     let trackLiked = null;
     if (currentlyPlaying.currently_playing_type === 'track') {
-      const likedResponse = await SpotifyApiInstance.fetch(
-        '/me/tracks/contains?ids=' + currentlyPlaying.item.id,
-        {
-          method: 'GET',
-        }
-      );
+      const likedResponse = await SpotifyApiInstance.fetch('/me/tracks/contains?ids=' + currentlyPlaying.item.id, {
+        method: 'GET',
+      });
       if (likedResponse === null || likedResponse.length === 0) {
         return;
       }
@@ -302,12 +252,9 @@ class Cover extends React.Component<any, any> {
   async getAllTracksFromPlaylist(playlist_id: string): Promise<string[]> {
     const allTracks: string[] | PromiseLike<string[]> = [];
 
-    let playlist = await SpotifyApiInstance.fetch(
-      '/playlists/' + playlist_id + '/tracks',
-      {
-        method: 'GET',
-      }
-    );
+    let playlist = await SpotifyApiInstance.fetch('/playlists/' + playlist_id + '/tracks', {
+      method: 'GET',
+    });
 
     if (!playlist) {
       return allTracks;
@@ -354,17 +301,12 @@ class Cover extends React.Component<any, any> {
     // 4) Shuffle the tracks
     // 5) Put them in the shuffled order in the playlist ID
     // 6) Play that playlist ID
-    const playlist_id = this.state.currently_playing.context.uri
-      .split(':')
-      .reverse()[0];
+    const playlist_id = this.state.currently_playing.context.uri.split(':').reverse()[0];
     // const tracks = (await this.getAllTracksFromPlaylist(playlist_id));
 
-    const playlist = await SpotifyApiInstance.fetch(
-      '/playlists/' + playlist_id + '/tracks',
-      {
-        method: 'GET',
-      }
-    );
+    const playlist = await SpotifyApiInstance.fetch('/playlists/' + playlist_id + '/tracks', {
+      method: 'GET',
+    });
 
     if (!playlist) {
       return;
@@ -408,12 +350,9 @@ class Cover extends React.Component<any, any> {
 
   async getAllPlaylists(limit = 50) {
     let playlists: any[] = [];
-    let playlistObject = await SpotifyApiInstance.fetch(
-      '/me/playlists?limit=' + limit,
-      {
-        method: 'GET',
-      }
-    );
+    let playlistObject = await SpotifyApiInstance.fetch('/me/playlists?limit=' + limit, {
+      method: 'GET',
+    });
 
     if (!playlistObject) {
       return playlists;
@@ -439,11 +378,19 @@ class Cover extends React.Component<any, any> {
         });
         break;
       case VISUALIZATION_TYPE.SMALL:
+        if (LINUX) {
+          // FIXME Never go fullscreen in Linux until https://github.com/dvx/lofi/issues/149 is fixed
+          this.setState({
+            visWindow: null,
+            visualizationType: VISUALIZATION_TYPE.NONE,
+          });
+          return;
+        }
         const BrowserWindow = remote.BrowserWindow;
         const visWindow = new BrowserWindow({
           webPreferences: {
-            nodeIntegration: true, 
-            enableRemoteModule: true
+            nodeIntegration: true,
+            enableRemoteModule: true,
           },
         });
         visWindow.on('close', () => {
@@ -462,16 +409,10 @@ class Cover extends React.Component<any, any> {
         // We need slightly different logic for where the window pops up because Windows is full screen while MacOS isn't
         if (MACOS) {
           // Just show regular window instead
-          visWindow.setPosition(
-            remote.screen.getCursorScreenPoint().x - 400,
-            remote.screen.getCursorScreenPoint().y
-          );
+          visWindow.setPosition(remote.screen.getCursorScreenPoint().x - 400, remote.screen.getCursorScreenPoint().y);
           visWindow.setSize(800, 600);
         } else {
-          visWindow.setPosition(
-            remote.getCurrentWindow().getBounds().x,
-            remote.getCurrentWindow().getBounds().y
-          );
+          visWindow.setPosition(remote.getCurrentWindow().getBounds().x, remote.getCurrentWindow().getBounds().y);
           visWindow.setSimpleFullScreen(true);
           if (Boolean(settings.getSync('debug')) === true) {
             visWindow.webContents.openDevTools({ mode: 'detach' });
@@ -479,10 +420,7 @@ class Cover extends React.Component<any, any> {
         }
 
         visWindow.webContents.once('dom-ready', () => {
-          visWindow.webContents.send(
-            'set-visualization',
-            this.props.lofi.state.lofiSettings.visualizationId
-          );
+          visWindow.webContents.send('set-visualization', this.props.lofi.state.lofiSettings.visualizationId);
         });
 
         this.setState({
@@ -509,7 +447,8 @@ class Cover extends React.Component<any, any> {
       case VISUALIZATION_TYPE.NONE:
         return 'fa-expand';
       case VISUALIZATION_TYPE.SMALL:
-        return 'fa-expand-arrows-alt';
+        // FIXME Never go fullscreen in Linux until https://github.com/dvx/lofi/issues/149 is fixed
+        return LINUX ? 'fa-compress-arrows-alt' : 'fa-expand-arrows-alt';
       case VISUALIZATION_TYPE.BIG:
         return 'fa-compress-arrows-alt';
       default:
@@ -528,9 +467,7 @@ class Cover extends React.Component<any, any> {
       } else if (this.state.currently_playing.currently_playing_type == 'ad') {
         // TODO: Cover art for ads?
         return '';
-      } else if (
-        this.state.currently_playing.currently_playing_type == 'episode'
-      ) {
+      } else if (this.state.currently_playing.currently_playing_type == 'episode') {
         // Podcasts fall into this category
         return this.state.currently_playing.item.images[0].url;
       }
@@ -544,9 +481,7 @@ class Cover extends React.Component<any, any> {
         return this.state.currently_playing.item.name;
       } else if (this.state.currently_playing.currently_playing_type == 'ad') {
         return 'Advertisement';
-      } else if (
-        this.state.currently_playing.currently_playing_type == 'episode'
-      ) {
+      } else if (this.state.currently_playing.currently_playing_type == 'episode') {
         // Podcasts fall into this category
         return this.state.currently_playing.item.name;
       }
@@ -561,14 +496,10 @@ class Cover extends React.Component<any, any> {
   getArtist() {
     if (this.state.currently_playing) {
       if (this.state.currently_playing.currently_playing_type == 'track') {
-        return _.map(this.state.currently_playing.item.artists, 'name').join(
-          ', '
-        );
+        return _.map(this.state.currently_playing.item.artists, 'name').join(', ');
       } else if (this.state.currently_playing.currently_playing_type == 'ad') {
         return 'Spotify';
-      } else if (
-        this.state.currently_playing.currently_playing_type == 'episode'
-      ) {
+      } else if (this.state.currently_playing.currently_playing_type == 'episode') {
         // Podcasts fall into this category
         return this.state.currently_playing.item.description;
       }
@@ -601,26 +532,16 @@ class Cover extends React.Component<any, any> {
         ) : null}
         <div
           className={'cover full ' + (this.getPlayState() ? '' : 'pause')}
-          style={
-            this.getCoverArt()
-              ? { backgroundImage: 'url(' + this.getCoverArt() + ')' }
-              : {}
-          }
+          style={this.getCoverArt() ? { backgroundImage: 'url(' + this.getCoverArt() + ')' } : {}}
         />
-        <RecreateChildOnPropsChange
-          visType={this.state.visualizationType}
-          visId={this.props.visualizationId}>
+        <RecreateChildOnPropsChange visType={this.state.visualizationType} visId={this.props.visualizationId}>
           <Visualizer
             visId={this.props.visualizationId}
             currentlyPlaying={this.state.currently_playing}
             show={this.state.visualizationType === VISUALIZATION_TYPE.SMALL}
           />
         </RecreateChildOnPropsChange>
-        {this.state.currently_playing ? (
-          <Controls parent={this} />
-        ) : (
-          <Waiting />
-        )}
+        {this.state.currently_playing ? <Controls parent={this} /> : <Waiting />}
       </>
     );
   }

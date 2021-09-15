@@ -1,29 +1,14 @@
-import {
-  app,
-  BrowserWindow,
-  ipcMain,
-  screen,
-  shell,
-  Tray,
-  Menu,
-  nativeImage,
-} from 'electron';
+import { app, BrowserWindow, ipcMain, screen, shell, Tray, Menu, nativeImage } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import settings from 'electron-settings';
-import {
-  MACOS,
-  WINDOWS,
-  LINUX,
-  CONTAINER,
-  SETTINGS_CONTAINER,
-  DEFAULT_SETTINGS,
-} from '../constants';
+import { MACOS, WINDOWS, LINUX, CONTAINER, SETTINGS_CONTAINER, DEFAULT_SETTINGS } from '../constants';
 
 // Webpack imports
 import '../../build/Release/black-magic.node';
 import '../../icon.png';
 import '../../icon.ico';
+import { version } from '../../version.generated';
 
 // Visualizations look snappier on 60Hz refresh rate screens if we disable vsync
 app.commandLine.appendSwitch('disable-gpu-vsync');
@@ -31,12 +16,11 @@ app.commandLine.appendArgument('disable-gpu-vsync');
 app.commandLine.appendSwitch('enable-transparent-visuals');
 
 // Settings bootstrap
-const HARDWARE_ACCELERATION: boolean = Boolean(
-  settings.getSync('hardware_acceleration')
-);
+const HARDWARE_ACCELERATION: boolean = Boolean(settings.getSync('hardware_acceleration'));
 const windowConfig: any = {};
 
-if (!HARDWARE_ACCELERATION) {
+// FIXME Patch to always disable hardware acceleration on LINUX, cf. https://github.com/dvx/lofi/issues/149
+if (!HARDWARE_ACCELERATION || LINUX) {
   app.disableHardwareAcceleration();
 }
 
@@ -101,12 +85,8 @@ function createWindow() {
       let bb = {
         ix: b.x + (CONTAINER.HORIZONTAL - windowConfig.side) / 2,
         iy: b.y + (CONTAINER.VERTICAL - windowConfig.side) / 2,
-        ax:
-          b.x +
-          (windowConfig.side + (CONTAINER.HORIZONTAL - windowConfig.side) / 2),
-        ay:
-          b.y +
-          (windowConfig.side + (CONTAINER.VERTICAL - windowConfig.side) / 2),
+        ax: b.x + (windowConfig.side + (CONTAINER.HORIZONTAL - windowConfig.side) / 2),
+        ay: b.y + (windowConfig.side + (CONTAINER.VERTICAL - windowConfig.side) / 2),
       };
 
       if (bb.ix <= p.x && p.x <= bb.ax && bb.iy <= p.y && p.y <= bb.ay) {
@@ -126,50 +106,44 @@ function createWindow() {
     mainWindow.webContents.openDevTools({ mode: 'detach' });
   }
 
-  ipcMain.on(
-    'windowMoving',
-    (e: Event, { mouseX, mouseY }: { mouseX: number; mouseY: number }) => {
-      const { x, y } = screen.getCursorScreenPoint();
+  ipcMain.on('windowMoving', (e: Event, { mouseX, mouseY }: { mouseX: number; mouseY: number }) => {
+    const { x, y } = screen.getCursorScreenPoint();
 
-      let bounds: Partial<Electron.Rectangle> = {
-        x: x - mouseX,
-        y: y - mouseY,
-      };
+    let bounds: Partial<Electron.Rectangle> = {
+      x: x - mouseX,
+      y: y - mouseY,
+    };
 
-      // Bounds increase even when set to the same value, this is a quirk of the setBounds function
-      // We must keep the bounds constant to keep the window where it should be
-      // See: https://github.com/dvx/lofi/issues/118
-      if (!initialBounds) {
-        initialBounds = mainWindow.getBounds();
-      } else {
-        bounds.width = initialBounds.width;
-        bounds.height = initialBounds.height;
-      }
+    // Bounds increase even when set to the same value, this is a quirk of the setBounds function
+    // We must keep the bounds constant to keep the window where it should be
+    // See: https://github.com/dvx/lofi/issues/118
+    if (!initialBounds) {
+      initialBounds = mainWindow.getBounds();
+    } else {
+      bounds.width = initialBounds.width;
+      bounds.height = initialBounds.height;
+    }
 
-      // Use setBounds instead of setPosition
-      // See: https://github.com/electron/electron/issues/9477#issuecomment-406833003
-      mainWindow.setBounds(bounds);
+    // Use setBounds instead of setPosition
+    // See: https://github.com/electron/electron/issues/9477#issuecomment-406833003
+    mainWindow.setBounds(bounds);
 
-      // Ugly black transparency fix when dragging transparent window past screen edges
-      // From what I understand, setting opacity forces a re-draw
-      // TODO: only happens on Windows?
-      if (WINDOWS) {
-        // This breaks the UI if hardware acceleration is disabled
-        if (HARDWARE_ACCELERATION) {
-          mainWindow.setOpacity(1);
-        }
+    // Ugly black transparency fix when dragging transparent window past screen edges
+    // From what I understand, setting opacity forces a re-draw
+    // TODO: only happens on Windows?
+    if (WINDOWS) {
+      // This breaks the UI if hardware acceleration is disabled
+      if (HARDWARE_ACCELERATION) {
+        mainWindow.setOpacity(1);
       }
     }
-  );
+  });
 
-  ipcMain.on(
-    'windowMoved',
-    (e: Event, { mouseX, mouseY }: { mouseX: number; mouseY: number }) => {
-      const { x, y } = screen.getCursorScreenPoint();
-      windowConfig.x = x - mouseX;
-      windowConfig.y = y - mouseY;
-    }
-  );
+  ipcMain.on('windowMoved', (e: Event, { mouseX, mouseY }: { mouseX: number; mouseY: number }) => {
+    const { x, y } = screen.getCursorScreenPoint();
+    windowConfig.x = x - mouseX;
+    windowConfig.y = y - mouseY;
+  });
 
   ipcMain.on('windowResizing', (e: Event, length: number) => {
     windowConfig.side = length;
@@ -177,13 +151,7 @@ function createWindow() {
 
   mainWindow.webContents.on(
     'new-window',
-    function (
-      event: Electron.NewWindowEvent,
-      url: string,
-      frameName: string,
-      disposition: string,
-      options: any
-    ) {
+    function (event: Electron.NewWindowEvent, url: string, frameName: string, disposition: string, options: any) {
       event.preventDefault();
 
       switch (frameName) {
@@ -203,10 +171,7 @@ function createWindow() {
   );
 }
 
-function createSettingsWindow(
-  event: Electron.NewWindowWebContentsEvent,
-  options: any
-) {
+function createSettingsWindow(event: Electron.NewWindowWebContentsEvent, options: any) {
   // Open settings window as modal
   Object.assign(options, {
     x:
@@ -235,10 +200,7 @@ function createSettingsWindow(
   }
 }
 
-function createAboutWindow(
-  event: Electron.NewWindowWebContentsEvent,
-  options: any
-) {
+function createAboutWindow(event: Electron.NewWindowWebContentsEvent, options: any) {
   Object.assign(options, {
     x:
       screen.getDisplayMatching(mainWindow.getBounds()).bounds.x -
@@ -275,21 +237,12 @@ let tray = null;
 app.on('ready', () => {
   settings.defaults(DEFAULT_SETTINGS);
   // If we have a settings version mismatch, nuke the settings
-  if (
-    !settings.hasSync('version') ||
-    String(settings.getSync('version')) !== String(DEFAULT_SETTINGS.version)
-  ) {
+  if (!settings.hasSync('version') || String(settings.getSync('version')) !== version) {
     settings.resetToDefaultsSync();
 
     // Default position is based on OS; (0,0) sometimes breaks
-    settings.setSync(
-      'lofi.window.x',
-      0 - CONTAINER.HORIZONTAL / 2 + screen.getPrimaryDisplay().size.width / 2
-    );
-    settings.setSync(
-      'lofi.window.y',
-      0 - CONTAINER.VERTICAL / 2 + screen.getPrimaryDisplay().size.height / 2
-    );
+    settings.setSync('lofi.window.x', 0 - CONTAINER.HORIZONTAL / 2 + screen.getPrimaryDisplay().size.width / 2);
+    settings.setSync('lofi.window.y', 0 - CONTAINER.VERTICAL / 2 + screen.getPrimaryDisplay().size.height / 2);
   }
 
   Object.assign(windowConfig, {
@@ -307,16 +260,12 @@ app.on('ready', () => {
     createWindow();
   }
 
-  tray = new Tray(
-    nativeImage.createFromPath(__dirname + '/icon.png').resize({ height: 16 })
-  );
+  tray = new Tray(nativeImage.createFromPath(__dirname + '/icon.png').resize({ height: 16 }));
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: `lofi v${DEFAULT_SETTINGS.version}`,
+      label: `lofi v${version}`,
       enabled: false,
-      icon: nativeImage
-        .createFromPath(__dirname + '/icon.png')
-        .resize({ height: 16 }),
+      icon: nativeImage.createFromPath(__dirname + '/icon.png').resize({ height: 16 }),
     },
     { type: 'separator' },
     {
@@ -342,7 +291,7 @@ app.on('ready', () => {
     },
   ]);
   tray.setContextMenu(contextMenu);
-  tray.setToolTip(`lofi v${DEFAULT_SETTINGS.version}`);
+  tray.setToolTip(`lofi v${version}`);
 });
 
 // Quit when all windows are closed.

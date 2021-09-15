@@ -3,12 +3,7 @@ import { default as rainbow_road } from './rainbow-road';
 import { default as string_theory } from './string-theory';
 import { default as seascape } from './seascape';
 
-export const visualizations = [
-  blue_wave,
-  rainbow_road,
-  string_theory,
-  seascape,
-];
+export const visualizations = [blue_wave, rainbow_road, string_theory, seascape];
 
 export const nextVisualization = function (currentVisualization) {
   currentVisualization++;
