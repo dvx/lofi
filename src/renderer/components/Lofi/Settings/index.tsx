@@ -4,7 +4,7 @@ import TitleBar from 'frameless-titlebar';
 import './style.scss';
 
 import { visualizations } from '../../../../visualizations/visualizations.js';
-import { MACOS, DEFAULT_SETTINGS, MAX_BAR_THICKNESS } from '../../../../constants';
+import { MACOS, DEFAULT_SETTINGS, MAX_BAR_THICKNESS, LINUX } from '../../../../constants';
 import { get, set } from 'lodash';
 import { remote } from 'electron';
 
@@ -253,8 +253,7 @@ class Settings extends React.Component<any, any> {
                     disabled={MACOS}
                     value={this.state.lofi.visualization}
                     className="picker"
-                    onChange={(e) => this.setNewSettingsState('lofi.visualization', Number(e.target.value))}
-                  >
+                    onChange={(e) => this.setNewSettingsState('lofi.visualization', Number(e.target.value))}>
                     {visualizations.map((vis, idx) => (
                       <option key={idx} value={idx}>
                         {vis.name}
@@ -289,18 +288,23 @@ class Settings extends React.Component<any, any> {
               <legend>Advanced</legend>
 
               <div className="form-group">
-                <div>
-                  <input
-                    type="checkbox"
-                    name="hardware_acceleration"
-                    id="hardware_acceleration"
-                    onChange={() =>
-                      this.setNewSettingsState('hardware_acceleration', !this.state.hardware_acceleration)
-                    }
-                    checked={this.state.hardware_acceleration}
-                  />
-                  <label htmlFor="hardware_acceleration">Use hardware acceleration (requires restart)</label>
-                </div>
+                {LINUX ? (
+                  // FIXME Linux gpu support is always disabled, see cf. https://github.com/dvx/lofi/issues/149
+                  ''
+                ) : (
+                  <div>
+                    <input
+                      type="checkbox"
+                      name="hardware_acceleration"
+                      id="hardware_acceleration"
+                      onChange={() =>
+                        this.setNewSettingsState('hardware_acceleration', !this.state.hardware_acceleration)
+                      }
+                      checked={this.state.hardware_acceleration}
+                    />
+                    <label htmlFor="hardware_acceleration">Use hardware acceleration (requires restart)</label>
+                  </div>
+                )}
                 <div>
                   <input
                     type="checkbox"
@@ -324,8 +328,7 @@ class Settings extends React.Component<any, any> {
               <a
                 href="#"
                 onClick={this.commitSettings.bind(this)}
-                className={`${this.isFormValid() ? 'green-button' : 'button-disabled'}`}
-              >
+                className={`${this.isFormValid() ? 'green-button' : 'button-disabled'}`}>
                 Save
               </a>
             </div>

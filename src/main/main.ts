@@ -19,7 +19,8 @@ app.commandLine.appendSwitch('enable-transparent-visuals');
 const HARDWARE_ACCELERATION: boolean = Boolean(settings.getSync('hardware_acceleration'));
 const windowConfig: any = {};
 
-if (!HARDWARE_ACCELERATION) {
+// FIXME Patch to always disable hardware acceleration on LINUX, cf. https://github.com/dvx/lofi/issues/149
+if (!HARDWARE_ACCELERATION || LINUX) {
   app.disableHardwareAcceleration();
 }
 
