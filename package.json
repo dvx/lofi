@@ -33,7 +33,13 @@
     "mac": {
       "identity": null,
       "category": "music.player"
-    }
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "releaseType": "draft"
+      }
+    ]
   },
   "devDependencies": {
     "@types/electron-settings": "2.2.3",
@@ -46,7 +52,7 @@
     "copy-webpack-plugin": "^7.0.0",
     "css-loader": "^5.0.1",
     "electron": "^11.2.1",
-    "electron-builder": "^22.9.1",
+    "electron-builder": "^22.11.7",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^4.5.1",
     "native-ext-loader": "^2.3.0",
