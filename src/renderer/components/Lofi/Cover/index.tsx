@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { remote } from 'electron';
 import settings from 'electron-settings';
-import { MACOS, DEFAULT_SETTINGS, LOFI_SHUFFLED_PLAYLIST_NAME } from '../../../../constants';
+import { MACOS, DEFAULT_SETTINGS, LOFI_SHUFFLED_PLAYLIST_NAME, LINUX } from '../../../../constants';
 import * as path from 'path';
 import * as url from 'url';
 import _ from 'lodash';
@@ -378,6 +378,14 @@ class Cover extends React.Component<any, any> {
         });
         break;
       case VISUALIZATION_TYPE.SMALL:
+        if (LINUX) {
+          // FIXME Never go fullscreen in Linux until https://github.com/dvx/lofi/issues/149 is fixed
+          this.setState({
+            visWindow: null,
+            visualizationType: VISUALIZATION_TYPE.NONE,
+          });
+          return;
+        }
         const BrowserWindow = remote.BrowserWindow;
         const visWindow = new BrowserWindow({
           webPreferences: {
@@ -439,7 +447,8 @@ class Cover extends React.Component<any, any> {
       case VISUALIZATION_TYPE.NONE:
         return 'fa-expand';
       case VISUALIZATION_TYPE.SMALL:
-        return 'fa-expand-arrows-alt';
+        // FIXME Never go fullscreen in Linux until https://github.com/dvx/lofi/issues/149 is fixed
+        return LINUX ? 'fa-compress-arrows-alt' : 'fa-expand-arrows-alt';
       case VISUALIZATION_TYPE.BIG:
         return 'fa-compress-arrows-alt';
       default:
