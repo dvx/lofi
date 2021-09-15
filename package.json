@@ -7,7 +7,7 @@
   "scripts": {
     "install": "yarn run build",
     "config-xcode": "node-gyp configure -- -f xcode",
-    "build": "node-gyp rebuild --target=4.0.1 --arch=x64 --dist-url=https://atom.io/download/electron",
+    "build": "node-gyp rebuild --target=4.0.1 --arch=x64 --dist-url=https://atom.io/download/electron && genversion --es6 --semi version.generated.ts",
     "start": "electron ./pack/main.bundle.js",
     "dev": "yarn run development",
     "development": "rimraf pack && webpack --watch --config ./webpack.dev.js --progress --color",
@@ -48,6 +48,7 @@
     "electron": "^11.2.1",
     "electron-builder": "^22.9.1",
     "file-loader": "^6.2.0",
+    "genversion": "^3.0.1",
     "html-webpack-plugin": "^4.5.1",
     "native-ext-loader": "^2.3.0",
     "node-addon-api": "^3.1.0",

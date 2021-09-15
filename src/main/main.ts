@@ -8,6 +8,7 @@ import { MACOS, WINDOWS, LINUX, CONTAINER, SETTINGS_CONTAINER, DEFAULT_SETTINGS 
 import '../../build/Release/black-magic.node';
 import '../../icon.png';
 import '../../icon.ico';
+import { version } from '../../version.generated';
 
 // Visualizations look snappier on 60Hz refresh rate screens if we disable vsync
 app.commandLine.appendSwitch('disable-gpu-vsync');
@@ -235,7 +236,7 @@ let tray = null;
 app.on('ready', () => {
   settings.defaults(DEFAULT_SETTINGS);
   // If we have a settings version mismatch, nuke the settings
-  if (!settings.hasSync('version') || String(settings.getSync('version')) !== String(DEFAULT_SETTINGS.version)) {
+  if (!settings.hasSync('version') || String(settings.getSync('version')) !== version) {
     settings.resetToDefaultsSync();
 
     // Default position is based on OS; (0,0) sometimes breaks
@@ -261,7 +262,7 @@ app.on('ready', () => {
   tray = new Tray(nativeImage.createFromPath(__dirname + '/icon.png').resize({ height: 16 }));
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: `lofi v${DEFAULT_SETTINGS.version}`,
+      label: `lofi v${version}`,
       enabled: false,
       icon: nativeImage.createFromPath(__dirname + '/icon.png').resize({ height: 16 }),
     },
@@ -289,7 +290,7 @@ app.on('ready', () => {
     },
   ]);
   tray.setContextMenu(contextMenu);
-  tray.setToolTip(`lofi v${DEFAULT_SETTINGS.version}`);
+  tray.setToolTip(`lofi v${version}`);
 });
 
 // Quit when all windows are closed.
