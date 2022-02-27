@@ -1,55 +1,52 @@
-import * as os from 'os';
-import { version } from '../version.generated';
+import { platform } from 'os';
 
 export const SPOTIFY_API_URL = 'https://api.spotify.com/v1';
 
-export const WINDOWS = os.platform() === 'win32';
-export const LINUX = os.platform() === 'linux';
-export const MACOS = os.platform() === 'darwin';
+export const WINDOWS = platform() === 'win32';
+export const LINUX = platform() === 'linux';
+export const MACOS = platform() === 'darwin';
 
-export const HEIGHT = 150;
-export const WIDTH = 150;
-
-export const MIN_SIDE_LENGTH = 150;
-export const MAX_SIDE_LENGTH = 300;
+export const MIN_SIDE_LENGTH = 115;
+export const MAX_SIDE_LENGTH = 1440;
 export const MAX_BAR_THICKNESS = 20;
+export const TRACK_INFO_GAP = { X: 10, Y: 10 };
 
-export const LOFI_SHUFFLED_PLAYLIST_NAME = 'Shuffled by Lofi';
+export const MIN_SKIP_SONG_DELAY = 5;
+export const MAX_SKIP_SONG_DELAY = 60;
 
-// Native shadows are buggy, so just make the main (transparent) window big enough so it can hold the shadow as well
-// On Mojave, we want to do away with the ugly white bar on top, so we simply move up the window (way) past the top screen edge
-// See: https://github.com/electron/electron/issues/13164
-// NOTE: This only works because we're using some black magic to return our own ConstrainFrameRect
-export const CONTAINER = {
-  VERTICAL: 800,
-  HORIZONTAL: 800,
-};
+export enum WindowTitle {
+  About = 'About Lofi',
+  FullscreenViz = 'fullscreen-visualization',
+  Settings = 'Lofi Settings',
+  TrackInfo = 'track-info',
+}
 
-export const SETTINGS_CONTAINER = {
-  VERTICAL: 500,
-  HORIZONTAL: 500,
-};
-export const DEFAULT_SETTINGS = {
-  version: version,
-  debug: false,
-  hardware_acceleration: true,
-  lofi: {
-    visualization: 0,
-    window: {
-      always_on_top: true,
-      show_in_taskbar: true,
-      x: 0,
-      y: 0,
-      hide: false,
-      metadata: false,
-      scale: 1,
-      side: 150,
-      show_progress: false,
-      bar_thickness: 1,
-    },
-    audio: {
-      volume_increment: 10,
-      display_volume_change: false,
-    },
-  },
-};
+export enum WindowName {
+  About = 'about',
+  Auth = 'auth',
+  FullscreenViz = 'fullscreen-visualization',
+  Settings = 'settings',
+  TrackInfo = 'track-info',
+}
+
+export enum IpcMessage {
+  CloseApp = 'closeApp',
+  OpenLink = 'openLink',
+  ScreenSize = 'screenSize',
+  SettingsChanged = 'settingsChanged',
+  ShowAbout = 'showAbout',
+  ShowFullscreenVizualizer = 'showFullscreenVizualizer',
+  ShowSettings = 'showSettings',
+  SideChanged = 'sideChanged',
+  WindowMoved = 'windowMoved',
+  WindowMoving = 'windowMoving',
+  WindowReady = 'windowReady',
+  WindowResized = 'windowResized',
+}
+
+export enum ApplicationUrl {
+  Home = 'https://www.lofi.rocks/',
+  Help = 'https://www.lofi.rocks/help',
+  Discord = 'https://discord.gg/YuH9UJk',
+  GitHub = 'https://github.com/dvx/lofi',
+}
