@@ -51,7 +51,7 @@
     "copy-pkg-json-webpack-plugin": "^0.0.40",
     "copy-webpack-plugin": "^7.0.0",
     "css-loader": "^5.0.1",
-    "electron": "^11.2.1",
+    "electron": "^18.3.7",
     "electron-builder": "^22.11.7",
     "file-loader": "^6.2.0",
     "genversion": "^3.0.1",
