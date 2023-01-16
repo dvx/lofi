@@ -39,31 +39,58 @@ class Controls extends React.Component<any, any> {
     this.props.parent.togglePlayPause();
   }
 
-  async forward() {
+  async forward(e: React.MouseEvent) {
     if (this.props.parent.state.spotifyError) {
       return;
     }
 
-    SpotifyApiInstance.fetch('/me/player/next', {
-      method: 'POST',
-    }).then(() => {
-      // Spotify API doesn't update fast enough sometimes, so give it some leeway
-      setTimeout(this.props.parent.listeningTo.bind(this), 2000);
-    });
+    if (e.ctrlKey) {
+      SpotifyApiInstance.fetch(`/me/player`, {
+        method: 'GET',
+      }).then((body) => {
+        const currentProgress = Number(body.progress_ms);
+        SpotifyApiInstance.fetch(`/me/player/seek?position_ms=${currentProgress + 15000}`, {
+          method: 'PUT',
+        }).then(() => {
+          // Spotify API doesn't update fast enough sometimes, so give it some leeway
+          setTimeout(this.props.parent.listeningTo.bind(this), 2000);
+        });
+      });
+    } else {
+      SpotifyApiInstance.fetch('/me/player/next', {
+        method: 'POST',
+      }).then(() => {
+        // Spotify API doesn't update fast enough sometimes, so give it some leeway
+        setTimeout(this.props.parent.listeningTo.bind(this), 2000);
+      });
+    }
     this.props.parent.setPlaying(true);
   }
 
-  async backward() {
+  async backward(e: React.MouseEvent) {
     if (this.props.parent.state.spotifyError) {
       return;
     }
-
-    SpotifyApiInstance.fetch('/me/player/previous', {
-      method: 'POST',
-    }).then(() => {
-      // Spotify API doesn't update fast enough sometimes, so give it some leeway
-      setTimeout(this.props.parent.listeningTo.bind(this), 2000);
-    });
+    if (e.ctrlKey) {
+      SpotifyApiInstance.fetch(`/me/player`, {
+        method: 'GET',
+      }).then((body) => {
+        const currentProgress = Number(body.progress_ms);
+        SpotifyApiInstance.fetch(`/me/player/seek?position_ms=${currentProgress - 15000}`, {
+          method: 'PUT',
+        }).then(() => {
+          // Spotify API doesn't update fast enough sometimes, so give it some leeway
+          setTimeout(this.props.parent.listeningTo.bind(this), 2000);
+        });
+      });
+    } else {
+      SpotifyApiInstance.fetch('/me/player/previous', {
+        method: 'POST',
+      }).then(() => {
+        // Spotify API doesn't update fast enough sometimes, so give it some leeway
+        setTimeout(this.props.parent.listeningTo.bind(this), 2000);
+      });
+    }
     this.props.parent.setPlaying(true);
   }
 
