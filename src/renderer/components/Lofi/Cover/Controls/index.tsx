@@ -3,6 +3,18 @@ import * as settings from 'electron-settings';
 import './style.scss';
 import { SpotifyApiInstance } from '../../../../../api/spotify-api';
 
+const moveSongProgress = async (isForward: boolean, distInSec: number) => {
+  const distinMs = distInSec * 1000;
+  const currentlyPlaying = await SpotifyApiInstance.fetch(`/me/player`, {
+    method: 'GET',
+  });
+  const currentProgress = Number(currentlyPlaying.progress_ms);
+  const newProgress = isForward ? currentProgress + distinMs : currentProgress - distinMs;
+  await SpotifyApiInstance.fetch(`/me/player/seek?position_ms=${newProgress}`, {
+    method: 'PUT',
+  });
+};
+
 class Controls extends React.Component<any, any> {
   private accountType: string;
   constructor(props: any) {
@@ -39,31 +51,35 @@ class Controls extends React.Component<any, any> {
     this.props.parent.togglePlayPause();
   }
 
-  async forward() {
+  async forward({ ctrlKey }: React.MouseEvent) {
     if (this.props.parent.state.spotifyError) {
       return;
     }
 
-    SpotifyApiInstance.fetch('/me/player/next', {
-      method: 'POST',
-    }).then(() => {
-      // Spotify API doesn't update fast enough sometimes, so give it some leeway
-      setTimeout(this.props.parent.listeningTo.bind(this), 2000);
-    });
+    if (ctrlKey) {
+      moveSongProgress(true, 15);
+    } else {
+      await SpotifyApiInstance.fetch('/me/player/next', {
+        method: 'POST',
+      });
+    }
+
+    setTimeout(this.props.parent.listeningTo.bind(this), 2000);
     this.props.parent.setPlaying(true);
   }
 
-  async backward() {
+  async backward({ ctrlKey }: React.MouseEvent) {
     if (this.props.parent.state.spotifyError) {
       return;
     }
-
-    SpotifyApiInstance.fetch('/me/player/previous', {
-      method: 'POST',
-    }).then(() => {
-      // Spotify API doesn't update fast enough sometimes, so give it some leeway
-      setTimeout(this.props.parent.listeningTo.bind(this), 2000);
-    });
+    if (ctrlKey) {
+      moveSongProgress(false, 15);
+    } else {
+      await SpotifyApiInstance.fetch('/me/player/previous', {
+        method: 'POST',
+      });
+    }
+    setTimeout(this.props.parent.listeningTo.bind(this), 2000);
     this.props.parent.setPlaying(true);
   }
 
