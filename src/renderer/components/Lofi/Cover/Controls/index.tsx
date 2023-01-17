@@ -44,26 +44,32 @@ class Controls extends React.Component<any, any> {
       return;
     }
 
-    if (e.ctrlKey) {
-      SpotifyApiInstance.fetch(`/me/player`, {
+   const jumpSkip = async (isForward: boolean) => {
+        const currentlyPlaying = await SpotifyApiInstance.fetch(`/me/player`, {
         method: 'GET',
-      }).then((body) => {
-        const currentProgress = Number(body.progress_ms);
-        SpotifyApiInstance.fetch(`/me/player/seek?position_ms=${currentProgress + 15000}`, {
+      })
+     const currentProgress = Number(currentlyPlaying.progress_ms);
+     const newProgress = isForward ? currentProgress + 15000 : currentProgress - 15000
+     await SpotifyApiInstance.fetch(`/me/player/seek?position_ms=${newProgress}`, {
           method: 'PUT',
-        }).then(() => {
-          // Spotify API doesn't update fast enough sometimes, so give it some leeway
-          setTimeout(this.props.parent.listeningTo.bind(this), 2000);
         });
-      });
-    } else {
-      SpotifyApiInstance.fetch('/me/player/next', {
-        method: 'POST',
-      }).then(() => {
-        // Spotify API doesn't update fast enough sometimes, so give it some leeway
-        setTimeout(this.props.parent.listeningTo.bind(this), 2000);
-      });
+   }
+   
+    async forward({ctrlKey}: React.MouseEvent) {
+    if (this.props.parent.state.spotifyError) {
+      return;
     }
+   
+    if (ctrlKey) {
+      skipDelay(true)
+    } else {
+      await SpotifyApiInstance.fetch('/me/player/next', {
+        method: 'POST',
+      })
+    }
+
+    // Spotify API doesn't update fast enough sometimes, so give it some leeway
+    setTimeout(this.props.parent.listeningTo.bind(this), 2000);
     this.props.parent.setPlaying(true);
   }
 
