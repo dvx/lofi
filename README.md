@@ -5,7 +5,7 @@
 <h1 align="center"><strong>Lofi: a tiny Spotify player</strong></h1>
 
 <p align="center">
-  <a target="_blank" href="https://www.lofi.rocks">Website</a> • <a target="_blank" href="https://www.lofi.rocks/help">FAQ</a> 
+  <a target="_blank" href="https://www.lofi.rocks">Website</a> • <a target="_blank" href="https://www.lofi.rocks/help">FAQ</a> • <a target="_blank" href="https://discord.gg/YuH9UJk">Discord</a>
 </p>
 
 <table width="100%">
@@ -63,12 +63,6 @@ To **develop**, open up a Terminal and type:
 $ yarn run development
 $ yarn run start
 ```
-
-## `node-sass` compatibility
-
-You might need to change the `node-sass` version inside `package.json` to be compliant with your `nodejs` version or the `node-gyp` build might fail.
-
-Please refer to the [Node version support policy matrix](https://github.com/sass/node-sass) on the `node-sass` web site.
 
 # Bugs, issues, and contributing
 

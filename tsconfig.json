@@ -11,8 +11,8 @@
     "allowUnusedLabels": false,
     "noUnusedLocals": true,
     "sourceMap": true,
-    "target": "es2017",
-    "types": ["node", "lodash", "express", "electron", "electron-settings"]
+    "target": "ES2021",
+    "types": ["node", "lodash", "electron"]
   },
   "exclude": ["node_modules"]
 }

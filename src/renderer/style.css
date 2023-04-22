@@ -1,0 +1,67 @@
+@import url('./static/inter-ui/inter-ui.css');
+@import url('./static/fontawesome/css/all.min.css');
+
+html,
+body {
+  font-family: 'Inter UI', sans-serif;
+  height: 100%;
+  width: 100%;
+  -webkit-app-region: none;
+}
+
+body {
+  user-select: none;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.draggable-window {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-app-region: drag;
+}
+
+.full {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.controls {
+  height: 100%;
+  float: left;
+  width: 50%;
+}
+
+.unstyled-button {
+  color: white;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.app {
+  margin: auto;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+}
+
+.centered {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.transparent {
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+}

@@ -1,9 +1,17 @@
+import './style.css';
+
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-// Import the styles here to process them with webpack
-import './style.scss';
+import { App } from './app';
+import { CurrentlyPlayingProvider } from './contexts/currently-playing.context';
+import { SettingsProvider } from './contexts/settings.context';
 
-import Lofi from './components/Lofi';
-
-ReactDOM.render(<Lofi />, document.getElementById('app'));
+ReactDOM.render(
+  <SettingsProvider>
+    <CurrentlyPlayingProvider>
+      <App />
+    </CurrentlyPlayingProvider>
+  </SettingsProvider>,
+  document.getElementById('app')
+);
