@@ -49,7 +49,7 @@ export const DEFAULT_SETTINGS: Settings = {
   isAlwaysShowTrackInfo: false,
   isAlwaysShowSongProgress: false,
   barThickness: 2,
-  barColor: '#00FF00',
+  barColor: '#74c999',
   volumeIncrement: 5,
   skipSongDelay: 15,
 };
