@@ -1,60 +1,67 @@
 import React, { FunctionComponent } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-import { MAX_BAR_THICKNESS } from '../../../constants';
+import { MAX_BAR_THICKNESS, MAX_FONT_SIZE, MIN_FONT_SIZE } from '../../../constants';
 import { DEFAULT_SETTINGS, Settings } from '../../../models/settings';
 import {
   ColorInput,
   FieldSet,
   FormGroup,
-  Input,
   Label,
   Legend,
-  RangeInput,
+  NoBorderFieldSet,
   RangeValue,
   Row,
-} from '../../components/styled/form.styled';
+  Slider,
+  StyledCheckbox,
+} from '../../components';
+import { INPUT_COLOR, StyledTextInput } from '../../components/mantine.styled';
 
 export const WindowSettings: FunctionComponent = () => {
   const { register, watch } = useFormContext<Settings>();
+
   const barThicknessWatch = watch('barThickness');
+  const trackInfoFontSizeWatch = watch('trackInfoFontSize');
+  const trackInfoBackgroundOpacityWatch = watch('trackInfoBackgroundOpacity');
 
   return (
-    <FieldSet>
-      <Legend>Window</Legend>
-      <FormGroup>
+    <FormGroup>
+      <NoBorderFieldSet>
         <Row>
-          <Label>
-            <Input type="checkbox" {...register('isAlwaysOnTop')} />
-            Always on top
-          </Label>
+          <StyledCheckbox color={INPUT_COLOR} label="Always on top" size="xs" {...register('isAlwaysOnTop')} />
         </Row>
 
         <Row>
-          <Label>
-            <Input type="checkbox" {...register('isVisibleInTaskbar')} />
-            Display in the taskbar
-          </Label>
+          <StyledCheckbox
+            color={INPUT_COLOR}
+            label="Display in taskbar"
+            size="xs"
+            {...register('isVisibleInTaskbar')}
+          />
         </Row>
 
         <Row>
-          <Label>
-            <Input type="checkbox" {...register('isAlwaysShowTrackInfo')} />
-            Always show song and artist information
-          </Label>
+          <StyledCheckbox
+            color={INPUT_COLOR}
+            label="Always show song information"
+            size="xs"
+            {...register('isAlwaysShowTrackInfo')}
+          />
         </Row>
 
         <Row>
-          <Label>
-            <Input type="checkbox" {...register('isAlwaysShowSongProgress')} />
-            Always show song progress
-          </Label>
+          <StyledCheckbox
+            color={INPUT_COLOR}
+            label="Always show song progress"
+            size="xs"
+            {...register('isAlwaysShowSongProgress')}
+          />
         </Row>
 
         <Row>
           <Label>
             Progress bar thickness
-            <RangeInput
+            <Slider
               type="range"
               min={1}
               max={MAX_BAR_THICKNESS}
@@ -72,7 +79,62 @@ export const WindowSettings: FunctionComponent = () => {
             <ColorInput {...register('barColor')} />
           </Label>
         </Row>
-      </FormGroup>
-    </FieldSet>
+      </NoBorderFieldSet>
+
+      <FieldSet>
+        <Legend>TRACK INFO</Legend>
+
+        <Row>
+          <Label>
+            Font family
+            <StyledTextInput size="xs" {...register('font')} />
+          </Label>
+        </Row>
+
+        <Row>
+          <Label>
+            Font size
+            <Slider
+              type="range"
+              min={MIN_FONT_SIZE}
+              max={MAX_FONT_SIZE}
+              step={1}
+              defaultValue={DEFAULT_SETTINGS.trackInfoFontSize}
+              {...register('trackInfoFontSize', { required: true, valueAsNumber: true })}
+            />
+            <RangeValue>{trackInfoFontSizeWatch}</RangeValue>
+          </Label>
+        </Row>
+
+        <Row>
+          <Label>
+            Font color
+            <ColorInput {...register('trackInfoColor')} />
+          </Label>
+        </Row>
+
+        <Row>
+          <Label>
+            Background color
+            <ColorInput {...register('trackInfoBackgroundColor')} />
+          </Label>
+        </Row>
+
+        <Row>
+          <Label>
+            Background opacity
+            <Slider
+              type="range"
+              min={0}
+              max={100}
+              step={1}
+              defaultValue={DEFAULT_SETTINGS.trackInfoBackgroundOpacity}
+              {...register('trackInfoBackgroundOpacity', { required: true, valueAsNumber: true })}
+            />
+            <RangeValue>{trackInfoBackgroundOpacityWatch}</RangeValue>
+          </Label>
+        </Row>
+      </FieldSet>
+    </FormGroup>
   );
 };

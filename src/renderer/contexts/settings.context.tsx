@@ -24,7 +24,7 @@ export const SettingsProvider: FunctionComponent = ({ children }) => {
       }),
     []
   );
-  const [state, dispatch] = useReducer(useSettingsReducer, store.get('settings'));
+  const [state, dispatch] = useReducer(useSettingsReducer, { ...DEFAULT_SETTINGS, ...store.get('settings') });
 
   useEffect(() => {
     store.set('settings', state || DEFAULT_SETTINGS);

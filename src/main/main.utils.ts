@@ -21,7 +21,7 @@ export const getCommonWindowOptions = (): BrowserWindowConstructorOptions => ({
   roundedCorners: false,
   minimizable: false,
   maximizable: false,
-  resizable: false,
+  resizable: true,
   alwaysOnTop: true,
   fullscreenable: false,
   center: true,
@@ -29,8 +29,10 @@ export const getCommonWindowOptions = (): BrowserWindowConstructorOptions => ({
 
 export const getSettingsWindowOptions = (): BrowserWindowConstructorOptions => ({
   ...getCommonWindowOptions(),
-  height: 640,
-  width: 440,
+  height: 560,
+  minHeight: 560,
+  width: 540,
+  minWidth: 540,
   title: WindowTitle.Settings,
 });
 

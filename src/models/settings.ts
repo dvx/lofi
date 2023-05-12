@@ -28,6 +28,11 @@ export interface Settings {
   size: number;
   volumeIncrement: number;
   skipSongDelay: number;
+  font: string;
+  trackInfoFontSize: number;
+  trackInfoColor: string;
+  trackInfoBackgroundColor: string;
+  trackInfoBackgroundOpacity: number;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -49,7 +54,12 @@ export const DEFAULT_SETTINGS: Settings = {
   isAlwaysShowTrackInfo: false,
   isAlwaysShowSongProgress: false,
   barThickness: 2,
-  barColor: '#74c999',
+  barColor: '#74C999',
   volumeIncrement: 5,
   skipSongDelay: 15,
+  font: 'Inter UI',
+  trackInfoFontSize: 14,
+  trackInfoColor: '#FFFFFF',
+  trackInfoBackgroundColor: '#000000',
+  trackInfoBackgroundOpacity: 50,
 };

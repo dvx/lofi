@@ -1,10 +1,10 @@
+import styled from '@emotion/styled';
+import { Tabs } from '@mantine/core';
 import React, { FunctionComponent, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import styled from 'styled-components';
 
 import { DEFAULT_SETTINGS, Settings } from '../../../models/settings';
-import { Input } from '../../components/styled/form.styled';
-import { StyledWindow } from '../../components/styled/window.styled';
+import { Input, StyledTabs, StyledWindow } from '../../components';
 import { DisplayData } from '../../models';
 import { WindowHeader } from '../window-header';
 import { AccountSettings } from './account-settings';
@@ -12,6 +12,13 @@ import { AdvancedSettings } from './advanced-settings';
 import { AudioSettings } from './audio-settings';
 import { VisualizationSettings } from './visualization-settings';
 import { WindowSettings } from './window-settings';
+
+enum Tab {
+  Advanced = 'Advanced',
+  Audio = 'Audio',
+  Visualization = 'Visualization',
+  Window = 'Window',
+}
 
 const SettingsWindowWrapper = styled(StyledWindow)`
   display: flex;
@@ -27,7 +34,6 @@ const Form = styled.form`
 
 const ButtonsGroup = styled.div`
   display: flex;
-  margin-top: 2rem;
   width: 100%;
 `;
 
@@ -36,6 +42,13 @@ const SaveCancelButtonsWrapper = styled.div`
   justify-content: flex-end;
   width: 100%;
   gap: 0.25rem;
+`;
+
+const TabsWrapper = styled.div`
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: stretch;
 `;
 
 const getDefaultValues = (initialValues: Settings, displays: DisplayData[]): Settings => {
@@ -85,17 +98,44 @@ export const SettingsWindow: FunctionComponent<Props> = ({ initialValues, displa
       <WindowHeader title="Settings" onClose={onClose} />
       <Form onSubmit={handleSubmit(onSubmit)}>
         <FormProvider {...methods}>
-          <WindowSettings />
+          <TabsWrapper>
+            <StyledTabs defaultValue={Tab.Window} color="gray" variant="default" radius="md">
+              <Tabs.List>
+                <Tabs.Tab value={Tab.Window} icon={<i className="fa-solid fa-window-maximize" />}>
+                  {Tab.Window}
+                </Tabs.Tab>
+                <Tabs.Tab value={Tab.Visualization} icon={<i className="fa-solid fa-chart-simple" />}>
+                  {Tab.Visualization}
+                </Tabs.Tab>
+                <Tabs.Tab value={Tab.Audio} icon={<i className="fa-solid fa-headphones" />}>
+                  {Tab.Audio}
+                </Tabs.Tab>
+                <Tabs.Tab value={Tab.Advanced} icon={<i className="fa-solid fa-gears" />}>
+                  {Tab.Advanced}
+                </Tabs.Tab>
+              </Tabs.List>
 
-          <VisualizationSettings
-            displays={displays}
-            defaultVisualizationId={initialValues.visualizationId}
-            defaultVisualizationScreenId={initialValues.visualizationScreenId}
-          />
+              <Tabs.Panel value={Tab.Window}>
+                <WindowSettings />
+              </Tabs.Panel>
 
-          <AudioSettings />
+              <Tabs.Panel value={Tab.Visualization}>
+                <VisualizationSettings
+                  displays={displays}
+                  defaultVisualizationId={initialValues.visualizationId}
+                  defaultVisualizationScreenId={initialValues.visualizationScreenId}
+                />
+              </Tabs.Panel>
 
-          <AdvancedSettings />
+              <Tabs.Panel value={Tab.Audio}>
+                <AudioSettings />
+              </Tabs.Panel>
+
+              <Tabs.Panel value={Tab.Advanced}>
+                <AdvancedSettings />
+              </Tabs.Panel>
+            </StyledTabs>
+          </TabsWrapper>
 
           <AccountSettings onLogout={onLogout} />
 

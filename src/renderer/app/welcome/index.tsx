@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 
 import { VisualizationType } from '../../../models/settings';
-import { LoginButton } from '../../components/login-button';
+import { LoginButton } from '../../components';
 import wavesImage from '../../static/waves.gif';
 import Menu from '../cover/menu';
 

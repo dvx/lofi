@@ -1,5 +1,6 @@
 import './style.css';
 
+import { MantineProvider } from '@mantine/core';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
@@ -10,7 +11,9 @@ import { SettingsProvider } from './contexts/settings.context';
 ReactDOM.render(
   <SettingsProvider>
     <CurrentlyPlayingProvider>
-      <App />
+      <MantineProvider withNormalizeCSS>
+        <App />
+      </MantineProvider>
     </CurrentlyPlayingProvider>
   </SettingsProvider>,
   document.getElementById('app')

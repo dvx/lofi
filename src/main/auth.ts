@@ -161,7 +161,7 @@ const handleServerResponse = async (request: http.IncomingMessage, response: htt
     }
 
     if (queryState !== codeState) {
-      console.error('Invalid state');
+      console.error('Invalid state', JSON.stringify(urlObj));
       response.end('Lofi authorization error: invalid state, you may close this window and retry.');
       return;
     }
