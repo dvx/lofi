@@ -89,18 +89,10 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
     }
   }, [dispatch]);
 
-  useEffect(() => {
-    if (state.isPlaying && state.id !== currentSongId) {
-      setCurrentSongId(state.id);
-      console.log(`New song '${songTitle}' by '${artist}.`);
-    }
-  }, [artist, currentSongId, songTitle, state.id, state.isPlaying]);
-
   const refreshTrackLiked = useCallback(async (): Promise<void> => {
     if (state.type === CurrentlyPlayingType.Track) {
       try {
         const isTrackLiked = await SpotifyApiInstance.isTrackLiked(state.id);
-
         dispatch({ type: CurrentlyPlayingActions.SetTrackLiked, payload: isTrackLiked });
         await handlePlaybackChanged();
       } catch (error) {
@@ -109,6 +101,16 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
       }
     }
   }, [dispatch, handlePlaybackChanged, state.id, state.type]);
+
+  useEffect(() => {
+    (async () => {
+      if (state.isPlaying && state.id !== currentSongId) {
+        setCurrentSongId(state.id);
+        console.log(`New song '${songTitle}' by '${artist}.`);
+        await refreshTrackLiked();
+      }
+    })();
+  }, [artist, currentSongId, refreshTrackLiked, songTitle, state.id, state.isPlaying]);
 
   const keepAlive = useCallback(async (): Promise<void> => {
     if (state.isPlaying || state.userProfile?.accountType !== AccountType.Premium) {
@@ -172,23 +174,31 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
 
   useEffect(() => {
     const listeningToIntervalId = setInterval(handlePlaybackChanged, ONE_SECOND);
-    const refreshTrackLikedIntervalId = setInterval(refreshTrackLiked, 2 * ONE_SECOND);
-    const keepAliveIntervalId = setInterval(keepAlive, ONE_MINUTE);
 
     return () => {
       if (listeningToIntervalId) {
         clearInterval(listeningToIntervalId);
       }
+    };
+  }, [handlePlaybackChanged]);
 
+  useEffect(() => {
+    const refreshTrackLikedIntervalId = setInterval(refreshTrackLiked, 2 * ONE_SECOND);
+    return () => {
       if (refreshTrackLikedIntervalId) {
         clearInterval(refreshTrackLikedIntervalId);
       }
+    };
+  }, [refreshTrackLiked]);
 
+  useEffect(() => {
+    const keepAliveIntervalId = setInterval(keepAlive, ONE_MINUTE);
+    return () => {
       if (keepAliveIntervalId) {
         clearInterval(keepAliveIntervalId);
       }
     };
-  }, [keepAlive, handlePlaybackChanged, refreshTrackLiked]);
+  }, [keepAlive]);
 
   const coverUrl = useMemo(() => state.cover, [state.cover]);
 
