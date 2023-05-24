@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { version } from '../../../../version.generated';
 import { ApplicationUrl } from '../../../constants';
-import { StyledWindow } from '../../components/styled/window.styled';
+import { StyledWindow } from '../../components';
 import { WindowHeader } from '../window-header';
 import { AboutLink } from './about-link';
 

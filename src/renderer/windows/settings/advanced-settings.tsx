@@ -2,27 +2,26 @@ import React, { FunctionComponent } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { Settings } from '../../../models/settings';
-import { FieldSet, FormGroup, Input, Label, Legend, Row } from '../../components/styled/form.styled';
+import { FormGroup, NoBorderFieldSet, Row, StyledCheckbox } from '../../components';
+import { INPUT_COLOR } from '../../components/mantine.styled';
 
 export const AdvancedSettings: FunctionComponent = () => {
   const { register } = useFormContext<Settings>();
   return (
-    <FieldSet>
-      <Legend>Advanced</Legend>
+    <NoBorderFieldSet>
       <FormGroup>
         <Row>
-          <Label>
-            <Input type="checkbox" {...register('isUsingHardwareAcceleration')} />
-            Use hardware acceleration (requires restart)
-          </Label>
+          <StyledCheckbox
+            color={INPUT_COLOR}
+            label="Use hardware acceleration (requires restart)"
+            size="xs"
+            {...register('isUsingHardwareAcceleration')}
+          />
         </Row>
         <Row>
-          <Label>
-            <Input type="checkbox" {...register('isDebug')} />
-            Debug mode
-          </Label>
+          <StyledCheckbox color={INPUT_COLOR} label="Enable dev tools" size="xs" {...register('isDebug')} />
         </Row>
       </FormGroup>
-    </FieldSet>
+    </NoBorderFieldSet>
   );
 };

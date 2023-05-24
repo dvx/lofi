@@ -7,7 +7,7 @@ import styled, { css } from 'styled-components';
 import { WindowName } from '../../../constants';
 import { Settings, VisualizationType } from '../../../models/settings';
 import { AccountType, SpotifyApiInstance } from '../../api/spotify-api';
-import { WindowPortal } from '../../components/window-portal';
+import { WindowPortal } from '../../components';
 import { useCurrentlyPlaying } from '../../contexts/currently-playing.context';
 import { CurrentlyPlayingActions, CurrentlyPlayingType } from '../../reducers/currently-playing.reducer';
 import { TrackInfo } from '../../windows/track-info';

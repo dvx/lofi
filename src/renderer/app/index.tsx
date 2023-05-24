@@ -8,7 +8,7 @@ import { AuthData, refreshAccessToken, setTokenRetrievedCallback } from '../../m
 import { DEFAULT_SETTINGS, Settings, VisualizationType } from '../../models/settings';
 import { visualizations } from '../../visualizations';
 import { AccountType, SpotifyApiInstance } from '../api/spotify-api';
-import { WindowPortal } from '../components/window-portal';
+import { WindowPortal } from '../components';
 import { useCurrentlyPlaying } from '../contexts/currently-playing.context';
 import { useSettings } from '../contexts/settings.context';
 import { DisplayData } from '../models';
@@ -90,18 +90,22 @@ export const App: FunctionComponent = () => {
 
       try {
         const userProfile = await SpotifyApiInstance.updateTokens(data);
-        if (userProfile?.accountType !== AccountType.Premium) {
-          const playbackDisabledMessage = 'Account is not premium, playback controls disabled.';
-          console.warn(playbackDisabledMessage);
-          setMessage(playbackDisabledMessage);
+        if (userProfile) {
+          if (userProfile?.accountType !== AccountType.Premium) {
+            const playbackDisabledMessage = 'Account is not premium, playback controls disabled.';
+            console.warn(playbackDisabledMessage);
+            setMessage(playbackDisabledMessage);
+          }
+
+          currentlyPlayingDispatch({
+            type: CurrentlyPlayingActions.SetUserProfile,
+            payload: userProfile,
+          });
+
+          console.log(`User '${userProfile.name}' successfully authenticated.`);
+        } else {
+          console.error('User not authenticated.');
         }
-
-        currentlyPlayingDispatch({
-          type: CurrentlyPlayingActions.SetUserProfile,
-          payload: userProfile,
-        });
-
-        console.log(`User '${userProfile.name}' successfully authenticated.`);
       } catch (error) {
         console.error(error);
       }

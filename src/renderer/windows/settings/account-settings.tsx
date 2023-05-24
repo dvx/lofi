@@ -2,21 +2,21 @@ import { capitalize } from 'lodash';
 import React, { FunctionComponent, useCallback } from 'react';
 import styled from 'styled-components';
 
-import { LoginButton } from '../../components/login-button';
-import { FieldSet, Legend, Row } from '../../components/styled/form.styled';
+import { Row } from '../../components';
 import { useCurrentlyPlaying } from '../../contexts/currently-playing.context';
 import { useHover } from '../../hooks/use-hover';
 import { CurrentlyPlayingActions } from '../../reducers/currently-playing.reducer';
 
 const Image = styled.img`
-  height: 3rem;
-  width: 3rem;
+  max-width: 48px;
+  max-height: 48px;
   border-radius: 50%;
   margin-right: 0.5rem;
 `;
 
 const InfoRow = styled(Row)`
   align-items: center;
+  padding: 0.5rem 0;
 `;
 
 const InfoWrapper = styled.div`
@@ -72,37 +72,32 @@ export const AccountSettings: FunctionComponent<Props> = ({ onLogout }) => {
   }, [dispatch, onLogout]);
 
   return (
-    <FieldSet>
-      <Legend>Account</Legend>
-      <InfoRow>
-        {userProfile ? (
-          <>
-            {userProfile.avatar ? (
-              <Image src={userProfile.avatar} alt="" />
-            ) : (
-              <NoAvatar className="fa-solid fa-user-ninja" />
-            )}
-            <InfoWrapper>
-              <UserInformation>
-                <UserName>
-                  {userProfile.name} ({userProfile.email})
-                </UserName>
-                <LogoutButton
-                  type="button"
-                  className="unstyled-button"
-                  onMouseEnter={onMouseEnter}
-                  onMouseLeave={onMouseLeave}
-                  onClick={handleLogoutClick}>
-                  {isHovering ? <i className="fa-solid fa-link-slash" /> : <i className="fa-solid fa-link" />}
-                </LogoutButton>
-              </UserInformation>
-              <div>{capitalize(userProfile.product)} account</div>
-            </InfoWrapper>
-          </>
-        ) : (
-          <LoginButton />
-        )}
-      </InfoRow>
-    </FieldSet>
+    <InfoRow>
+      {userProfile && (
+        <>
+          {userProfile.avatar ? (
+            <Image src={userProfile.avatar} alt="Spotify account logo" height={48} width={48} />
+          ) : (
+            <NoAvatar className="fa-solid fa-user-ninja" />
+          )}
+          <InfoWrapper>
+            <UserInformation>
+              <UserName>
+                {userProfile.name} ({userProfile.email})
+              </UserName>
+              <LogoutButton
+                type="button"
+                className="unstyled-button"
+                onMouseEnter={onMouseEnter}
+                onMouseLeave={onMouseLeave}
+                onClick={handleLogoutClick}>
+                {isHovering ? <i className="fa-solid fa-link-slash" /> : <i className="fa-solid fa-link" />}
+              </LogoutButton>
+            </UserInformation>
+            <div>{capitalize(userProfile.product)} account</div>
+          </InfoWrapper>
+        </>
+      )}
+    </InfoRow>
   );
 };

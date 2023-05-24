@@ -3,16 +3,7 @@ import { useFormContext } from 'react-hook-form';
 
 import { DEFAULT_SETTINGS, Settings } from '../../../models/settings';
 import { visualizations } from '../../../visualizations';
-import {
-  FieldSet,
-  FormGroup,
-  Label,
-  Legend,
-  RangeInput,
-  RangeValue,
-  Row,
-  Select,
-} from '../../components/styled/form.styled';
+import { FormGroup, Label, NoBorderFieldSet, RangeValue, Row, Select, Slider } from '../../components';
 import { DisplayData } from '../../models';
 
 interface Props {
@@ -29,8 +20,7 @@ export const VisualizationSettings: FunctionComponent<Props> = ({
   const { register, watch } = useFormContext<Settings>();
   const opacityWatch = watch('visualizerOpacity');
   return (
-    <FieldSet>
-      <Legend>Visualization</Legend>
+    <NoBorderFieldSet>
       <FormGroup>
         <Row>
           Display on
@@ -57,7 +47,7 @@ export const VisualizationSettings: FunctionComponent<Props> = ({
         <Row>
           <Label>
             Opacity
-            <RangeInput
+            <Slider
               type="range"
               min={0}
               max={100}
@@ -69,6 +59,6 @@ export const VisualizationSettings: FunctionComponent<Props> = ({
           </Label>
         </Row>
       </FormGroup>
-    </FieldSet>
+    </NoBorderFieldSet>
   );
 };

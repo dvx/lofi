@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 
-import { CloseButton } from '../buttons/close-button';
+import { CloseButton } from './close-button';
 
 const TitleBarWrapper = styled.div`
   width: 100%;

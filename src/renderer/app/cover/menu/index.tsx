@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { IpcMessage, WINDOWS } from '../../../../constants';
 import { VisualizationType } from '../../../../models/settings';
-import { CloseButton } from '../../../components/buttons/close-button';
+import { CloseButton } from '../../../components';
 
 const MenuList = styled.ul`
   display: flex;

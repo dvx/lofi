@@ -9,6 +9,8 @@ export const MACOS = platform() === 'darwin';
 export const MIN_SIDE_LENGTH = 115;
 export const MAX_SIDE_LENGTH = 1440;
 export const MAX_BAR_THICKNESS = 20;
+export const MIN_FONT_SIZE = 6;
+export const MAX_FONT_SIZE = 32;
 export const TRACK_INFO_GAP = { X: 10, Y: 10 };
 
 export const MIN_SKIP_SONG_DELAY = 5;

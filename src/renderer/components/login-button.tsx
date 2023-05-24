@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useMemo } from 'react';
 import styled from 'styled-components';
 
-import { getAuthUrl, startAuthServer } from '../../../main/auth';
+import { getAuthUrl, startAuthServer } from '../../main/auth';
 
 const Link = styled.a`
   margin: auto;
