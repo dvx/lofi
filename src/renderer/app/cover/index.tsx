@@ -1,10 +1,10 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable no-console */
+import { ipcRenderer } from 'electron';
 import { clamp } from 'lodash';
 import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
-import { WindowName } from '../../../constants';
+import { IpcMessage, WindowName } from '../../../constants';
 import { Settings, VisualizationType } from '../../../models/settings';
 import { AccountType, SpotifyApiInstance } from '../../api/spotify-api';
 import { WindowPortal } from '../../components';
@@ -93,6 +93,9 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
     if (state.type === CurrentlyPlayingType.Track) {
       try {
         const isTrackLiked = await SpotifyApiInstance.isTrackLiked(state.id);
+        if (state.isLiked !== isTrackLiked) {
+          ipcRenderer.send(IpcMessage.TrackLiked, isTrackLiked);
+        }
         dispatch({ type: CurrentlyPlayingActions.SetTrackLiked, payload: isTrackLiked });
         await handlePlaybackChanged();
       } catch (error) {
@@ -100,7 +103,7 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
         setErrorToDisplay((error as Error).message);
       }
     }
-  }, [dispatch, handlePlaybackChanged, state.id, state.type]);
+  }, [dispatch, handlePlaybackChanged, state.id, state.isLiked, state.type]);
 
   useEffect(() => {
     (async () => {

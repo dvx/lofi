@@ -1,6 +1,7 @@
 import '../../build/Release/black-magic.node';
-import '../../icon.png';
 import '../../icon.ico';
+import '../../icon.png';
+import '../../icon_liked.png';
 
 import {
   app,
@@ -73,13 +74,16 @@ let mainWindow: BrowserWindow | null = null;
 let mousePoller: NodeJS.Timeout;
 let initialBounds: Rectangle;
 
-let tray = null;
+let tray: Tray = null;
 Menu.setApplicationMenu(null);
 
 const isSingleInstance: boolean = app.requestSingleInstanceLock();
 if (!isSingleInstance) {
   app.quit();
 }
+
+const icon = nativeImage.createFromPath(`${__dirname}/icon.png`).resize({ height: 16 });
+const iconTrackLiked = nativeImage.createFromPath(`${__dirname}/icon_liked.png`).resize({ height: 16 });
 
 const MAIN_WINDOW_OPTIONS: BrowserWindowConstructorOptions = {
   x: settings.x ?? -1,
@@ -216,6 +220,12 @@ const createMainWindow = (): void => {
     mainWindow.webContents.send(IpcMessage.ShowSettings);
   });
 
+  ipcMain.on(IpcMessage.TrackLiked, (_: Event, isTrackLiked: boolean) => {
+    if (tray) {
+      tray.setImage(isTrackLiked ? iconTrackLiked : icon);
+    }
+  });
+
   const windowOpenHandler = (
     details: HandlerDetails
   ): { action: 'allow' | 'deny'; overrideBrowserWindowOptions?: BrowserWindowConstructorOptions } => {
@@ -334,8 +344,6 @@ app.on('ready', () => {
 
   createMainWindow();
 
-  const iconPath = `${__dirname}/icon.png`;
-  const icon = nativeImage.createFromPath(iconPath).resize({ height: 16 });
   tray = new Tray(icon);
 
   const contextMenu = Menu.buildFromTemplate([

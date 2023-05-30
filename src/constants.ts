@@ -40,6 +40,7 @@ export enum IpcMessage {
   ShowFullscreenVizualizer = 'showFullscreenVizualizer',
   ShowSettings = 'showSettings',
   SideChanged = 'sideChanged',
+  TrackLiked = 'trackLiked',
   WindowMoved = 'windowMoved',
   WindowMoving = 'windowMoving',
   WindowReady = 'windowReady',
