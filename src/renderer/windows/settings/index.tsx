@@ -7,15 +7,17 @@ import { DEFAULT_SETTINGS, Settings } from '../../../models/settings';
 import { Input, StyledTabs, StyledWindow } from '../../components';
 import { DisplayData } from '../../models';
 import { WindowHeader } from '../window-header';
-import { AccountSettings } from './account-settings';
-import { AdvancedSettings } from './advanced-settings';
-import { AudioSettings } from './audio-settings';
-import { VisualizationSettings } from './visualization-settings';
-import { WindowSettings } from './window-settings';
+import { AccountSettings } from './account.settings';
+import { AdvancedSettings } from './advanced.settings';
+import { AudioSettings } from './audio.settings';
+import { TrackInfoSettings } from './track-info.settings';
+import { VisualizationSettings } from './visualization.settings';
+import { WindowSettings } from './window.settings';
 
 enum Tab {
   Advanced = 'Advanced',
   Audio = 'Audio',
+  TrackInfo = 'Track Info',
   Visualization = 'Visualization',
   Window = 'Window',
 }
@@ -98,11 +100,14 @@ export const SettingsWindow: FunctionComponent<Props> = ({ initialValues, displa
       <WindowHeader title="Settings" onClose={onClose} />
       <Form onSubmit={handleSubmit(onSubmit)}>
         <FormProvider {...methods}>
-          <TabsWrapper>
-            <StyledTabs defaultValue={Tab.Window} color="gray" variant="default" radius="md">
+          <TabsWrapper className="tabs-wrapper">
+            <StyledTabs defaultValue={Tab.Window} color="gray" variant="default" radius="md" orientation="vertical">
               <Tabs.List>
                 <Tabs.Tab value={Tab.Window} icon={<i className="fa-solid fa-window-maximize" />}>
                   {Tab.Window}
+                </Tabs.Tab>
+                <Tabs.Tab value={Tab.TrackInfo} icon={<i className="fa-solid fa-voicemail" />}>
+                  {Tab.TrackInfo}
                 </Tabs.Tab>
                 <Tabs.Tab value={Tab.Visualization} icon={<i className="fa-solid fa-chart-simple" />}>
                   {Tab.Visualization}
@@ -117,6 +122,10 @@ export const SettingsWindow: FunctionComponent<Props> = ({ initialValues, displa
 
               <Tabs.Panel value={Tab.Window}>
                 <WindowSettings />
+              </Tabs.Panel>
+
+              <Tabs.Panel value={Tab.TrackInfo}>
+                <TrackInfoSettings />
               </Tabs.Panel>
 
               <Tabs.Panel value={Tab.Visualization}>

@@ -20,8 +20,8 @@ export const VisualizationSettings: FunctionComponent<Props> = ({
   const { register, watch } = useFormContext<Settings>();
   const opacityWatch = watch('visualizerOpacity');
   return (
-    <NoBorderFieldSet>
-      <FormGroup>
+    <FormGroup>
+      <NoBorderFieldSet>
         <Row>
           Display on
           <Select
@@ -58,7 +58,7 @@ export const VisualizationSettings: FunctionComponent<Props> = ({
             <RangeValue>{opacityWatch}</RangeValue>
           </Label>
         </Row>
-      </FormGroup>
-    </NoBorderFieldSet>
+      </NoBorderFieldSet>
+    </FormGroup>
   );
 };

@@ -29,10 +29,10 @@ export const getCommonWindowOptions = (): BrowserWindowConstructorOptions => ({
 
 export const getSettingsWindowOptions = (): BrowserWindowConstructorOptions => ({
   ...getCommonWindowOptions(),
-  height: 560,
-  minHeight: 560,
-  width: 540,
-  minWidth: 540,
+  height: 350,
+  minHeight: 350,
+  width: 562,
+  minWidth: 562,
   title: WindowTitle.Settings,
 });
 

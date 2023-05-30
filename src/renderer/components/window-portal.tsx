@@ -85,6 +85,7 @@ export const WindowPortal = memo(
     useEffect(() => {
       const left = window.top.outerWidth / 2 + window.top.screenX - features.width / 2;
       const top = window.top.outerHeight / 2 + window.top.screenY - features.height / 2;
+      // TODO fix focus grab
       const newWindow = window.open(url, name, toWindowFeatures({ ...features, top, left }));
 
       newWindow.document.title = title;

@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { ipcRenderer } from 'electron';
-import { clamp } from 'lodash';
+import clamp from 'lodash/clamp';
 import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -53,6 +53,7 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
     isAlwaysShowSongProgress,
     isAlwaysShowTrackInfo,
     isOnLeft,
+    isTrackInfoVisibleOnSongChange,
     size,
     skipSongDelay,
     volumeIncrement,
@@ -110,10 +111,26 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
       if (state.isPlaying && state.id !== currentSongId) {
         setCurrentSongId(state.id);
         console.log(`New song '${songTitle}' by '${artist}.`);
+        if (isTrackInfoVisibleOnSongChange && !isAlwaysShowTrackInfo) {
+          setShouldShowTrackInfo(true);
+          setTimeout(() => {
+            setShouldShowTrackInfo(false);
+            // TODO Add the delay to the settings
+          }, ONE_SECOND);
+        }
         await refreshTrackLiked();
       }
     })();
-  }, [artist, currentSongId, refreshTrackLiked, songTitle, state.id, state.isPlaying]);
+  }, [
+    artist,
+    currentSongId,
+    isAlwaysShowTrackInfo,
+    isTrackInfoVisibleOnSongChange,
+    refreshTrackLiked,
+    songTitle,
+    state.id,
+    state.isPlaying,
+  ]);
 
   const keepAlive = useCallback(async (): Promise<void> => {
     if (state.isPlaying || state.userProfile?.accountType !== AccountType.Premium) {

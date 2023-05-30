@@ -11,8 +11,8 @@ export const AudioSettings: FunctionComponent = () => {
   const skipSongDelayWatch = watch('skipSongDelay');
 
   return (
-    <NoBorderFieldSet>
-      <FormGroup>
+    <FormGroup>
+      <NoBorderFieldSet>
         <Row>
           <Label>
             Volume increment
@@ -41,7 +41,7 @@ export const AudioSettings: FunctionComponent = () => {
             <RangeValue>{skipSongDelayWatch}</RangeValue>
           </Label>
         </Row>
-      </FormGroup>
-    </NoBorderFieldSet>
+      </NoBorderFieldSet>
+    </FormGroup>
   );
 };

@@ -33,6 +33,7 @@ export interface Settings {
   trackInfoColor: string;
   trackInfoBackgroundColor: string;
   trackInfoBackgroundOpacity: number;
+  isTrackInfoVisibleOnSongChange: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -62,4 +63,5 @@ export const DEFAULT_SETTINGS: Settings = {
   trackInfoColor: '#FFFFFF',
   trackInfoBackgroundColor: '#000000',
   trackInfoBackgroundOpacity: 50,
+  isTrackInfoVisibleOnSongChange: false,
 };

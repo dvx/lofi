@@ -9,24 +9,10 @@ export const FormGroup = styled.div`
   padding: 0.5rem 0;
 `;
 
-export const FieldSet = styled.fieldset`
-  border-color: #717171;
-  border-width: 2px;
+export const NoBorderFieldSet = styled.fieldset`
   padding: 0.25rem;
   margin-bottom: 0.25rem;
-`;
-
-export const NoBorderFieldSet = styled(FieldSet)`
   border: none;
-`;
-
-export const Legend = styled.legend`
-  font-size: 130%;
-  color: rgb(214, 146, 255);
-  font-weight: 300;
-  font-variant: all-petite-caps;
-  text-shadow: #00000085 0 0 0.25rem;
-  margin-bottom: 0.25rem;
 `;
 
 export const Row = styled.div`

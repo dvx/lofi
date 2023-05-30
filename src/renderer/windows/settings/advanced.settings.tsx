@@ -8,8 +8,8 @@ import { INPUT_COLOR } from '../../components/mantine.styled';
 export const AdvancedSettings: FunctionComponent = () => {
   const { register } = useFormContext<Settings>();
   return (
-    <NoBorderFieldSet>
-      <FormGroup>
+    <FormGroup>
+      <NoBorderFieldSet>
         <Row>
           <StyledCheckbox
             color={INPUT_COLOR}
@@ -21,7 +21,7 @@ export const AdvancedSettings: FunctionComponent = () => {
         <Row>
           <StyledCheckbox color={INPUT_COLOR} label="Enable dev tools" size="xs" {...register('isDebug')} />
         </Row>
-      </FormGroup>
-    </NoBorderFieldSet>
+      </NoBorderFieldSet>
+    </FormGroup>
   );
 };

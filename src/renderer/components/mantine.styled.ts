@@ -17,16 +17,18 @@ export const StyledTextInput = styled(TextInput)`
 `;
 
 export const StyledTabs = styled(Tabs)`
+  width: 100%;
+
   & .mantine-Tabs-root {
     width: 100%;
   }
 
   & .mantine-Tabs-tabsList {
     gap: 0;
+    border-right: 0;
   }
 
   & .mantine-Tabs-tab {
-    min-width: 130px;
     margin: 0;
     color: white;
 
@@ -40,7 +42,10 @@ export const StyledTabs = styled(Tabs)`
   }
 
   & .mantine-Tabs-tabLabel {
-    color: white;
+    color: rgb(214, 146, 255);
+    font-weight: 300;
+    font-variant: all-petite-caps;
+    text-shadow: #00000085 0 0 0.25rem;
   }
 
   & .mantine-Tabs-tabIcon {
@@ -51,7 +56,8 @@ export const StyledTabs = styled(Tabs)`
     color: white;
     padding: 0 0.25rem;
     background-color: #444444;
-    height: calc(100% - 36px);
-    border-radius: 0 0 0.5rem 0.5rem;
+    border-radius: 0 0.5rem 0.5rem 0;
+    width: 100%;
+    min-height: 200px;
   }
 `;
