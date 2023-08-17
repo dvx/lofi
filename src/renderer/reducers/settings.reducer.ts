@@ -2,33 +2,17 @@ import { AuthData } from '../../main/auth';
 import { Settings, VisualizationType } from '../../models/settings';
 
 export enum SettingsActionType {
-  SetDebug = 'setDebug',
-  SetUseHardwareAcceleration = 'setUseHardwareAcceleration',
   SetVisualization = 'setVisualization',
   SetVisualizationType = 'setVisualizationType',
-  SetAlwaysOnTop = 'setAlwaysOnTop',
-  SetShowInTaskbar = 'setShowInTaskBar',
   SetWindowPos = 'setWindowPos',
-  SetAlwaysShowTrackInfo = 'setAlwaysShowTrackInfo',
-  SetAlwaysShowProgress = 'setAlwaysShowProgress',
-  SetBarThickness = 'setBarThickness',
   SetIsOnLeft = 'setIsOnLeft',
   SetSize = 'setSize',
-  SetVolumeIncrement = 'setVolumeIncrement',
   SetTokens = 'setTokens',
   ResetTokens = 'resetTokens',
   UpdateSettings = 'updateSettings',
 }
 
 export type SettingsAction =
-  | {
-      type: SettingsActionType.SetDebug;
-      payload: boolean;
-    }
-  | {
-      type: SettingsActionType.SetUseHardwareAcceleration;
-      payload: boolean;
-    }
   | {
       type: SettingsActionType.SetVisualization;
       payload: number;
@@ -38,28 +22,8 @@ export type SettingsAction =
       payload: VisualizationType;
     }
   | {
-      type: SettingsActionType.SetAlwaysOnTop;
-      payload: boolean;
-    }
-  | {
-      type: SettingsActionType.SetShowInTaskbar;
-      payload: boolean;
-    }
-  | {
       type: SettingsActionType.SetWindowPos;
       payload: { x: number; y: number };
-    }
-  | {
-      type: SettingsActionType.SetAlwaysShowTrackInfo;
-      payload: boolean;
-    }
-  | {
-      type: SettingsActionType.SetAlwaysShowProgress;
-      payload: boolean;
-    }
-  | {
-      type: SettingsActionType.SetBarThickness;
-      payload: number;
     }
   | {
       type: SettingsActionType.SetIsOnLeft;
@@ -67,10 +31,6 @@ export type SettingsAction =
     }
   | {
       type: SettingsActionType.SetSize;
-      payload: number;
-    }
-  | {
-      type: SettingsActionType.SetVolumeIncrement;
       payload: number;
     }
   | {
@@ -87,20 +47,6 @@ export type SettingsAction =
 
 export const useSettingsReducer = (state: Settings, action: SettingsAction): Settings => {
   switch (action.type) {
-    case SettingsActionType.SetDebug: {
-      return {
-        ...state,
-        isDebug: action.payload,
-      };
-    }
-
-    case SettingsActionType.SetUseHardwareAcceleration: {
-      return {
-        ...state,
-        isUsingHardwareAcceleration: action.payload,
-      };
-    }
-
     case SettingsActionType.SetVisualization: {
       return {
         ...state,
@@ -115,46 +61,11 @@ export const useSettingsReducer = (state: Settings, action: SettingsAction): Set
       };
     }
 
-    case SettingsActionType.SetAlwaysOnTop: {
-      return {
-        ...state,
-        isAlwaysOnTop: action.payload,
-      };
-    }
-
-    case SettingsActionType.SetShowInTaskbar: {
-      return {
-        ...state,
-        isVisibleInTaskbar: action.payload,
-      };
-    }
-
     case SettingsActionType.SetWindowPos: {
       return {
         ...state,
         x: action.payload.x,
         y: action.payload.y,
-      };
-    }
-
-    case SettingsActionType.SetAlwaysShowTrackInfo: {
-      return {
-        ...state,
-        isAlwaysShowTrackInfo: action.payload,
-      };
-    }
-
-    case SettingsActionType.SetAlwaysShowProgress: {
-      return {
-        ...state,
-        isAlwaysShowSongProgress: action.payload,
-      };
-    }
-
-    case SettingsActionType.SetBarThickness: {
-      return {
-        ...state,
-        barThickness: action.payload,
       };
     }
 
@@ -169,13 +80,6 @@ export const useSettingsReducer = (state: Settings, action: SettingsAction): Set
       return {
         ...state,
         isOnLeft: action.payload,
-      };
-    }
-
-    case SettingsActionType.SetVolumeIncrement: {
-      return {
-        ...state,
-        volumeIncrement: action.payload,
       };
     }
 
