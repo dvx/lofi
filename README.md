@@ -10,8 +10,8 @@
 
 <table width="100%">
   <tr>
-    <td width="50%"><img width="100%" src="https://www.lofi.rocks/images/min.jpg"></td>
-    <td width="50%"><img width="100%" src="https://www.lofi.rocks/images/vis.gif"></td>
+    <td width="50%"><img width="100%" src="https://www.lofi.rocks/min.jpg"></td>
+    <td width="50%"><img width="100%" src="https://www.lofi.rocks/vis.gif"></td>
   </tr>
 </table>
 
