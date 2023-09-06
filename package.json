@@ -54,7 +54,7 @@
     "copy-pkg-json-webpack-plugin": "^0.0.40",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^5.0.1",
-    "electron": "^24.0.0",
+    "electron": "^24.7.1",
     "electron-builder": "^23.6.0",
     "eslint": "^7.32.0 || ^8.2.0",
     "eslint-config-airbnb": "^19.0.4",
