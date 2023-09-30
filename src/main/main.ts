@@ -119,7 +119,7 @@ const createMainWindow = (): void => {
 
   mainWindow.loadURL(`file://${path.join(__dirname, './index.html')}`);
 
-  showDevTool(mainWindow, settings.isDebug);
+  showDevTool(mainWindow, !!settings?.isDebug);
 
   ipcMain.on(IpcMessage.WindowMoving, (_: Event, { mouseX, mouseY }: MouseData) => {
     const { x, y } = screen.getCursorScreenPoint();
