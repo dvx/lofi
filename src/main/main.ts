@@ -60,14 +60,13 @@ Store.initRenderer();
 const store = new Store({ clearInvalidConfig: true });
 const storeSettings = store.get('settings') as Settings;
 
-let settings: Settings = null;
+let settings: Settings = DEFAULT_SETTINGS;
 try {
   settingsSchema.parse(storeSettings);
   settings = storeSettings;
 } catch (error) {
   // eslint-disable-next-line no-console
   console.error(`Invalid settings file: ${error}`);
-  settings = DEFAULT_SETTINGS;
 }
 
 let mainWindow: BrowserWindow | null = null;
