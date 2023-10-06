@@ -38,7 +38,7 @@ export const getSettingsWindowOptions = (): BrowserWindowConstructorOptions => (
 
 export const getAboutWindowOptions = (): BrowserWindowConstructorOptions => ({
   ...getCommonWindowOptions(),
-  height: 380,
+  height: 540,
   width: 400,
   title: WindowTitle.About,
 });
