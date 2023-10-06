@@ -95,7 +95,7 @@
     "react-dom": "^17.0.1",
     "react-hook-form": "^7.41.2",
     "styled-components": "^5.3.6",
-    "zod": "^3.21.4"
+    "zod": "^3.22.3"
   },
   "resolutions": {
     "@types/react": "17.0.2",
