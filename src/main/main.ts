@@ -85,8 +85,8 @@ const icon = nativeImage.createFromPath(`${__dirname}/icon.png`).resize({ height
 const iconTrackLiked = nativeImage.createFromPath(`${__dirname}/icon_liked.png`).resize({ height: 16 });
 
 const MAIN_WINDOW_OPTIONS: BrowserWindowConstructorOptions = {
-  x: settings.x ?? -1,
-  y: settings.y ?? -1,
+  x: settings?.x ?? -1,
+  y: settings?.y ?? -1,
   height: settings.size ?? DEFAULT_SIZE,
   width: settings.size ?? DEFAULT_SIZE,
   minHeight: MIN_SIDE_LENGTH,
@@ -100,8 +100,8 @@ const MAIN_WINDOW_OPTIONS: BrowserWindowConstructorOptions = {
   minimizable: true,
   transparent: true,
   hasShadow: false,
-  skipTaskbar: !settings.isVisibleInTaskbar,
-  focusable: settings.isVisibleInTaskbar,
+  skipTaskbar: !settings?.isVisibleInTaskbar,
+  focusable: !!settings?.isVisibleInTaskbar,
   title: 'Lofi',
   webPreferences: {
     nodeIntegration: true,

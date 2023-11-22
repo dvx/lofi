@@ -121,13 +121,15 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
     }
 
     try {
-      await SpotifyApiInstance.seek(state.progress);
-      console.debug('Keep-alive triggered.');
+      const currentlyPlaying = await SpotifyApiInstance.getCurrentlyPlaying();
+      if (!currentlyPlaying?.is_playing) {
+        await SpotifyApiInstance.seek(state.progress);
+      }
     } catch (error) {
       console.error(error);
       setErrorToDisplay((error as Error).message);
     }
-  }, [state.isPlaying, state.progress, state.userProfile]);
+  }, [state.isPlaying, state.progress, state.userProfile?.accountType]);
 
   const changeVolume = useCallback(
     (newVolume: number) => {
