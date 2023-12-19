@@ -17,16 +17,16 @@ export const StyledTextInput = styled(TextInput)`
 `;
 
 export const StyledTabs = styled(Tabs)`
-  & .mantine-Tabs-root {
+  & .mantine-tabs-root {
     width: 100%;
   }
 
-  & .mantine-Tabs-tabsList {
+  & .mantine-tabs-tabsList {
     gap: 0;
   }
 
-  & .mantine-Tabs-tab {
-    min-width: 130px;
+  & .mantine-tabs-tab {
+    min-width: 80px;
     margin: 0;
     color: white;
 
@@ -39,15 +39,15 @@ export const StyledTabs = styled(Tabs)`
     }
   }
 
-  & .mantine-Tabs-tabLabel {
+  & .mantine-tabs-tabLabel {
     color: white;
   }
 
-  & .mantine-Tabs-tabIcon {
+  & .mantine-tabs-tabIcon {
     color: white;
   }
 
-  & .mantine-Tabs-panel {
+  & .mantine-tabs-panel {
     color: white;
     padding: 0 0.25rem;
     background-color: #444444;

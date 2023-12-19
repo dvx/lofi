@@ -77,7 +77,7 @@ export const App: FunctionComponent = () => {
   const [displays, setDisplays] = useState<DisplayData[]>([]);
 
   const { state, dispatch } = useSettings();
-  const { dispatch: currentlyPlayingDispatch } = useCurrentlyPlaying();
+  const { state: currentlyPlaying, dispatch: currentlyPlayingDispatch } = useCurrentlyPlaying();
   const { accessToken, refreshToken, visualizationId, visualizationType } = state || DEFAULT_SETTINGS;
 
   const updateTokens = useCallback(
@@ -91,12 +91,6 @@ export const App: FunctionComponent = () => {
       try {
         const userProfile = await SpotifyApiInstance.updateTokens(data);
         if (userProfile) {
-          if (userProfile?.accountType !== AccountType.Premium) {
-            const playbackDisabledMessage = 'Account is not premium, playback controls disabled.';
-            console.warn(playbackDisabledMessage);
-            setMessage(playbackDisabledMessage);
-          }
-
           currentlyPlayingDispatch({
             type: CurrentlyPlayingActions.SetUserProfile,
             payload: userProfile,
@@ -112,6 +106,16 @@ export const App: FunctionComponent = () => {
     },
     [currentlyPlayingDispatch, dispatch]
   );
+
+  useEffect(() => {
+    if (currentlyPlaying.userProfile?.accountType !== AccountType.Premium && state.showFreemiumWarning) {
+      const playbackDisabledMessage = 'Account is not premium, playback controls disabled.';
+      console.warn(playbackDisabledMessage);
+      setMessage(playbackDisabledMessage);
+    } else {
+      setMessage('');
+    }
+  }, [currentlyPlaying.userProfile?.accountType, state.showFreemiumWarning]);
 
   useEffect(() => {
     setTokenRetrievedCallback(updateTokens);

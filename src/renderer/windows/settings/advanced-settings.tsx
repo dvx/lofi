@@ -2,14 +2,15 @@ import React, { FunctionComponent } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { Settings } from '../../../models/settings';
-import { FormGroup, NoBorderFieldSet, Row, StyledCheckbox } from '../../components';
+import { FieldSet, FormGroup, Legend, Row, StyledCheckbox } from '../../components';
 import { INPUT_COLOR } from '../../components/mantine.styled';
 
 export const AdvancedSettings: FunctionComponent = () => {
   const { register } = useFormContext<Settings>();
   return (
-    <NoBorderFieldSet>
-      <FormGroup>
+    <FormGroup>
+      <FieldSet>
+        <Legend>Advanced</Legend>
         <Row>
           <StyledCheckbox
             color={INPUT_COLOR}
@@ -21,7 +22,7 @@ export const AdvancedSettings: FunctionComponent = () => {
         <Row>
           <StyledCheckbox color={INPUT_COLOR} label="Enable dev tools" size="xs" {...register('isDebug')} />
         </Row>
-      </FormGroup>
-    </NoBorderFieldSet>
+      </FieldSet>
+    </FormGroup>
   );
 };

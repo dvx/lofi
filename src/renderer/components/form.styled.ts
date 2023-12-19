@@ -6,18 +6,15 @@ const INPUT_COLOR_HEX = '#be4bdb';
 export const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0.5rem 0;
+  padding: 0.5rem 0 0;
+  height: 100%;
 `;
 
 export const FieldSet = styled.fieldset`
-  border-color: #717171;
-  border-width: 2px;
+  border: none;
   padding: 0.25rem;
   margin-bottom: 0.25rem;
-`;
-
-export const NoBorderFieldSet = styled(FieldSet)`
-  border: none;
+  height: 100%;
 `;
 
 export const Legend = styled.legend`

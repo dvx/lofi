@@ -10,12 +10,14 @@ import { WindowHeader } from '../window-header';
 import { AccountSettings } from './account-settings';
 import { AdvancedSettings } from './advanced-settings';
 import { AudioSettings } from './audio-settings';
+import { TrackInfoSettings } from './track-info-settings';
 import { VisualizationSettings } from './visualization-settings';
 import { WindowSettings } from './window-settings';
 
 enum Tab {
   Advanced = 'Advanced',
   Audio = 'Audio',
+  TrackInfo = 'Track Info',
   Visualization = 'Visualization',
   Window = 'Window',
 }
@@ -101,22 +103,19 @@ export const SettingsWindow: FunctionComponent<Props> = ({ initialValues, displa
           <TabsWrapper>
             <StyledTabs defaultValue={Tab.Window} color="gray" variant="default" radius="md">
               <Tabs.List>
-                <Tabs.Tab value={Tab.Window} icon={<i className="fa-solid fa-window-maximize" />}>
-                  {Tab.Window}
-                </Tabs.Tab>
-                <Tabs.Tab value={Tab.Visualization} icon={<i className="fa-solid fa-chart-simple" />}>
-                  {Tab.Visualization}
-                </Tabs.Tab>
-                <Tabs.Tab value={Tab.Audio} icon={<i className="fa-solid fa-headphones" />}>
-                  {Tab.Audio}
-                </Tabs.Tab>
-                <Tabs.Tab value={Tab.Advanced} icon={<i className="fa-solid fa-gears" />}>
-                  {Tab.Advanced}
-                </Tabs.Tab>
+                <Tabs.Tab value={Tab.Window} icon={<i className="fa-solid fa-window-maximize" />} />
+                <Tabs.Tab value={Tab.TrackInfo} icon={<i className="fa-solid fa-circle-info" />} />
+                <Tabs.Tab value={Tab.Visualization} icon={<i className="fa-solid fa-chart-simple" />} />
+                <Tabs.Tab value={Tab.Audio} icon={<i className="fa-solid fa-headphones" />} />
+                <Tabs.Tab value={Tab.Advanced} icon={<i className="fa-solid fa-gears" />} />
               </Tabs.List>
 
               <Tabs.Panel value={Tab.Window}>
                 <WindowSettings />
+              </Tabs.Panel>
+
+              <Tabs.Panel value={Tab.TrackInfo}>
+                <TrackInfoSettings />
               </Tabs.Panel>
 
               <Tabs.Panel value={Tab.Visualization}>
