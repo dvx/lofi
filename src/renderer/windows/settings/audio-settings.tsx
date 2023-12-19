@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form';
 
 import { MAX_SKIP_SONG_DELAY, MIN_SKIP_SONG_DELAY } from '../../../constants';
 import { DEFAULT_SETTINGS, Settings } from '../../../models/settings';
-import { FormGroup, Label, NoBorderFieldSet, RangeValue, Row, Slider } from '../../components';
+import { FieldSet, FormGroup, Label, Legend, RangeValue, Row, Slider } from '../../components';
 
 export const AudioSettings: FunctionComponent = () => {
   const { register, watch } = useFormContext<Settings>();
@@ -11,8 +11,9 @@ export const AudioSettings: FunctionComponent = () => {
   const skipSongDelayWatch = watch('skipSongDelay');
 
   return (
-    <NoBorderFieldSet>
-      <FormGroup>
+    <FormGroup>
+      <FieldSet>
+        <Legend>Audio</Legend>
         <Row>
           <Label>
             Volume increment
@@ -41,7 +42,7 @@ export const AudioSettings: FunctionComponent = () => {
             <RangeValue>{skipSongDelayWatch}</RangeValue>
           </Label>
         </Row>
-      </FormGroup>
-    </NoBorderFieldSet>
+      </FieldSet>
+    </FormGroup>
   );
 };
