@@ -12,6 +12,9 @@ export const MAX_BAR_THICKNESS = 20;
 export const MIN_FONT_SIZE = 6;
 export const MAX_FONT_SIZE = 32;
 export const TRACK_INFO_GAP = { X: 10, Y: 10 };
+export const MAX_CORNER_RADIUS = 20;
+export const WIN_11_CORNER_RADIUS = 8;
+export const MACOS_CORNER_RADIUS = 9;
 
 export const MIN_SKIP_SONG_DELAY = 5;
 export const MAX_SKIP_SONG_DELAY = 60;

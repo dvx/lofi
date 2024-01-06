@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { Display, ipcRenderer } from 'electron';
-import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { IpcMessage, WindowName } from '../../constants';
@@ -79,6 +79,7 @@ export const App: FunctionComponent = () => {
   const { state, dispatch } = useSettings();
   const { state: currentlyPlaying, dispatch: currentlyPlayingDispatch } = useCurrentlyPlaying();
   const { accessToken, refreshToken, visualizationId, visualizationType } = state || DEFAULT_SETTINGS;
+  const { cornerRadius } = useMemo(() => state, [state]);
 
   const updateTokens = useCallback(
     async (data: AuthData) => {
@@ -274,7 +275,10 @@ export const App: FunctionComponent = () => {
   );
 
   return (
-    <VisibleUi id="visible-ui" className="click-on">
+    <VisibleUi
+      id="visible-ui"
+      className="click-on"
+      style={cornerRadius ? { borderRadius: cornerRadius, overflow: 'hidden' } : {}}>
       {shouldShowSettings && (
         <WindowPortal onUnload={() => setShouldShowSettings(false)} name={WindowName.Settings}>
           <SettingsWindow
