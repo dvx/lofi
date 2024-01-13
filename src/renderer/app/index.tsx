@@ -278,7 +278,7 @@ export const App: FunctionComponent = () => {
     <VisibleUi
       id="visible-ui"
       className="click-on"
-      style={cornerRadius ? { borderRadius: cornerRadius, overflow: 'hidden' } : {}}>
+      style={cornerRadius ? { borderRadius: `${cornerRadius}%`, overflow: 'hidden' } : {}}>
       {shouldShowSettings && (
         <WindowPortal onUnload={() => setShouldShowSettings(false)} name={WindowName.Settings}>
           <SettingsWindow
