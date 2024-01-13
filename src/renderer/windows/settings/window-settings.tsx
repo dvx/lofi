@@ -1,8 +1,7 @@
-import os from 'node:os';
 import React, { FunctionComponent } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-import { MACOS_CORNER_RADIUS, MAX_BAR_THICKNESS, MAX_CORNER_RADIUS, WIN_11_CORNER_RADIUS } from '../../../constants';
+import { MAX_BAR_THICKNESS, MAX_CORNER_RADIUS } from '../../../constants';
 import { DEFAULT_SETTINGS, Settings } from '../../../models/settings';
 import {
   ColorInput,
@@ -16,17 +15,6 @@ import {
   StyledCheckbox,
 } from '../../components';
 import { INPUT_COLOR } from '../../components/mantine.styled';
-
-function calcDefaultRadius(): number {
-  const osRelease = os.release();
-  if (osRelease.startsWith('11')) {
-    return WIN_11_CORNER_RADIUS;
-  }
-  if (osRelease.startsWith('Darwin')) {
-    return MACOS_CORNER_RADIUS;
-  }
-  return DEFAULT_SETTINGS.cornerRadius;
-}
 
 export const WindowSettings: FunctionComponent = () => {
   const { register, watch } = useFormContext<Settings>();
@@ -93,7 +81,7 @@ export const WindowSettings: FunctionComponent = () => {
               min={0}
               max={MAX_CORNER_RADIUS}
               step={1}
-              defaultValue={calcDefaultRadius()}
+              defaultValue={DEFAULT_SETTINGS.cornerRadius}
               {...register('cornerRadius', { required: true, valueAsNumber: true })}
             />
             <RangeValue>{cornerRadiusWatch}</RangeValue>
