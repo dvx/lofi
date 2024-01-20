@@ -16,6 +16,8 @@ jobs:
         with:
           node-version: 16
 
+      - run: pip install packaging
+
       - run: yarn install
       - run: yarn build
       - run: yarn production

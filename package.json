@@ -1,6 +1,6 @@
 {
   "name": "lofi",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Mini Spotify player with visualizations.",
   "homepage": "http://lofi.rocks",
   "main": "./pack/main.bundle.js",
@@ -70,8 +70,8 @@
     "html-webpack-plugin": "^4.5.1",
     "husky": "^8.0.3",
     "native-ext-loader": "^2.3.0",
-    "node-addon-api": "^3.1.0",
-    "node-gyp": "^9.3.1",
+    "node-addon-api": "^7.1.0",
+    "node-gyp": "^10.0.1",
     "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
     "style-loader": "^2.0.0",

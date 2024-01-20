@@ -7,7 +7,7 @@
   "editor.formatOnSave": true,
   "eslint.alwaysShowStatus": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
   "[scss]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
