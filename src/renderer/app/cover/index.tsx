@@ -179,7 +179,7 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
   }, [onMouseWheel]);
 
   useEffect(() => {
-    const listeningToIntervalId = setInterval(handlePlaybackChanged, refreshTime);
+    const listeningToIntervalId = setInterval(handlePlaybackChanged, refreshTime * 1000);
 
     return () => {
       if (listeningToIntervalId) {
@@ -189,7 +189,7 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
   }, [handlePlaybackChanged, refreshTime]);
 
   useEffect(() => {
-    const refreshTrackLikedIntervalId = setInterval(refreshTrackLiked, 2 * refreshTime);
+    const refreshTrackLikedIntervalId = setInterval(refreshTrackLiked, 2 * refreshTime * 1000);
     return () => {
       if (refreshTrackLikedIntervalId) {
         clearInterval(refreshTrackLikedIntervalId);

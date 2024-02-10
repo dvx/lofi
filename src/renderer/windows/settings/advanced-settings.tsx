@@ -27,12 +27,12 @@ export const AdvancedSettings: FunctionComponent = () => {
         </Row>
         <Row>
           <Label>
-            Refresh Time (milliseconds)
+            Refresh Time (Seconds)
             <Slider
               type="range"
-              min={1000}
-              max={10000}
-              step={500}
+              min={1}
+              max={10}
+              step={1}
               defaultValue={DEFAULT_SETTINGS.refreshTime}
               {...register('refreshTime', { required: true, valueAsNumber: true })}
             />
