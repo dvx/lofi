@@ -5,8 +5,6 @@ import { DEFAULT_SETTINGS, Settings } from '../../../models/settings';
 import { FieldSet, FormGroup, Label, Legend, RangeValue, Row, Slider, StyledCheckbox } from '../../components';
 import { INPUT_COLOR } from '../../components/mantine.styled';
 
-
-
 export const AdvancedSettings: FunctionComponent = () => {
   const { register, watch } = useFormContext<Settings>();
 

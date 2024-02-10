@@ -59,7 +59,7 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
     visualizationId,
     visualizationType,
     visualizerOpacity,
-    refreshTime
+    refreshTime,
   } = useMemo(() => settings, [settings]);
 
   const [currentSongId, setCurrentSongId] = useState('');
