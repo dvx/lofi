@@ -59,6 +59,7 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
     visualizationId,
     visualizationType,
     visualizerOpacity,
+    refreshTime
   } = useMemo(() => settings, [settings]);
 
   const [currentSongId, setCurrentSongId] = useState('');
@@ -178,23 +179,23 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
   }, [onMouseWheel]);
 
   useEffect(() => {
-    const listeningToIntervalId = setInterval(handlePlaybackChanged, ONE_SECOND);
+    const listeningToIntervalId = setInterval(handlePlaybackChanged, refreshTime);
 
     return () => {
       if (listeningToIntervalId) {
         clearInterval(listeningToIntervalId);
       }
     };
-  }, [handlePlaybackChanged]);
+  }, [handlePlaybackChanged, refreshTime]);
 
   useEffect(() => {
-    const refreshTrackLikedIntervalId = setInterval(refreshTrackLiked, 2 * ONE_SECOND);
+    const refreshTrackLikedIntervalId = setInterval(refreshTrackLiked, 2 * refreshTime);
     return () => {
       if (refreshTrackLikedIntervalId) {
         clearInterval(refreshTrackLikedIntervalId);
       }
     };
-  }, [refreshTrackLiked]);
+  }, [refreshTrackLiked, refreshTime]);
 
   useEffect(() => {
     const keepAliveIntervalId = setInterval(keepAlive, ONE_MINUTE);
