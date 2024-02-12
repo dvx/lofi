@@ -35,7 +35,7 @@ export interface Settings {
   trackInfoBackgroundOpacity: number;
   showFreemiumWarning: boolean;
   cornerRadius: number;
-  refreshTime: number;
+  trackInfoRefreshTimeInSeconds: number;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -67,5 +67,5 @@ export const DEFAULT_SETTINGS: Settings = {
   trackInfoBackgroundOpacity: 50,
   showFreemiumWarning: true,
   cornerRadius: 0,
-  refreshTime: 1000,
+  trackInfoRefreshTimeInSeconds: 1,
 };
