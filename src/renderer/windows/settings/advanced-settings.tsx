@@ -8,7 +8,7 @@ import { INPUT_COLOR } from '../../components/mantine.styled';
 export const AdvancedSettings: FunctionComponent = () => {
   const { register, watch } = useFormContext<Settings>();
 
-  const refreshTimeWatch = watch('trackInfoRefeshTimeInSeconds');
+  const refreshTimeWatch = watch('trackInfoRefreshTimeInSeconds');
 
   return (
     <FormGroup>
@@ -33,8 +33,8 @@ export const AdvancedSettings: FunctionComponent = () => {
               min={1}
               max={10}
               step={1}
-              defaultValue={DEFAULT_SETTINGS.trackInfoRefeshTimeInSeconds}
-              {...register('trackInfoRefeshTimeInSeconds', { required: true, valueAsNumber: true })}
+              defaultValue={DEFAULT_SETTINGS.trackInfoRefreshTimeInSeconds}
+              {...register('trackInfoRefreshTimeInSeconds', { required: true, valueAsNumber: true })}
             />
             <RangeValue>{refreshTimeWatch}</RangeValue>
           </Label>
