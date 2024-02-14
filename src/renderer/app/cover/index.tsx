@@ -6,13 +6,13 @@ import styled, { css } from 'styled-components';
 
 import { IpcMessage, WindowName } from '../../../constants';
 import { Settings, VisualizationType } from '../../../models/settings';
-import { AccountType, SpotifyApiInstance } from '../../api/spotify-api';
 import { LyricsData, SpotifyLyricsApiInstance } from '../../api/lyrics-api';
+import { AccountType, SpotifyApiInstance } from '../../api/spotify-api';
 import { WindowPortal } from '../../components';
 import { useCurrentlyPlaying } from '../../contexts/currently-playing.context';
 import { CurrentlyPlayingActions, CurrentlyPlayingType } from '../../reducers/currently-playing.reducer';
-import { TrackInfo } from '../../windows/track-info';
 import { Lyric } from '../../windows/lyric';
+import { TrackInfo } from '../../windows/track-info';
 import { Bars } from '../bars';
 import { Controls } from './controls';
 import Menu from './menu';
@@ -238,7 +238,7 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
           )}
           {shouldShowTrackInfo && (
             <WindowPortal name={WindowName.Lyric}>
-              <Lyric track={songTitle} artist={artist} isOnLeft={isOnLeft} lyrics={currentLyrics} />
+              <Lyric isOnLeft={isOnLeft} lyrics={currentLyrics} />
             </WindowPortal>
           )}
           <CoverContent

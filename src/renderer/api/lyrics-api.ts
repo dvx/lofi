@@ -1,4 +1,5 @@
-import { ipcRenderer, ipcMain } from 'electron';
+/* eslint-disable no-console */
+import { ipcRenderer } from 'electron';
 
 // eslint-disable-next-line camelcase
 const sp_dc =

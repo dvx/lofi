@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
-import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { DEFAULT_SETTINGS } from '../../../models/settings';
-import { useSettings } from '../../contexts/settings.context';
-import { useCurrentlyPlaying } from '../../contexts/currently-playing.context';
 import { Line, LyricsData } from '../../api/lyrics-api';
+import { useCurrentlyPlaying } from '../../contexts/currently-playing.context';
+import { useSettings } from '../../contexts/settings.context';
 
 const TrackInfoWrapper = styled.div`
   position: fixed;
@@ -56,7 +56,7 @@ const LyricText: FunctionComponent<LyricTextProps> = ({ lyrics }) => {
   let closestLineDiff = Infinity;
 
   lyrics.lyrics.lines.forEach((line: Line, index: number) => {
-    const diff = Math.abs(Number(line.startTimeMs) - state.progress);
+    const diff = Math.abs(Number(line.startTimeMs) - state.progress + 150);
     if (diff < closestLineDiff) {
       closestLineDiff = diff;
       closestLineIndex = index;
@@ -77,13 +77,11 @@ const LyricText: FunctionComponent<LyricTextProps> = ({ lyrics }) => {
 };
 
 interface TrackInfoProps {
-  track?: string;
-  artist?: string;
   lyrics?: LyricsData;
   isOnLeft?: boolean;
 }
 
-export const Lyric: FunctionComponent<TrackInfoProps> = ({ track, artist, lyrics, isOnLeft }) => {
+export const Lyric: FunctionComponent<TrackInfoProps> = ({ lyrics, isOnLeft }) => {
   const { state } = useSettings();
   const backgroundColor = useMemo(() => {
     const normalizedOpacity = Math.floor((state.trackInfoBackgroundOpacity / 100) * 255);

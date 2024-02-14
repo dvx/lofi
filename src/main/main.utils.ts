@@ -3,13 +3,13 @@ import { z } from 'zod';
 
 import {
   IpcMessage,
+  LYRIC_GAP,
   MAX_BAR_THICKNESS,
   MAX_SIDE_LENGTH,
   MAX_SKIP_SONG_DELAY,
   MIN_SIDE_LENGTH,
   MIN_SKIP_SONG_DELAY,
   TRACK_INFO_GAP,
-  LYRIC_GAP,
   WindowTitle,
 } from '../constants';
 import { VisualizationType } from '../models/settings';
