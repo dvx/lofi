@@ -50,6 +50,9 @@ export const Bars: FunctionComponent<Props> = ({ barColor, barThickness, alwaysS
         className="vertical bar draggable"
         style={{ width: `${barThickness}px` }}
       />
+      <div>
+        <p>Lyrics</p>
+      </div>
     </>
   );
 };

@@ -12,6 +12,7 @@ export const MAX_BAR_THICKNESS = 20;
 export const MIN_FONT_SIZE = 6;
 export const MAX_FONT_SIZE = 32;
 export const TRACK_INFO_GAP = { X: 10, Y: 10 };
+export const LYRIC_GAP = { X: 0, Y: 10 };
 export const MAX_CORNER_RADIUS = 20;
 
 export const MIN_SKIP_SONG_DELAY = 5;
@@ -22,6 +23,7 @@ export enum WindowTitle {
   FullscreenViz = 'fullscreen-visualization',
   Settings = 'Lofi Settings',
   TrackInfo = 'track-info',
+  Lyric = 'lyric',
 }
 
 export enum WindowName {
@@ -30,6 +32,7 @@ export enum WindowName {
   FullscreenViz = 'fullscreen-visualization',
   Settings = 'settings',
   TrackInfo = 'track-info',
+  Lyric = 'lyric',
 }
 
 export enum IpcMessage {

@@ -7,10 +7,12 @@ import styled, { css } from 'styled-components';
 import { IpcMessage, WindowName } from '../../../constants';
 import { Settings, VisualizationType } from '../../../models/settings';
 import { AccountType, SpotifyApiInstance } from '../../api/spotify-api';
+import { LyricsData, SpotifyLyricsApiInstance } from '../../api/lyrics-api';
 import { WindowPortal } from '../../components';
 import { useCurrentlyPlaying } from '../../contexts/currently-playing.context';
 import { CurrentlyPlayingActions, CurrentlyPlayingType } from '../../reducers/currently-playing.reducer';
 import { TrackInfo } from '../../windows/track-info';
+import { Lyric } from '../../windows/lyric';
 import { Bars } from '../bars';
 import { Controls } from './controls';
 import Menu from './menu';
@@ -64,6 +66,7 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
   const [currentSongId, setCurrentSongId] = useState('');
   const [shouldShowTrackInfo, setShouldShowTrackInfo] = useState(isAlwaysShowTrackInfo);
   const [errorToDisplay, setErrorToDisplay] = useState('');
+  const [currentLyrics, setCurrentLyrics] = useState<LyricsData>();
 
   useEffect(() => setErrorToDisplay(message), [message]);
 
@@ -114,6 +117,15 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
       }
     })();
   }, [artist, currentSongId, refreshTrackLiked, songTitle, state.id, state.isPlaying]);
+
+  useEffect(() => {
+    (async () => {
+      if (SpotifyLyricsApiInstance.loggedIn) {
+        const lyrics = await SpotifyLyricsApiInstance.getLyrics(currentSongId);
+        setCurrentLyrics(lyrics);
+      }
+    })();
+  }, [currentSongId]);
 
   const keepAlive = useCallback(async (): Promise<void> => {
     if (state.isPlaying || state.userProfile?.accountType !== AccountType.Premium) {
@@ -222,6 +234,11 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
           {shouldShowTrackInfo && (
             <WindowPortal name={WindowName.TrackInfo}>
               <TrackInfo track={songTitle} artist={artist} isOnLeft={isOnLeft} message={errorToDisplay || message} />
+            </WindowPortal>
+          )}
+          {shouldShowTrackInfo && (
+            <WindowPortal name={WindowName.Lyric}>
+              <Lyric track={songTitle} artist={artist} isOnLeft={isOnLeft} lyrics={currentLyrics} />
             </WindowPortal>
           )}
           <CoverContent

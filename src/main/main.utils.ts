@@ -9,6 +9,7 @@ import {
   MIN_SIDE_LENGTH,
   MIN_SKIP_SONG_DELAY,
   TRACK_INFO_GAP,
+  LYRIC_GAP,
   WindowTitle,
 } from '../constants';
 import { VisualizationType } from '../models/settings';
@@ -74,6 +75,26 @@ export const getTrackInfoWindowOptions = (
   };
 };
 
+export const getLyricWindowOptions = (
+  mainWindow: BrowserWindow,
+  isAlwaysOnTop: boolean
+): BrowserWindowConstructorOptions => {
+  const { x, y, width, height } = mainWindow.getBounds();
+  return {
+    ...getCommonWindowOptions(),
+    parent: mainWindow,
+    skipTaskbar: true,
+    alwaysOnTop: isAlwaysOnTop,
+    height: 200,
+    width: 400,
+    transparent: true,
+    center: false,
+    x: x + LYRIC_GAP.X - width,
+    y: y + height + LYRIC_GAP.Y,
+    title: WindowTitle.Lyric,
+  };
+};
+
 export const showDevTool = (window: BrowserWindow, isShow: boolean): void => {
   if (isShow) {
     window.webContents.openDevTools({ mode: 'detach' });
@@ -125,6 +146,27 @@ export const moveTrackInfo = (mainWindow: BrowserWindow, screen: Screen): void =
   };
 
   trackInfoWindow.setBounds(newBounds);
+  mainWindow.webContents.send(IpcMessage.SideChanged, { isOnLeft });
+};
+
+export const moveLyric = (mainWindow: BrowserWindow, screen: Screen): void => {
+  const { x, y, width, height } = mainWindow.getBounds();
+  const LyricWindow = findWindow(WindowTitle.Lyric);
+  if (!LyricWindow) {
+    return;
+  }
+
+  const currentDisplay = screen.getDisplayNearestPoint({ x, y });
+  const isOnLeft = checkIfAppIsOnLeftSide(currentDisplay, x, width);
+
+  const originalBounds = LyricWindow.getBounds();
+  const newBounds = {
+    ...originalBounds,
+    x: isOnLeft ? x + LYRIC_GAP.X - width : x - originalBounds.width - LYRIC_GAP.X + width,
+    y: y + height + LYRIC_GAP.Y,
+  };
+
+  LyricWindow.setBounds(newBounds);
   mainWindow.webContents.send(IpcMessage.SideChanged, { isOnLeft });
 };
 

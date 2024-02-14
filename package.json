@@ -7,7 +7,7 @@
   "scripts": {
     "install": "yarn run build",
     "config-xcode": "node-gyp configure -- -f xcode",
-    "build": "node-gyp rebuild --target=4.0.1 --dist-url=https://electronjs.org/headers --openssl_fips=X && genversion --es6 --semi version.generated.ts",
+    "build": "set npm_config_python=C:/Users/AliEntezari/.conda/envs/py2/python.exe & node-gyp rebuild --target=4.0.1 --dist-url=https://electronjs.org/headers --openssl_fips=X && genversion --es6 --semi version.generated.ts",
     "start": "electron ./pack/main.bundle.js",
     "dev": "yarn run development",
     "development": "rimraf pack && webpack --watch --config ./webpack.dev.js --progress --color",

@@ -13,6 +13,7 @@ import {
   nativeImage,
   Rectangle,
   screen,
+  session,
   shell,
   Tray,
 } from 'electron';
@@ -37,8 +38,10 @@ import {
   getAboutWindowOptions,
   getFullscreenVisualizationWindowOptions,
   getFullscreenVizBounds,
+  getLyricWindowOptions,
   getSettingsWindowOptions,
   getTrackInfoWindowOptions,
+  moveLyric,
   moveTrackInfo,
   setAlwaysOnTop,
   settingsSchema,
@@ -142,6 +145,7 @@ const createMainWindow = (): void => {
     // See: https://github.com/electron/electron/issues/9477#issuecomment-406833003
     mainWindow.setBounds(bounds);
     moveTrackInfo(mainWindow, screen);
+    moveLyric(mainWindow, screen);
 
     mainWindow.webContents.send(IpcMessage.WindowMoved, bounds);
   });
@@ -162,6 +166,7 @@ const createMainWindow = (): void => {
 
   mainWindow.on('resize', () => {
     moveTrackInfo(mainWindow, screen);
+    moveLyric(mainWindow, screen);
   });
 
   mainWindow.on('resized', () => {
@@ -184,6 +189,7 @@ const createMainWindow = (): void => {
         mainWindow.center();
       }
       moveTrackInfo(mainWindow, screen);
+      moveLyric(mainWindow, screen);
 
       const fullscreenVizWindow = findWindow(WindowTitle.FullscreenViz);
       if (fullscreenVizWindow) {
@@ -225,6 +231,10 @@ const createMainWindow = (): void => {
     }
   });
 
+  // ipcMain.on('set-cookie', (event, url, name, value) => {
+  //   session.defaultSession.cookies.set({ url, name, value });
+  // });
+
   const windowOpenHandler = (
     details: HandlerDetails
   ): { action: 'allow' | 'deny'; overrideBrowserWindowOptions?: BrowserWindowConstructorOptions } => {
@@ -259,6 +269,13 @@ const createMainWindow = (): void => {
         return {
           action: 'allow',
           overrideBrowserWindowOptions: getTrackInfoWindowOptions(mainWindow, settings.isAlwaysOnTop),
+        };
+      }
+
+      case WindowName.Lyric: {
+        return {
+          action: 'allow',
+          overrideBrowserWindowOptions: getLyricWindowOptions(mainWindow, settings.isAlwaysOnTop),
         };
       }
 
@@ -324,6 +341,16 @@ const createMainWindow = (): void => {
         break;
       }
 
+      case WindowName.Lyric: {
+        moveLyric(mainWindow, screen);
+        childWindow.setIgnoreMouseEvents(true);
+        setAlwaysOnTop({ window: childWindow, isAlwaysOnTop: settings.isAlwaysOnTop });
+        if (MACOS) {
+          childWindow.setWindowButtonVisibility(false);
+        }
+        break;
+      }
+
       default: {
         break;
       }
@@ -340,6 +367,19 @@ app.on('ready', () => {
     store.clear();
     settings = store.get('settings') as Settings;
   }
+
+  session.defaultSession.cookies.set({
+    url: 'https://spotify.com',
+    name: 'sp_dc',
+    value:
+      'AQDkOH45Eb7QlEgTLWDjlP9YTbK8p0kJD02mr2vq8gtISw7v-YMDcRgBBW0nCpaJeg0rSeic_-Q0hCvwf_RtbBLV7E3yN64wQueDcyvXrvdSlk3TZF-Vl1UuZG1LBYp0rG4wbT1xUNL-sSZmbsCl6KhzoucvvLGX',
+    sameSite: 'no_restriction',
+    domain: '.spotify.com',
+    secure: true,
+    httpOnly: true,
+    path: '/',
+    expirationDate: 1739375434,
+  });
 
   createMainWindow();
 
@@ -397,6 +437,7 @@ app.on('ready', () => {
     const isOnLeft = checkIfAppIsOnLeftSide(currentDisplay, bounds.x, bounds.width);
     mainWindow.webContents.send(IpcMessage.WindowReady, { isOnLeft, displays });
     moveTrackInfo(mainWindow, screen);
+    moveLyric(mainWindow, screen);
   });
 });
 
