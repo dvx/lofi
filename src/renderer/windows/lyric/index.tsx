@@ -51,21 +51,20 @@ const LyricText: FunctionComponent<LyricTextProps> = ({ lyrics }) => {
       </div>
     );
   }
-
-  let closestLineIndex = 0;
-  let closestLineDiff = Infinity;
-
+  let closestLineIndex = -1;
   lyrics.lyrics.lines.forEach((line: Line, index: number) => {
-    const diff = Math.abs(Number(line.startTimeMs) - state.progress + 150);
-    if (diff < closestLineDiff) {
-      closestLineDiff = diff;
+    if (Number(line.startTimeMs) < state.progress) {
       closestLineIndex = index;
     }
   });
 
   const prevLine = closestLineIndex > 0 ? lyrics.lyrics.lines[closestLineIndex - 1] : null;
-  const line = lyrics.lyrics.lines[closestLineIndex];
+  let line = lyrics.lyrics.lines[closestLineIndex];
   const nextLine = closestLineIndex < lyrics.lyrics.lines.length - 1 ? lyrics.lyrics.lines[closestLineIndex + 1] : null;
+  if (line === undefined) {
+    line = nextLine;
+    line.words = lyrics.lyrics.lines[0].words;
+  }
 
   return (
     <div>
