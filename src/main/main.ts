@@ -179,7 +179,10 @@ const createMainWindow = (): void => {
 
   ipcMain.on(
     IpcMessage.SettingsChanged,
-    (_: Event, { x, y, size, isAlwaysOnTop, isDebug, isVisibleInTaskbar, visualizationScreenId, SPDCToken }: Settings) => {
+    (
+      _: Event,
+      { x, y, size, isAlwaysOnTop, isDebug, isVisibleInTaskbar, visualizationScreenId, SPDCToken }: Settings
+    ) => {
       setAlwaysOnTop({ window: mainWindow, isAlwaysOnTop });
       mainWindow.setSkipTaskbar(!isVisibleInTaskbar);
       showDevTool(mainWindow, isDebug);
