@@ -17,8 +17,8 @@ import Menu from './menu';
 import { Visualizer } from './visualizer';
 import { Waiting } from './waiting';
 
-const ONE_SECOND = 1000;
-const ONE_MINUTE = ONE_SECOND * 60;
+const ONE_SECOND_IN_MS = 1000;
+const ONE_MINUTE = ONE_SECOND_IN_MS * 60;
 
 const TRUNCATE_REGEX = /(.*?)\s[-(•].*/g;
 const truncateText = (text: string): string => text?.replace(TRUNCATE_REGEX, '$1');
@@ -59,6 +59,7 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
     visualizationId,
     visualizationType,
     visualizerOpacity,
+    trackInfoRefreshTimeInSeconds,
   } = useMemo(() => settings, [settings]);
 
   const [currentSongId, setCurrentSongId] = useState('');
@@ -178,23 +179,23 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
   }, [onMouseWheel]);
 
   useEffect(() => {
-    const listeningToIntervalId = setInterval(handlePlaybackChanged, ONE_SECOND);
+    const listeningToIntervalId = setInterval(handlePlaybackChanged, trackInfoRefreshTimeInSeconds * ONE_SECOND_IN_MS);
 
     return () => {
       if (listeningToIntervalId) {
         clearInterval(listeningToIntervalId);
       }
     };
-  }, [handlePlaybackChanged]);
+  }, [handlePlaybackChanged, trackInfoRefreshTimeInSeconds]);
 
   useEffect(() => {
-    const refreshTrackLikedIntervalId = setInterval(refreshTrackLiked, 2 * ONE_SECOND);
+    const refreshTrackLikedIntervalId = setInterval(refreshTrackLiked, 2 * trackInfoRefreshTimeInSeconds * ONE_SECOND_IN_MS);
     return () => {
       if (refreshTrackLikedIntervalId) {
         clearInterval(refreshTrackLikedIntervalId);
       }
     };
-  }, [refreshTrackLiked]);
+  }, [refreshTrackLiked, trackInfoRefreshTimeInSeconds]);
 
   useEffect(() => {
     const keepAliveIntervalId = setInterval(keepAlive, ONE_MINUTE);
