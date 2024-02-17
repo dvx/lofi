@@ -74,3 +74,6 @@ package
 
 # generated version file
 version.generated.ts
+
+# idea generated folder
+.idea/
