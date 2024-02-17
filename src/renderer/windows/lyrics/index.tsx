@@ -74,7 +74,14 @@ function generateRandomLightColor(opacity: number): string {
   return `hsl(${h}, ${s}%, ${l}%, ${opacity / 255})`;
 }
 
-const LyricsText: FunctionComponent<LyricTextProps> = ({ lyrics, loggedIn, isTokenEmpty, maxLength, nextLyricsColor, isLyricsBlur }) => {
+const LyricsText: FunctionComponent<LyricTextProps> = ({
+  lyrics,
+  loggedIn,
+  isTokenEmpty,
+  maxLength,
+  nextLyricsColor,
+  isLyricsBlur,
+}) => {
   const { state } = useCurrentlyPlaying();
   if (!loggedIn) {
     return (
@@ -109,7 +116,7 @@ const LyricsText: FunctionComponent<LyricTextProps> = ({ lyrics, loggedIn, isTok
     lyric.words = '';
   }
 
-  const blurStyle = isLyricsBlur? `blur(${0.55}px)`: 'none';
+  const blurStyle = isLyricsBlur ? `blur(${0.55}px)` : 'none';
 
   return (
     <div>
@@ -145,9 +152,11 @@ export const Lyrics: FunctionComponent<LyricsProps> = ({ lyrics, loggedIn, isOnL
   const backgroundColor = useMemo(() => {
     const normalizedOpacity = Math.floor((state.lyricsBackgroundOpacity / 100) * 255);
     const isLyricsRandomBackground = state.isLyricsRandomBackground && DEFAULT_SETTINGS.isLyricsRandomBackground;
-    const color = isLyricsRandomBackground? generateRandomLightColor(normalizedOpacity): state.lyricsBackgroundColor || DEFAULT_SETTINGS.lyricsBackgroundColor;
+    const color = isLyricsRandomBackground
+      ? generateRandomLightColor(normalizedOpacity)
+      : state.lyricsBackgroundColor || DEFAULT_SETTINGS.lyricsBackgroundColor;
 
-    return isLyricsRandomBackground ? color: `${color}${normalizedOpacity.toString(16)}`;
+    return isLyricsRandomBackground ? color : `${color}${normalizedOpacity.toString(16)}`;
   }, [state]);
   const maxLength = state.lyricMaxLength || DEFAULT_SETTINGS.lyricMaxLength;
   const nextLyricsColor = state.nextLyricsColor || DEFAULT_SETTINGS.nextLyricsColor;
@@ -166,7 +175,14 @@ export const Lyrics: FunctionComponent<LyricsProps> = ({ lyrics, loggedIn, isOnL
         maxWidth: `${maxLength}ch`,
         borderRadius: lyricsCornerRadius,
       }}>
-      <LyricsText lyrics={lyrics} loggedIn={loggedIn} isTokenEmpty={state.SPDCToken === ''} maxLength={maxLength} nextLyricsColor={nextLyricsColor} isLyricsBlur={isLyricsBlur} />
+      <LyricsText
+        lyrics={lyrics}
+        loggedIn={loggedIn}
+        isTokenEmpty={state.SPDCToken === ''}
+        maxLength={maxLength}
+        nextLyricsColor={nextLyricsColor}
+        isLyricsBlur={isLyricsBlur}
+      />
     </LyricsWrapper>
   );
 };
