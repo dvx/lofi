@@ -11,6 +11,7 @@ import {
   Row,
   Select,
   Slider,
+  TextArea,
 } from './form.styled';
 import { LoginButton } from './login-button';
 import { StyledCheckbox, StyledTabs } from './mantine.styled';
@@ -35,6 +36,7 @@ export {
   StyledCheckbox,
   StyledTabs,
   StyledWindow,
+  TextArea,
   TitleBar,
   WindowPortal,
 };

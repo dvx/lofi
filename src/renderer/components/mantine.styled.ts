@@ -26,7 +26,7 @@ export const StyledTabs = styled(Tabs)`
   }
 
   & .mantine-tabs-tab {
-    min-width: 80px;
+    min-width: 67px;
     margin: 0;
     color: white;
 

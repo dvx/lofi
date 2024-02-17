@@ -6,10 +6,12 @@ import styled, { css } from 'styled-components';
 
 import { IpcMessage, WindowName } from '../../../constants';
 import { Settings, VisualizationType } from '../../../models/settings';
+import { LyricsData, SpotifyLyricsApiInstance } from '../../api/lyrics-api';
 import { AccountType, SpotifyApiInstance } from '../../api/spotify-api';
 import { WindowPortal } from '../../components';
 import { useCurrentlyPlaying } from '../../contexts/currently-playing.context';
 import { CurrentlyPlayingActions, CurrentlyPlayingType } from '../../reducers/currently-playing.reducer';
+import { Lyrics } from '../../windows/lyrics';
 import { TrackInfo } from '../../windows/track-info';
 import { Bars } from '../bars';
 import { Controls } from './controls';
@@ -52,9 +54,12 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
     barColor,
     isAlwaysShowSongProgress,
     isAlwaysShowTrackInfo,
+    isAlwaysShowLyrics,
+    isShowLyrics,
     isOnLeft,
     size,
     skipSongDelay,
+    SPDCToken,
     volumeIncrement,
     visualizationId,
     visualizationType,
@@ -64,13 +69,20 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
 
   const [currentSongId, setCurrentSongId] = useState('');
   const [shouldShowTrackInfo, setShouldShowTrackInfo] = useState(isAlwaysShowTrackInfo);
+  const [shouldAlwaysShowLyrics, setShouldAlwaysShowLyrics] = useState(isAlwaysShowLyrics);
   const [errorToDisplay, setErrorToDisplay] = useState('');
+  const [currentLyrics, setCurrentLyrics] = useState<LyricsData>();
+  const [lyricsLoggedIn, setLyricsLoggedIn] = useState(false);
 
   useEffect(() => setErrorToDisplay(message), [message]);
 
   useEffect(() => {
     setShouldShowTrackInfo(isAlwaysShowTrackInfo);
   }, [isAlwaysShowTrackInfo]);
+
+  useEffect(() => {
+    setShouldAlwaysShowLyrics(isAlwaysShowLyrics);
+  }, [isAlwaysShowLyrics]);
 
   const artist = useMemo(() => truncateText(state.artist), [state.artist]);
   const songTitle = useMemo(() => truncateText(state.track), [state.track]);
@@ -115,6 +127,22 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
       }
     })();
   }, [artist, currentSongId, refreshTrackLiked, songTitle, state.id, state.isPlaying]);
+
+  useEffect(() => {
+    (async () => {
+      const lyrics = await SpotifyLyricsApiInstance.getLyrics(currentSongId);
+      setCurrentLyrics(lyrics);
+    })();
+  }, [currentSongId]);
+
+  useEffect(() => {
+    (async () => {
+      const loggedIn = await SpotifyLyricsApiInstance.login();
+      setLyricsLoggedIn(loggedIn);
+      if (loggedIn) console.log(`Lyrics API logged in with sp_dc: ${SPDCToken}`);
+      else console.log(`The provided sp_dc is invalid, please check it again!\n sp_dc: ${SPDCToken}`);
+    })();
+  }, [SPDCToken]);
 
   const keepAlive = useCallback(async (): Promise<void> => {
     if (state.isPlaying || state.userProfile?.accountType !== AccountType.Premium) {
@@ -211,8 +239,14 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
   return (
     <div
       className="transparent"
-      onMouseEnter={() => !isAlwaysShowTrackInfo && setShouldShowTrackInfo(true)}
-      onMouseLeave={() => !isAlwaysShowTrackInfo && setShouldShowTrackInfo(false)}>
+      onMouseEnter={() => {
+        if (!isAlwaysShowTrackInfo) setShouldShowTrackInfo(true);
+        if (isShowLyrics && !isAlwaysShowLyrics) setShouldAlwaysShowLyrics(true);
+      }}
+      onMouseLeave={() => {
+        if (!isAlwaysShowTrackInfo) setShouldShowTrackInfo(false);
+        if (isShowLyrics && !isAlwaysShowLyrics) setShouldAlwaysShowLyrics(false);
+      }}>
       <Menu
         onVisualizationChange={onVisualizationChange}
         onVisualizationCycle={onVisualizationCycle}
@@ -223,6 +257,11 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
           {shouldShowTrackInfo && (
             <WindowPortal name={WindowName.TrackInfo}>
               <TrackInfo track={songTitle} artist={artist} isOnLeft={isOnLeft} message={errorToDisplay || message} />
+            </WindowPortal>
+          )}
+          {shouldAlwaysShowLyrics && (
+            <WindowPortal name={WindowName.Lyrics}>
+              <Lyrics isOnLeft={isOnLeft} lyrics={currentLyrics} loggedIn={lyricsLoggedIn} />
             </WindowPortal>
           )}
           <CoverContent

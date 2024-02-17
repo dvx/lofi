@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import {
   IpcMessage,
+  LYRICS_GAP,
   MAX_BAR_THICKNESS,
   MAX_SIDE_LENGTH,
   MAX_SKIP_SONG_DELAY,
@@ -29,8 +30,8 @@ export const getCommonWindowOptions = (): BrowserWindowConstructorOptions => ({
 
 export const getSettingsWindowOptions = (): BrowserWindowConstructorOptions => ({
   ...getCommonWindowOptions(),
-  height: 420,
-  minHeight: 420,
+  height: 580,
+  minHeight: 580,
   width: 420,
   minWidth: 420,
   title: WindowTitle.Settings,
@@ -71,6 +72,26 @@ export const getTrackInfoWindowOptions = (
     x: x + width + TRACK_INFO_GAP.X,
     y: y + TRACK_INFO_GAP.Y,
     title: WindowTitle.TrackInfo,
+  };
+};
+
+export const getLyricsWindowOptions = (
+  mainWindow: BrowserWindow,
+  isAlwaysOnTop: boolean
+): BrowserWindowConstructorOptions => {
+  const { x, y, width, height } = mainWindow.getBounds();
+  return {
+    ...getCommonWindowOptions(),
+    parent: mainWindow,
+    skipTaskbar: true,
+    alwaysOnTop: isAlwaysOnTop,
+    height: 1000,
+    width: 1000,
+    transparent: true,
+    center: false,
+    x: x + LYRICS_GAP.X - width,
+    y: y + height + LYRICS_GAP.Y,
+    title: WindowTitle.Lyrics,
   };
 };
 
@@ -125,6 +146,27 @@ export const moveTrackInfo = (mainWindow: BrowserWindow, screen: Screen): void =
   };
 
   trackInfoWindow.setBounds(newBounds);
+  mainWindow.webContents.send(IpcMessage.SideChanged, { isOnLeft });
+};
+
+export const moveLyric = (mainWindow: BrowserWindow, screen: Screen): void => {
+  const { x, y, width, height } = mainWindow.getBounds();
+  const LyricsWindow = findWindow(WindowTitle.Lyrics);
+  if (!LyricsWindow) {
+    return;
+  }
+
+  const currentDisplay = screen.getDisplayNearestPoint({ x, y });
+  const isOnLeft = checkIfAppIsOnLeftSide(currentDisplay, x, width);
+
+  const originalBounds = LyricsWindow.getBounds();
+  const newBounds = {
+    ...originalBounds,
+    x: isOnLeft ? x + LYRICS_GAP.X : x - originalBounds.width - LYRICS_GAP.X + width,
+    y: y + height + LYRICS_GAP.Y,
+  };
+
+  LyricsWindow.setBounds(newBounds);
   mainWindow.webContents.send(IpcMessage.SideChanged, { isOnLeft });
 };
 

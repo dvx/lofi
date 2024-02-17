@@ -36,6 +36,19 @@ export interface Settings {
   showFreemiumWarning: boolean;
   cornerRadius: number;
   trackInfoRefreshTimeInSeconds: number;
+  SPDCToken: string;
+  isShowLyrics: boolean;
+  isAlwaysShowLyrics: boolean;
+  lyricMaxLength: number;
+  lyricsFontSize: number;
+  lyricsColor: string;
+  nextLyricsColor: string;
+  lyricsBackgroundColor: string;
+  lyricsBackgroundOpacity: number;
+  lyricsFont: string;
+  isLyricsBlur: boolean;
+  isLyricsRandomBackground: boolean;
+  lyricsCornerRadius: number;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -68,4 +81,17 @@ export const DEFAULT_SETTINGS: Settings = {
   showFreemiumWarning: true,
   cornerRadius: 0,
   trackInfoRefreshTimeInSeconds: 1,
+  SPDCToken: '',
+  isShowLyrics: false,
+  isAlwaysShowLyrics: false,
+  lyricMaxLength: 30,
+  lyricsFontSize: 14,
+  lyricsColor: '#FFFFFF',
+  nextLyricsColor: '#000000',
+  lyricsBackgroundColor: '#000000',
+  lyricsBackgroundOpacity: 50,
+  lyricsFont: 'Inter UI',
+  isLyricsBlur: true,
+  isLyricsRandomBackground: true,
+  lyricsCornerRadius: 0,
 };

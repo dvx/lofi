@@ -13,6 +13,7 @@ import {
   nativeImage,
   Rectangle,
   screen,
+  session,
   shell,
   Tray,
 } from 'electron';
@@ -37,8 +38,10 @@ import {
   getAboutWindowOptions,
   getFullscreenVisualizationWindowOptions,
   getFullscreenVizBounds,
+  getLyricsWindowOptions,
   getSettingsWindowOptions,
   getTrackInfoWindowOptions,
+  moveLyric,
   moveTrackInfo,
   setAlwaysOnTop,
   settingsSchema,
@@ -142,6 +145,7 @@ const createMainWindow = (): void => {
     // See: https://github.com/electron/electron/issues/9477#issuecomment-406833003
     mainWindow.setBounds(bounds);
     moveTrackInfo(mainWindow, screen);
+    moveLyric(mainWindow, screen);
 
     mainWindow.webContents.send(IpcMessage.WindowMoved, bounds);
   });
@@ -162,6 +166,7 @@ const createMainWindow = (): void => {
 
   mainWindow.on('resize', () => {
     moveTrackInfo(mainWindow, screen);
+    moveLyric(mainWindow, screen);
   });
 
   mainWindow.on('resized', () => {
@@ -174,7 +179,10 @@ const createMainWindow = (): void => {
 
   ipcMain.on(
     IpcMessage.SettingsChanged,
-    (_: Event, { x, y, size, isAlwaysOnTop, isDebug, isVisibleInTaskbar, visualizationScreenId }: Settings) => {
+    (
+      _: Event,
+      { x, y, size, isAlwaysOnTop, isDebug, isVisibleInTaskbar, visualizationScreenId, SPDCToken }: Settings
+    ) => {
       setAlwaysOnTop({ window: mainWindow, isAlwaysOnTop });
       mainWindow.setSkipTaskbar(!isVisibleInTaskbar);
       showDevTool(mainWindow, isDebug);
@@ -184,11 +192,25 @@ const createMainWindow = (): void => {
         mainWindow.center();
       }
       moveTrackInfo(mainWindow, screen);
+      moveLyric(mainWindow, screen);
 
       const fullscreenVizWindow = findWindow(WindowTitle.FullscreenViz);
       if (fullscreenVizWindow) {
         const fullscreenVizBounds = getFullscreenVizBounds(mainWindow.getBounds(), screen, visualizationScreenId);
         fullscreenVizWindow.setBounds(fullscreenVizBounds);
+      }
+      if (SPDCToken !== '') {
+        session.defaultSession.cookies.set({
+          url: 'https://spotify.com',
+          name: 'sp_dc',
+          value: SPDCToken,
+          sameSite: 'no_restriction',
+          domain: '.spotify.com',
+          secure: true,
+          httpOnly: true,
+          path: '/',
+          expirationDate: new Date().getTime() + 24 * 60 * 60 * 1000,
+        });
       }
     }
   );
@@ -262,6 +284,13 @@ const createMainWindow = (): void => {
         };
       }
 
+      case WindowName.Lyrics: {
+        return {
+          action: 'allow',
+          overrideBrowserWindowOptions: getLyricsWindowOptions(mainWindow, settings.isAlwaysOnTop),
+        };
+      }
+
       case WindowName.Auth: {
         shell.openExternal(details.url);
         break;
@@ -324,6 +353,16 @@ const createMainWindow = (): void => {
         break;
       }
 
+      case WindowName.Lyrics: {
+        moveLyric(mainWindow, screen);
+        childWindow.setIgnoreMouseEvents(true);
+        setAlwaysOnTop({ window: childWindow, isAlwaysOnTop: settings.isAlwaysOnTop });
+        if (MACOS) {
+          childWindow.setWindowButtonVisibility(false);
+        }
+        break;
+      }
+
       default: {
         break;
       }
@@ -342,6 +381,19 @@ app.on('ready', () => {
   }
 
   createMainWindow();
+  if (settings.SPDCToken !== '') {
+    session.defaultSession.cookies.set({
+      url: 'https://spotify.com',
+      name: 'sp_dc',
+      value: settings.SPDCToken,
+      sameSite: 'no_restriction',
+      domain: '.spotify.com',
+      secure: true,
+      httpOnly: true,
+      path: '/',
+      expirationDate: new Date().getTime() + 24 * 60 * 60 * 1000,
+    });
+  }
 
   tray = new Tray(icon);
 
@@ -397,6 +449,7 @@ app.on('ready', () => {
     const isOnLeft = checkIfAppIsOnLeftSide(currentDisplay, bounds.x, bounds.width);
     mainWindow.webContents.send(IpcMessage.WindowReady, { isOnLeft, displays });
     moveTrackInfo(mainWindow, screen);
+    moveLyric(mainWindow, screen);
   });
 });
 
