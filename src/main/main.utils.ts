@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import {
   IpcMessage,
-  LYRIC_GAP,
+  LYRICS_GAP,
   MAX_BAR_THICKNESS,
   MAX_SIDE_LENGTH,
   MAX_SKIP_SONG_DELAY,
@@ -30,8 +30,8 @@ export const getCommonWindowOptions = (): BrowserWindowConstructorOptions => ({
 
 export const getSettingsWindowOptions = (): BrowserWindowConstructorOptions => ({
   ...getCommonWindowOptions(),
-  height: 420,
-  minHeight: 420,
+  height: 540,
+  minHeight: 540,
   width: 420,
   minWidth: 420,
   title: WindowTitle.Settings,
@@ -75,7 +75,7 @@ export const getTrackInfoWindowOptions = (
   };
 };
 
-export const getLyricWindowOptions = (
+export const getLyricsWindowOptions = (
   mainWindow: BrowserWindow,
   isAlwaysOnTop: boolean
 ): BrowserWindowConstructorOptions => {
@@ -85,13 +85,13 @@ export const getLyricWindowOptions = (
     parent: mainWindow,
     skipTaskbar: true,
     alwaysOnTop: isAlwaysOnTop,
-    height: 200,
-    width: 400,
+    height: 1000,
+    width: 1000,
     transparent: true,
     center: false,
-    x: x + LYRIC_GAP.X - width,
-    y: y + height + LYRIC_GAP.Y,
-    title: WindowTitle.Lyric,
+    x: x + LYRICS_GAP.X - width,
+    y: y + height + LYRICS_GAP.Y,
+    title: WindowTitle.Lyrics,
   };
 };
 
@@ -151,22 +151,22 @@ export const moveTrackInfo = (mainWindow: BrowserWindow, screen: Screen): void =
 
 export const moveLyric = (mainWindow: BrowserWindow, screen: Screen): void => {
   const { x, y, width, height } = mainWindow.getBounds();
-  const LyricWindow = findWindow(WindowTitle.Lyric);
-  if (!LyricWindow) {
+  const LyricsWindow = findWindow(WindowTitle.Lyrics);
+  if (!LyricsWindow) {
     return;
   }
 
   const currentDisplay = screen.getDisplayNearestPoint({ x, y });
   const isOnLeft = checkIfAppIsOnLeftSide(currentDisplay, x, width);
 
-  const originalBounds = LyricWindow.getBounds();
+  const originalBounds = LyricsWindow.getBounds();
   const newBounds = {
     ...originalBounds,
-    x: isOnLeft ? x + LYRIC_GAP.X - width : x - originalBounds.width - LYRIC_GAP.X + width,
-    y: y + height + LYRIC_GAP.Y,
+    x: isOnLeft ? x + LYRICS_GAP.X : x - originalBounds.width - LYRICS_GAP.X + width,
+    y: y + height + LYRICS_GAP.Y,
   };
 
-  LyricWindow.setBounds(newBounds);
+  LyricsWindow.setBounds(newBounds);
   mainWindow.webContents.send(IpcMessage.SideChanged, { isOnLeft });
 };
 

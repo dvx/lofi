@@ -10,6 +10,7 @@ import { WindowHeader } from '../window-header';
 import { AccountSettings } from './account-settings';
 import { AdvancedSettings } from './advanced-settings';
 import { AudioSettings } from './audio-settings';
+import { LyricsSettings } from './lyrics-settings';
 import { TrackInfoSettings } from './track-info-settings';
 import { VisualizationSettings } from './visualization-settings';
 import { WindowSettings } from './window-settings';
@@ -17,6 +18,7 @@ import { WindowSettings } from './window-settings';
 enum Tab {
   Advanced = 'Advanced',
   Audio = 'Audio',
+  Lyrics = 'Lyrics',
   TrackInfo = 'Track Info',
   Visualization = 'Visualization',
   Window = 'Window',
@@ -51,6 +53,7 @@ const TabsWrapper = styled.div`
   height: 100%;
   width: 100%;
   align-items: stretch;
+  justify-content: center;
 `;
 
 const getDefaultValues = (initialValues: Settings, displays: DisplayData[]): Settings => {
@@ -107,6 +110,7 @@ export const SettingsWindow: FunctionComponent<Props> = ({ initialValues, displa
                 <Tabs.Tab value={Tab.TrackInfo} icon={<i className="fa-solid fa-circle-info" />} />
                 <Tabs.Tab value={Tab.Visualization} icon={<i className="fa-solid fa-chart-simple" />} />
                 <Tabs.Tab value={Tab.Audio} icon={<i className="fa-solid fa-headphones" />} />
+                <Tabs.Tab value={Tab.Lyrics} icon={<i className="fa-solid fa-font" />} />
                 <Tabs.Tab value={Tab.Advanced} icon={<i className="fa-solid fa-gears" />} />
               </Tabs.List>
 
@@ -128,6 +132,10 @@ export const SettingsWindow: FunctionComponent<Props> = ({ initialValues, displa
 
               <Tabs.Panel value={Tab.Audio}>
                 <AudioSettings />
+              </Tabs.Panel>
+
+              <Tabs.Panel value={Tab.Lyrics}>
+                <LyricsSettings />
               </Tabs.Panel>
 
               <Tabs.Panel value={Tab.Advanced}>

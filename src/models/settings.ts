@@ -35,6 +35,15 @@ export interface Settings {
   trackInfoBackgroundOpacity: number;
   showFreemiumWarning: boolean;
   cornerRadius: number;
+  SPDCToken: string;
+  isShowLyrics: boolean;
+  isAlwaysShowLyrics: boolean;
+  lyricMaxLength: number;
+  lyricsFontSize: number;
+  lyricsColor: string;
+  lyricsBackgroundColor: string;
+  lyricsBackgroundOpacity: number;
+  lyricsFont: string;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -66,4 +75,13 @@ export const DEFAULT_SETTINGS: Settings = {
   trackInfoBackgroundOpacity: 50,
   showFreemiumWarning: true,
   cornerRadius: 0,
+  SPDCToken: '',
+  isShowLyrics: false,
+  isAlwaysShowLyrics: false,
+  lyricMaxLength: 30,
+  lyricsFontSize: 14,
+  lyricsColor: '#FFFFFF',
+  lyricsBackgroundColor: '#000000',
+  lyricsBackgroundOpacity: 50,
+  lyricsFont: 'Inter UI',
 };

@@ -38,7 +38,7 @@ import {
   getAboutWindowOptions,
   getFullscreenVisualizationWindowOptions,
   getFullscreenVizBounds,
-  getLyricWindowOptions,
+  getLyricsWindowOptions,
   getSettingsWindowOptions,
   getTrackInfoWindowOptions,
   moveLyric,
@@ -179,7 +179,7 @@ const createMainWindow = (): void => {
 
   ipcMain.on(
     IpcMessage.SettingsChanged,
-    (_: Event, { x, y, size, isAlwaysOnTop, isDebug, isVisibleInTaskbar, visualizationScreenId }: Settings) => {
+    (_: Event, { x, y, size, isAlwaysOnTop, isDebug, isVisibleInTaskbar, visualizationScreenId, SPDCToken }: Settings) => {
       setAlwaysOnTop({ window: mainWindow, isAlwaysOnTop });
       mainWindow.setSkipTaskbar(!isVisibleInTaskbar);
       showDevTool(mainWindow, isDebug);
@@ -195,6 +195,19 @@ const createMainWindow = (): void => {
       if (fullscreenVizWindow) {
         const fullscreenVizBounds = getFullscreenVizBounds(mainWindow.getBounds(), screen, visualizationScreenId);
         fullscreenVizWindow.setBounds(fullscreenVizBounds);
+      }
+      if (SPDCToken !== '') {
+        session.defaultSession.cookies.set({
+          url: 'https://spotify.com',
+          name: 'sp_dc',
+          value: SPDCToken,
+          sameSite: 'no_restriction',
+          domain: '.spotify.com',
+          secure: true,
+          httpOnly: true,
+          path: '/',
+          expirationDate: new Date().getTime() + 24 * 60 * 60 * 1000,
+        });
       }
     }
   );
@@ -230,10 +243,6 @@ const createMainWindow = (): void => {
       tray.setImage(isTrackLiked ? iconTrackLiked : icon);
     }
   });
-
-  // ipcMain.on('set-cookie', (event, url, name, value) => {
-  //   session.defaultSession.cookies.set({ url, name, value });
-  // });
 
   const windowOpenHandler = (
     details: HandlerDetails
@@ -272,10 +281,10 @@ const createMainWindow = (): void => {
         };
       }
 
-      case WindowName.Lyric: {
+      case WindowName.Lyrics: {
         return {
           action: 'allow',
-          overrideBrowserWindowOptions: getLyricWindowOptions(mainWindow, settings.isAlwaysOnTop),
+          overrideBrowserWindowOptions: getLyricsWindowOptions(mainWindow, settings.isAlwaysOnTop),
         };
       }
 
@@ -341,7 +350,7 @@ const createMainWindow = (): void => {
         break;
       }
 
-      case WindowName.Lyric: {
+      case WindowName.Lyrics: {
         moveLyric(mainWindow, screen);
         childWindow.setIgnoreMouseEvents(true);
         setAlwaysOnTop({ window: childWindow, isAlwaysOnTop: settings.isAlwaysOnTop });
@@ -368,20 +377,20 @@ app.on('ready', () => {
     settings = store.get('settings') as Settings;
   }
 
-  session.defaultSession.cookies.set({
-    url: 'https://spotify.com',
-    name: 'sp_dc',
-    value:
-      'AQDkOH45Eb7QlEgTLWDjlP9YTbK8p0kJD02mr2vq8gtISw7v-YMDcRgBBW0nCpaJeg0rSeic_-Q0hCvwf_RtbBLV7E3yN64wQueDcyvXrvdSlk3TZF-Vl1UuZG1LBYp0rG4wbT1xUNL-sSZmbsCl6KhzoucvvLGX',
-    sameSite: 'no_restriction',
-    domain: '.spotify.com',
-    secure: true,
-    httpOnly: true,
-    path: '/',
-    expirationDate: 1739375434,
-  });
-
   createMainWindow();
+  if (settings.SPDCToken !== '') {
+    session.defaultSession.cookies.set({
+      url: 'https://spotify.com',
+      name: 'sp_dc',
+      value: settings.SPDCToken,
+      sameSite: 'no_restriction',
+      domain: '.spotify.com',
+      secure: true,
+      httpOnly: true,
+      path: '/',
+      expirationDate: new Date().getTime() + 24 * 60 * 60 * 1000,
+    });
+  }
 
   tray = new Tray(icon);
 

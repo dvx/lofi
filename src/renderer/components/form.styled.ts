@@ -94,3 +94,11 @@ export const Slider = styled(Input).attrs({
     box-shadow: -407px 0 0 400px ${INPUT_COLOR_HEX};
   }
 `;
+
+export const TextArea = styled.textarea`
+  ${BaseSettingsInputStyle};
+  resize: none;
+  width: 23.5rem;
+  height: 5rem;
+  margin-left: 0.25rem;
+`;

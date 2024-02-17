@@ -1,12 +1,4 @@
 /* eslint-disable no-console */
-import { ipcRenderer } from 'electron';
-
-// eslint-disable-next-line camelcase
-const sp_dc =
-  'AQDkOH45Eb7QlEgTLWDjlP9YTbK8p0kJD02mr2vq8gtISw7v-YMDcRgBBW0nCpaJeg0rSeic_-Q0hCvwf_RtbBLV7E3yN64wQueDcyvXrvdSlk3TZF-Vl1UuZG1LBYp0rG4wbT1xUNL-sSZmbsCl6KhzoucvvLGX';
-
-const token =
-  'BQBISYKmgH9KBYhLFEOop-QvkS0eB141iHePtS91dqCDxvIt9r_oOTk3pGWR5vIlyS9oMOK6h1EmX1ANS0XftaTGRYResMuZnb3EC2oGNjCCxAtg92jSAAPggBBjCLUnirmX6E6yZC8HtwxpE2PHBPp9oFx63pbBBU7t9Ij7BYbDd26jwSzD0gTPBlwTrImKQBCM2r2R8g0bnRwMTUhKew2HU4OqC38aIybThYyn8ZquDikuXtqLlgbhn2ht6AHRqB_Wo657J61EuDM6umkcF2ceEowFOvTG0MK8YlL9U_6iWONn8WU-XUTr7OEfC68gOI9Hv0fNtJQBKsNavMuERNMN';
 
 const TOKEN_URL = 'https://open.spotify.com/get_access_token?reason=transport&productType=web_player';
 const USER_AGENT =
@@ -51,22 +43,17 @@ export interface LyricsData {
 class SpotifyLyricsAPI {
   private token: string;
 
-  loggedIn: boolean;
-
-  constructor(private dcToken: string) {
-    this.loggedIn = false;
-    this.login().then((r) => {
-      this.loggedIn = r;
-    });
-    this.token = token;
-    // this.loggedIn = true;
+  constructor() {
+    this.login()
+      .then()
+      .catch(() => {
+        this.token = '';
+      });
   }
 
   async login(): Promise<boolean> {
+    this.token = '';
     try {
-      // Set the cookie
-      ipcRenderer.send('set-cookie', 'https://spotify.com/', 'sp_dc', this.dcToken);
-
       // Make the request with fetch
       const response = await fetch(TOKEN_URL, {
         method: 'GET',
@@ -80,7 +67,8 @@ class SpotifyLyricsAPI {
 
       // Check if the request was successful
       if (!response.ok) {
-        throw new Error(`Request failed: ${response.status}`);
+        console.error(`Request failed: ${response.status}`);
+        return false;
       }
 
       // Parse the response body as JSON
@@ -92,13 +80,12 @@ class SpotifyLyricsAPI {
       return true;
     } catch (error) {
       console.error(error);
-      throw new Error('sp_dc provided is invalid, please check it again!');
+      return false;
     }
   }
 
   async getLyrics(trackId: string): Promise<LyricsData> {
-    console.log(this.loggedIn, trackId);
-    if (!this.loggedIn || trackId === '') {
+    if (this.token === '' || trackId === '') {
       return null;
     }
     try {
@@ -132,4 +119,4 @@ class SpotifyLyricsAPI {
   }
 }
 
-export const SpotifyLyricsApiInstance = new SpotifyLyricsAPI(sp_dc);
+export const SpotifyLyricsApiInstance = new SpotifyLyricsAPI();
