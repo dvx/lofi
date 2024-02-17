@@ -27,7 +27,7 @@ export const AdvancedSettings: FunctionComponent = () => {
         </Row>
         <Row>
           <Label>
-            Currently Listening Refresh Time (Seconds)
+            API Polling Interval (Seconds)
             <Slider
               type="range"
               min={1}
