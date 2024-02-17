@@ -12,7 +12,6 @@ const LyricsWrapper = styled.div`
   transition: 0.1s;
   padding: 0.5em;
   max-width: 30ch;
-  border-radius: 5px;
 
   div {
     white-space: nowrap;
@@ -31,7 +30,6 @@ const LyricsWrapper = styled.div`
 `;
 
 const FocusedText = styled.div`
-  //font-weight: bold;
   margin-top: 5px;
   margin-bottom: 5px;
 `;
@@ -64,9 +62,19 @@ interface LyricTextProps {
   loggedIn?: boolean;
   isTokenEmpty?: boolean;
   maxLength?: number;
+  nextLyricsColor?: string;
+  isLyricsBlur?: boolean;
 }
 
-const LyricsText: FunctionComponent<LyricTextProps> = ({ lyrics, loggedIn, isTokenEmpty, maxLength }) => {
+function generateRandomLightColor(opacity: number): string {
+  const h = Math.floor(Math.random() * 360);
+  const s = 69;
+  const l = 69;
+
+  return `hsl(${h}, ${s}%, ${l}%, ${opacity / 255})`;
+}
+
+const LyricsText: FunctionComponent<LyricTextProps> = ({ lyrics, loggedIn, isTokenEmpty, maxLength, nextLyricsColor, isLyricsBlur }) => {
   const { state } = useCurrentlyPlaying();
   if (!loggedIn) {
     return (
@@ -101,11 +109,13 @@ const LyricsText: FunctionComponent<LyricTextProps> = ({ lyrics, loggedIn, isTok
     lyric.words = '';
   }
 
+  const blurStyle = isLyricsBlur? `blur(${0.55}px)`: 'none';
+
   return (
     <div>
       {prevLyric &&
         breakTextIntoLines(prevLyric.words, maxLength).map((line) => (
-          <FocusedText style={{ filter: `blur(${0.75}px)` }} key={line}>
+          <FocusedText style={{ filter: blurStyle }} key={line}>
             {line}
           </FocusedText>
         ))}
@@ -116,7 +126,7 @@ const LyricsText: FunctionComponent<LyricTextProps> = ({ lyrics, loggedIn, isTok
       </FocusedTextWrapper>
       {nextLyric &&
         breakTextIntoLines(nextLyric.words, maxLength).map((line) => (
-          <FocusedText style={{ color: 'black', filter: `blur(${0.75}px)` }} key={line}>
+          <FocusedText style={{ color: nextLyricsColor, filter: blurStyle }} key={line}>
             {line}
           </FocusedText>
         ))}
@@ -134,11 +144,15 @@ export const Lyrics: FunctionComponent<LyricsProps> = ({ lyrics, loggedIn, isOnL
   const { state } = useSettings();
   const backgroundColor = useMemo(() => {
     const normalizedOpacity = Math.floor((state.lyricsBackgroundOpacity / 100) * 255);
-    const color = state.lyricsBackgroundColor || DEFAULT_SETTINGS.lyricsBackgroundColor;
+    const isLyricsRandomBackground = state.isLyricsRandomBackground && DEFAULT_SETTINGS.isLyricsRandomBackground;
+    const color = isLyricsRandomBackground? generateRandomLightColor(normalizedOpacity): state.lyricsBackgroundColor || DEFAULT_SETTINGS.lyricsBackgroundColor;
 
-    return `${color}${normalizedOpacity.toString(16)}`;
+    return isLyricsRandomBackground ? color: `${color}${normalizedOpacity.toString(16)}`;
   }, [state]);
   const maxLength = state.lyricMaxLength || DEFAULT_SETTINGS.lyricMaxLength;
+  const nextLyricsColor = state.nextLyricsColor || DEFAULT_SETTINGS.nextLyricsColor;
+  const isLyricsBlur = state.isLyricsBlur && DEFAULT_SETTINGS.isLyricsBlur;
+  const lyricsCornerRadius = state.lyricsCornerRadius || DEFAULT_SETTINGS.lyricsCornerRadius;
 
   return (
     <LyricsWrapper
@@ -150,8 +164,9 @@ export const Lyrics: FunctionComponent<LyricsProps> = ({ lyrics, loggedIn, isOnL
         color: state.lyricsColor || DEFAULT_SETTINGS.lyricsColor,
         backgroundColor,
         maxWidth: `${maxLength}ch`,
+        borderRadius: lyricsCornerRadius,
       }}>
-      <LyricsText lyrics={lyrics} loggedIn={loggedIn} isTokenEmpty={state.SPDCToken === ''} maxLength={maxLength} />
+      <LyricsText lyrics={lyrics} loggedIn={loggedIn} isTokenEmpty={state.SPDCToken === ''} maxLength={maxLength} nextLyricsColor={nextLyricsColor} isLyricsBlur={isLyricsBlur} />
     </LyricsWrapper>
   );
 };

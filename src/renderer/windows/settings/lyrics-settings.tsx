@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-import { ApplicationUrl, MAX_FONT_SIZE, MIN_FONT_SIZE } from '../../../constants';
+import { ApplicationUrl, MAX_CORNER_RADIUS, MAX_FONT_SIZE, MIN_FONT_SIZE } from '../../../constants';
 import { DEFAULT_SETTINGS, Settings } from '../../../models/settings';
 import {
   ColorInput,
@@ -23,6 +23,7 @@ export const LyricsSettings: FunctionComponent = () => {
   const lyricMaxLengthWatch = watch('lyricMaxLength');
   const lyricFontSizeWatch = watch('lyricsFontSize');
   const lyricsBackgroundOpacityWatch = watch('lyricsBackgroundOpacity');
+  const lyricsCornerRadiusWatch = watch('lyricsCornerRadius');
 
   return (
     <FormGroup>
@@ -43,14 +44,30 @@ export const LyricsSettings: FunctionComponent = () => {
           </Label>
         </Row>
         <Row>
-          <StyledCheckbox color={INPUT_COLOR} label="Show Lyrics" size="xs" {...register('isShowLyrics')} />
+          <StyledCheckbox color={INPUT_COLOR} label="Show lyrics" size="xs" {...register('isShowLyrics')} />
         </Row>
         <Row>
           <StyledCheckbox
             color={INPUT_COLOR}
-            label="Always Show Lyrics"
+            label="Always show lyrics"
             size="xs"
             {...register('isAlwaysShowLyrics')}
+          />
+        </Row>
+        <Row>
+          <StyledCheckbox
+            color={INPUT_COLOR}
+            label="Blur prevoius and next lyrics"
+            size="xs"
+            {...register('isLyricsBlur')}
+          />
+        </Row>
+        <Row>
+          <StyledCheckbox
+            color={INPUT_COLOR}
+            label="Random background color (changes by hovering mouse )"
+            size="xs"
+            {...register('isLyricsRandomBackground')}
           />
         </Row>
         <Row>
@@ -78,8 +95,10 @@ export const LyricsSettings: FunctionComponent = () => {
             Font color
             <ColorInput {...register('lyricsColor')} />
           </Label>
-        </Row>
-        <Row>
+          <Label>
+            Next lyric font color
+            <ColorInput {...register('nextLyricsColor')} />
+          </Label>
           <Label>
             Background color
             <ColorInput {...register('lyricsBackgroundColor')} />
@@ -108,6 +127,20 @@ export const LyricsSettings: FunctionComponent = () => {
         <Row>
           <Label>
             <TextArea defaultValue={DEFAULT_SETTINGS.SPDCToken} {...register('SPDCToken')} />
+          </Label>
+        </Row>
+        <Row>
+          <Label>
+            Border Radius
+            <Slider
+              type="range"
+              min={0}
+              max={MAX_CORNER_RADIUS}
+              step={1}
+              defaultValue={DEFAULT_SETTINGS.lyricsCornerRadius}
+              {...register('lyricsCornerRadius', { required: true, valueAsNumber: true })}
+            />
+            <RangeValue>{lyricsCornerRadiusWatch}</RangeValue>
           </Label>
         </Row>
       </FieldSet>
