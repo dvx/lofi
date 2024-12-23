@@ -116,26 +116,32 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
           console.log(`New song '${songTitle}' by '${artist}.`);
           await refreshTrackLiked();
         }
-        showTrackInfoTemporarily();
+
+        if (!isAlwaysShowTrackInfo && showTrackInfoTemporarilyInSeconds) {
+          setShouldShowTrackInfo(true);
+
+          const timer = setTimeout(() => {
+            if (!document.getElementById('visible-ui')?.matches(':hover')) {
+              setShouldShowTrackInfo(false);
+            }
+            setTrackInfoTimer(null);
+          }, showTrackInfoTemporarilyInSeconds * ONE_SECOND_IN_MS);
+
+          setTrackInfoTimer(timer);
+        }
       }
     })();
-  }, [artist, currentSongId, refreshTrackLiked, songTitle, state.id, state.isPlaying]);
+  }, [
+    artist,
+    currentSongId,
+    refreshTrackLiked,
+    songTitle,
+    state.id,
+    state.isPlaying,
+    isAlwaysShowTrackInfo,
+    showTrackInfoTemporarilyInSeconds,
+  ]);
 
-  const showTrackInfoTemporarily = () => {
-    if (!isAlwaysShowTrackInfo && showTrackInfoTemporarilyInSeconds) {
-      setShouldShowTrackInfo(true);
-
-      const timer = setTimeout(() => {
-        if (!document.getElementById('visible-ui')?.matches(':hover')) {
-          setShouldShowTrackInfo(false);
-        }
-        setTrackInfoTimer(null);
-      }, showTrackInfoTemporarilyInSeconds * ONE_SECOND_IN_MS);
-    
-      setTrackInfoTimer(timer);
-    }
-  };
-  
   useEffect(() => {
     return () => {
       if (trackInfoTimer) {
@@ -217,7 +223,10 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
   }, [handlePlaybackChanged, trackInfoRefreshTimeInSeconds]);
 
   useEffect(() => {
-    const refreshTrackLikedIntervalId = setInterval(refreshTrackLiked, 2 * trackInfoRefreshTimeInSeconds * ONE_SECOND_IN_MS);
+    const refreshTrackLikedIntervalId = setInterval(
+      refreshTrackLiked,
+      2 * trackInfoRefreshTimeInSeconds * ONE_SECOND_IN_MS
+    );
     return () => {
       if (refreshTrackLikedIntervalId) {
         clearInterval(refreshTrackLikedIntervalId);
@@ -249,7 +258,7 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
       {state.id ? (
         <>
           {shouldShowTrackInfo && (
-            <WindowPortal name={WindowName.TrackInfo}>
+            <WindowPortal name={WindowName.TrackInfo} features={{ focusable: false }}>
               <TrackInfo track={songTitle} artist={artist} isOnLeft={isOnLeft} message={errorToDisplay || message} />
             </WindowPortal>
           )}
