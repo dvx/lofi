@@ -23,6 +23,7 @@ export interface Settings {
   isOnLeft: boolean;
   isAlwaysShowTrackInfo: boolean;
   isAlwaysShowSongProgress: boolean;
+  showTrackInfoTemporarilyInSeconds: number;
   barThickness: number;
   barColor: string;
   size: number;
@@ -55,6 +56,7 @@ export const DEFAULT_SETTINGS: Settings = {
   isAlwaysOnTop: true,
   isVisibleInTaskbar: true,
   isAlwaysShowTrackInfo: false,
+  showTrackInfoTemporarilyInSeconds: 0,
   isAlwaysShowSongProgress: false,
   barThickness: 2,
   barColor: '#74C999',
