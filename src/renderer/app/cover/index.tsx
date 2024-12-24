@@ -52,6 +52,7 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
     barColor,
     isAlwaysShowSongProgress,
     isAlwaysShowTrackInfo,
+    showTrackInfoTemporarilyInSeconds,
     isOnLeft,
     size,
     skipSongDelay,
@@ -64,6 +65,7 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
 
   const [currentSongId, setCurrentSongId] = useState('');
   const [shouldShowTrackInfo, setShouldShowTrackInfo] = useState(isAlwaysShowTrackInfo);
+  const [trackInfoTimer, setTrackInfoTimer] = useState<NodeJS.Timeout | null>(null);
   const [errorToDisplay, setErrorToDisplay] = useState('');
 
   useEffect(() => setErrorToDisplay(message), [message]);
@@ -108,13 +110,45 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
 
   useEffect(() => {
     (async () => {
-      if (state.isPlaying && state.id !== currentSongId) {
-        setCurrentSongId(state.id);
-        console.log(`New song '${songTitle}' by '${artist}.`);
-        await refreshTrackLiked();
+      if (state.isPlaying) {
+        if (state.id !== currentSongId) {
+          setCurrentSongId(state.id);
+          console.log(`New song '${songTitle}' by '${artist}.`);
+          await refreshTrackLiked();
+        }
+
+        if (!isAlwaysShowTrackInfo && showTrackInfoTemporarilyInSeconds) {
+          setShouldShowTrackInfo(true);
+
+          const timer = setTimeout(() => {
+            if (!document.getElementById('visible-ui')?.matches(':hover')) {
+              setShouldShowTrackInfo(false);
+            }
+            setTrackInfoTimer(null);
+          }, showTrackInfoTemporarilyInSeconds * ONE_SECOND_IN_MS);
+
+          setTrackInfoTimer(timer);
+        }
       }
     })();
-  }, [artist, currentSongId, refreshTrackLiked, songTitle, state.id, state.isPlaying]);
+  }, [
+    artist,
+    currentSongId,
+    refreshTrackLiked,
+    songTitle,
+    state.id,
+    state.isPlaying,
+    isAlwaysShowTrackInfo,
+    showTrackInfoTemporarilyInSeconds,
+  ]);
+
+  useEffect(() => {
+    return () => {
+      if (trackInfoTimer) {
+        clearTimeout(trackInfoTimer);
+      }
+    };
+  }, [trackInfoTimer]);
 
   const keepAlive = useCallback(async (): Promise<void> => {
     if (state.isPlaying || state.userProfile?.accountType !== AccountType.Premium) {
@@ -189,7 +223,10 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
   }, [handlePlaybackChanged, trackInfoRefreshTimeInSeconds]);
 
   useEffect(() => {
-    const refreshTrackLikedIntervalId = setInterval(refreshTrackLiked, 2 * trackInfoRefreshTimeInSeconds * ONE_SECOND_IN_MS);
+    const refreshTrackLikedIntervalId = setInterval(
+      refreshTrackLiked,
+      2 * trackInfoRefreshTimeInSeconds * ONE_SECOND_IN_MS
+    );
     return () => {
       if (refreshTrackLikedIntervalId) {
         clearInterval(refreshTrackLikedIntervalId);
@@ -212,7 +249,7 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
     <div
       className="transparent"
       onMouseEnter={() => !isAlwaysShowTrackInfo && setShouldShowTrackInfo(true)}
-      onMouseLeave={() => !isAlwaysShowTrackInfo && setShouldShowTrackInfo(false)}>
+      onMouseLeave={() => !isAlwaysShowTrackInfo && !trackInfoTimer && setShouldShowTrackInfo(false)}>
       <Menu
         onVisualizationChange={onVisualizationChange}
         onVisualizationCycle={onVisualizationCycle}
@@ -221,7 +258,7 @@ export const Cover: FunctionComponent<Props> = ({ settings, message, onVisualiza
       {state.id ? (
         <>
           {shouldShowTrackInfo && (
-            <WindowPortal name={WindowName.TrackInfo}>
+            <WindowPortal name={WindowName.TrackInfo} features={{ focusable: false }}>
               <TrackInfo track={songTitle} artist={artist} isOnLeft={isOnLeft} message={errorToDisplay || message} />
             </WindowPortal>
           )}

@@ -63,7 +63,7 @@ interface Props {
   url?: string;
   name: string;
   title?: string;
-  features?: { width?: number; height?: number; isFullscreen?: boolean };
+  features?: { width?: number; height?: number; isFullscreen?: boolean; focusable?: boolean };
   children: ReactNode;
   onOpen?: (window: Window) => void;
   onUnload?: () => void;
